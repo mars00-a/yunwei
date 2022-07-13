@@ -39,6 +39,7 @@ import nestedRouter from './modules/nested'
  * all roles can be accessed
  */
 export const constantRoutes = [
+
   {
     path: '/redirect',
     component: Layout,
@@ -371,7 +372,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
     path: 'external-link',
     component: Layout,
@@ -379,6 +379,45 @@ export const asyncRoutes = [
       {
         path: 'https://github.com/PanJiaChen/vue-element-admin',
         meta: { title: 'External Link', icon: 'link' }
+      }
+    ]
+  },
+  // 字典表
+  {
+    path: '/opdict',
+    component: Layout,
+    redirect: '/opdict/object',
+    meta: { title: '字典表', icon: 'link' },
+    children: [
+      {
+        path: 'object',
+        name: 'ObjectPage',
+        meta: { title: '检测对象', icon: 'link' },
+        component: () => import('@/views/opdict/object')
+      },
+      {
+        path: 'opcid',
+        name: 'OpcidPage',
+        meta: { title: '运维事件', icon: 'link' },
+        component: () => import('@/views/opdict/opcid')
+      },
+      {
+        path: 'service',
+        name: 'ServicePage',
+        meta: { title: '服务类型', icon: 'link' },
+        component: () => import('@/views/opdict/service')
+      },
+      {
+        path: 'signal',
+        name: 'SignalPage',
+        meta: { title: '运维指标', icon: 'link' },
+        component: () => import('@/views/opdict/signal')
+      },
+      {
+        path: 'status',
+        name: 'StatusPage',
+        meta: { title: '运维状态', icon: 'link' },
+        component: () => import('@/views/opdict/status')
       }
     ]
   },
