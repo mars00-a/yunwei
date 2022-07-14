@@ -62,19 +62,13 @@
             <el-input v-model="form.number" />
           </el-form-item>
           <el-form-item label="数据类型">
-            <el-select
-              v-model="value"
-              filterable
-              allow-create
-              default-first-option
-              placeholder="请选择数据类型"
-            >
+            <el-select v-model="value" placeholder="请选择数据类型">
               <el-option
                 v-for="item in DataTypes"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
-              />
+                :value="item.value">
+              </el-option>
             </el-select>
           </el-form-item>
         </el-form>
