@@ -1,16 +1,13 @@
 <template>
-  <div id="box">
-    <div id="Add">
+  <el-row :gutter="10">
+    <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Add">修改</el-button>
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="指标id">
+          <el-form-item label="监控的id">
             <el-input v-model="form.name" />
           </el-form-item>
-          <el-form-item label="指标名称">
-            <el-input v-model="form.name" />
-          </el-form-item>
-          <el-form-item label="指标类型">
+          <el-form-item label="所属系统">
             <el-select
               v-model="value"
               filterable
@@ -80,11 +77,11 @@
           <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
         </span>
       </el-dialog>
-    </div>
-    <div id="Del">
+    </div></el-col>
+    <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="Del">删除</el-button>
-    </div>
-  </div>
+    </div></el-col>
+  </el-row>
 </template>
 <script>
 export default {
@@ -124,6 +121,7 @@ export default {
   },
   methods: {
     Del() {
+      console.log(this);
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -148,6 +146,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style scoped>
