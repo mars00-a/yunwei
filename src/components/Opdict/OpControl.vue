@@ -1,9 +1,8 @@
-<template>
-  <div />
-</template>
+<template />
 <script>
 export default {
   name: 'OpControl'
+
 }
 </script>
 
