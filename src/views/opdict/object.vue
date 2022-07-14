@@ -15,7 +15,7 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpControl from '../../components/Opdict/OpControl'
-import OpOperate from '../../components/Opdict/OpOperate'
+import OpOperate from '../../components/Opdict/OpOperate/Object'
 export default {
   name: 'MonitorObjectPage',
   components: {

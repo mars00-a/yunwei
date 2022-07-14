@@ -1,7 +1,7 @@
 <template>
   <div id="box">
     <!--当前行数-->
-    <div id="now_line_number">第1条/</div>
+    <div id="now_line_number">{{ info }}</div>
     <!--分页-->
     <div id="paginate">
       <el-pagination
@@ -9,7 +9,7 @@
         :current-page="currentPage4"
         :page-sizes="[100, 200, 300, 400]"
         :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
+        layout="sizes, prev, pager, next, jumper"
         :total="12000"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -25,7 +25,8 @@ export default {
       currentPage1: 5,
       currentPage2: 5,
       currentPage3: 5,
-      currentPage4: 4
+      currentPage4: 4,
+      info : "第1条/共1000条数据"
     }
   },
   methods: {
@@ -43,12 +44,13 @@ export default {
   /*设置当前行数属性*/
   #now_line_number{
     font-size: 0.85rem;
-    margin-left: 5rem;
+    margin-left: 2rem;
     margin-top: 0.6rem;
     color: #606266;
     float:left;
   }
   #paginate{
-    float:left;
+    float:right;
+    margin-right: 2rem;
   }
 </style>
