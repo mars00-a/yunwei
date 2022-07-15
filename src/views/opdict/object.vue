@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <OpControl/>
+      <OpControl :parameter="parameter"/>
     </el-header>
     <el-main id="Main" >
       <el-table
@@ -69,6 +69,7 @@ export default {
   },
   data() {
     return {
+      parameter:["豆沙包", "粘豆包","18岁"],
       tableData: [{
         date: '2016-05-03',
         name: '王小虎',

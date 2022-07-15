@@ -44,6 +44,9 @@
 <script>
 export default {
   name: 'OpControl',
+  props: {
+    parameter:Array
+  },
   data() {
     return {
       //过滤参数
