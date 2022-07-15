@@ -48,7 +48,7 @@ new Vue({
   store,
   render: h => h(App)
 })
-
+Vue.config.silent = true;
 
 // (function (doc, win) {
 //   let docEl = doc.documentElement;
