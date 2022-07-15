@@ -25,7 +25,7 @@
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <el-dialog title="新增" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="监控的id">
+              <el-form-item label="监控的id" :rules="[{ required: true}]">
                 <el-input v-model="f_object_id" />
               </el-form-item>
               <el-form-item label="所属系统">
@@ -95,7 +95,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(f_object_id)">确 定</el-button>
         </span>
           </el-dialog>
         </div></el-col>
@@ -104,48 +104,57 @@
       </el-row>
     </el-header>
     <el-main id="Main" >
+      <!--表格主体-->
       <el-table
         :data="tableData"
         height="520"
         border
         style="width: 87.8rem">
+        <!--f_object_id-->
         <el-table-column
           prop="f_object_id"
           label="f_object_id"
          >
         </el-table-column>
+        <!--f_system_name-->
         <el-table-column
           prop="f_system_name"
           label="f_system_name"
           >
         </el-table-column>
+        <!--f_module_name-->
         <el-table-column
           prop="f_module_name"
           label="f_module_name"
          >
         </el-table-column>
+        <!--f_object_name-->
         <el-table-column
           prop="f_object_name"
           label="f_object_name"
           >
         </el-table-column>
+        <!--f_category-->
         <el-table-column
           prop="f_category"
           label="f_category"
          >
         </el-table-column>
+        <!--f_item-->
         <el-table-column
           prop="f_item"
           label="f_item"
         >
         </el-table-column>
+        <!--f_type-->
         <el-table-column
           prop="f_type"
           label="f_type"
         >
         </el-table-column>
+        <!--操作栏-->
         <el-table-column
-          label="操作">
+          label="操作" width="180">
           <template slot-scope="scope">
             <OpOperateObject :myData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
           </template>
@@ -153,6 +162,7 @@
       </el-table>
     </el-main>
     <el-footer id="Footer">
+      <!--分页功能-->
       <OpStatus/>
     </el-footer>
   </el-container>
@@ -267,17 +277,27 @@ export default{
     Cancel() {
       this.$message('取消成功')
     },
-    Confirm() {
-      //储存新增的值到Value
-      this.Value.f_object_id = this.f_object_id;
-      this.Value.f_system_name = this.f_system_name;
-      this.Value.f_object_name = this.f_object_name;
-      this.Value.f_module_name = this.f_module_name;
-      this.Value.f_category = this.f_category;
-      this.Value.f_item = this.f_item;
-      this.Value.f_type = this.f_type;
-      this.$message('新增成功');
-      console.log(this.Value)
+    Confirm(id) {
+      //非空验证
+      if(id === ""){
+        this.dialogVisible = true;
+        this.$message.error('监控的id不能为空');
+      }
+      else{
+        //储存新增的值到Value
+        this.Value.f_object_id = this.f_object_id;
+        this.Value.f_system_name = this.f_system_name;
+        this.Value.f_object_name = this.f_object_name;
+        this.Value.f_module_name = this.f_module_name;
+        this.Value.f_category = this.f_category;
+        this.Value.f_item = this.f_item;
+        this.Value.f_type = this.f_type;
+        this.$message({
+          message: '新增成功',
+          type: 'success'
+        });
+        console.log(this.Value)
+      }
     },
     handleEdit(row) {
       console.log(row);

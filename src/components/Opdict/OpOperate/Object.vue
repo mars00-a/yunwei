@@ -4,7 +4,7 @@
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="监控的id">
+          <el-form-item label="监控的id" :rules="[{ required: true}]">
             <el-input v-model="f_object_id" />
           </el-form-item>
           <el-form-item label="所属系统">
@@ -74,7 +74,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(f_object_id)">确 定</el-button>
         </span>
       </el-dialog>
     </div></el-col>
@@ -169,17 +169,26 @@ export default {
       this.$message('取消成功')
     },
     //编辑弹窗点击确认时响应
-    Confirm() {
+    Confirm(id) {
       //储存修改的值到Value
-      this.Value.f_object_id = this.f_object_id;
-      this.Value.f_system_name = this.f_system_name;
-      this.Value.f_object_name = this.f_object_name;
-      this.Value.f_module_name = this.f_module_name;
-      this.Value.f_category = this.f_category;
-      this.Value.f_item = this.f_item;
-      this.Value.f_type = this.f_type;
-      this.$message('修改成功');
-      this.$emit("Revise",this.Value);
+      if(id === ""){
+        this.dialogVisible = true;
+        this.$message.error('监控的id不能为空');
+      }
+      else{
+        this.Value.f_object_id = this.f_object_id;
+        this.Value.f_system_name = this.f_system_name;
+        this.Value.f_object_name = this.f_object_name;
+        this.Value.f_module_name = this.f_module_name;
+        this.Value.f_category = this.f_category;
+        this.Value.f_item = this.f_item;
+        this.Value.f_type = this.f_type;
+        this.$message({
+          message: '编辑成功',
+          type: 'success'
+        });
+        this.$emit("Revise",this.Value);
+      }
     }
   },
   //接入来自../../../views/opdict/object的数据
