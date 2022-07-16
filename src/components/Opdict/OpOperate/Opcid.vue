@@ -3,7 +3,6 @@
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
-
 <!--            左侧表单栏-->
             <div>
               <el-form ref="form" :model="form" label-width="100px">

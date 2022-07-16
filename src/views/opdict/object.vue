@@ -2,6 +2,7 @@
   <el-container>
     <el-header id="Header">
       <el-row :gutter="10" id="Control">
+        <!--过滤参数选择-->
         <el-col :span="6"><div class="grid-content bg-purple">
           <span id="FilterParameters">过滤参数：</span>
           <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
@@ -13,6 +14,7 @@
             </el-option>
           </el-select>
         </div></el-col>
+        <!--查找输入框、查找按钮、新增按钮-->
         <el-col :span="12"><div class="grid-content bg-purple">
           <span id="Value">值：</span>
           <!--远程搜索框-->
@@ -23,14 +25,18 @@
             @select="handleSelect"/>
           <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
-          <el-dialog title="新增" :visible.sync="dialogVisible" width="30%">
+          <!--弹窗-->
+          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+            <!--弹窗表单-->
             <el-form ref="form" :model="form" label-width="80px">
+              <!--监测对象id：f_object_id-->
               <el-form-item label="监控的id" :rules="[{ required: true}]">
-                <el-input v-model="f_object_id" />
+                <el-input v-model="form.f_object_id" />
               </el-form-item>
+              <!--监控对象所属系统：f_system_name-->
               <el-form-item label="所属系统">
                 <el-select
-                  v-model="f_system_name"
+                  v-model="form.f_system_name"
                   filterable
                   allow-create
                   default-first-option
@@ -44,9 +50,10 @@
                   />
                 </el-select>
               </el-form-item>
+              <!--监控对象所属模块：f_module_name-->
               <el-form-item label="所属模块">
                 <el-select
-                  v-model="f_module_name"
+                  v-model="form.f_module_name"
                   filterable
                   allow-create
                   default-first-option
@@ -60,12 +67,14 @@
                   />
                 </el-select>
               </el-form-item>
+              <!--监测对象名称：f_object_name-->
               <el-form-item label="对象名称">
-                <el-input v-model="f_object_name" />
+                <el-input v-model="form.f_object_name" />
               </el-form-item>
+              <!--监测对象类型：f_category-->
               <el-form-item label="对象类型">
                 <el-select
-                  v-model="f_category"
+                  v-model="form.f_category"
                   filterable
                   allow-create
                   default-first-option
@@ -79,11 +88,13 @@
                   />
                 </el-select>
               </el-form-item>
+              <!--监测内容：f_item-->
               <el-form-item label="检测内容">
-                <el-input v-model="f_item" />
+                <el-input v-model="form.f_item" />
               </el-form-item>
+              <!--数据类型：f_type-->
               <el-form-item label="数据类型">
-                <el-select v-model="f_type" placeholder="请选择数据类型">
+                <el-select v-model="form.f_type" placeholder="请选择数据类型">
                   <el-option
                     v-for="item in DataTypes"
                     :key="item.value"
@@ -95,10 +106,11 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(f_object_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_object_id)">确 定</el-button>
         </span>
           </el-dialog>
         </div></el-col>
+        <!--后续需要添加的按钮写在这-->
         <el-col :span="6"><div class="grid-content bg-purple">
         </div></el-col>
       </el-row>
@@ -110,46 +122,46 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_object_id-->
+        <!--监测对象id：f_object_id-->
         <el-table-column
           prop="f_object_id"
-          label="f_object_id"
+          label="监测对象id"
          >
         </el-table-column>
-        <!--f_system_name-->
+        <!--监控对象所属系统：f_system_name-->
         <el-table-column
           prop="f_system_name"
-          label="f_system_name"
+          label="监控对象所属系统"
           >
         </el-table-column>
-        <!--f_module_name-->
+        <!--监控对象所属模块：f_module_name-->
         <el-table-column
           prop="f_module_name"
-          label="f_module_name"
+          label="监控对象所属模块"
          >
         </el-table-column>
-        <!--f_object_name-->
+        <!--监测对象名称：f_object_name-->
         <el-table-column
           prop="f_object_name"
-          label="f_object_name"
+          label="监测对象名称"
           >
         </el-table-column>
-        <!--f_category-->
+        <!--监测对象类型：f_category-->
         <el-table-column
           prop="f_category"
-          label="f_category"
+          label="监测对象类型"
          >
         </el-table-column>
-        <!--f_item-->
+        <!--监测内容：f_item-->
         <el-table-column
           prop="f_item"
-          label="f_item"
+          label="监测内容"
         >
         </el-table-column>
-        <!--f_type-->
+        <!--数据类型：f_type-->
         <el-table-column
           prop="f_type"
-          label="f_type"
+          label="数据类型"
         >
         </el-table-column>
         <!--操作栏-->
@@ -196,7 +208,71 @@ export default{
         f_category:'服务',
         f_item:'存活',
         f_type:'2',
-      }],
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },{
+        f_object_id: '0001001',
+        f_system_name: '系统',
+        f_module_name: '硬',
+        f_object_name:'服务器是否',
+        f_category:'服务',
+        f_item:'存活',
+        f_type:'2',
+      },],
       FilterParameters: [{
         value: '选项1',
         label: '黄金糕'
@@ -215,13 +291,25 @@ export default{
       }],
       FilterParameter_value: '',
       CompleteValue:'',
-      //值查询
-
-      //新增
+      //新增按钮数据，如下：
+      //用于弹窗的显示
       dialogVisible: false,
+      //弹窗表单数据
       form: {
-        name: '',
-        number: ''
+        //监控的id
+        f_object_id:'',
+        //所属系统
+        f_system_name:'',
+        //所属模块
+        f_object_name:'',
+        //对象名称
+        f_module_name:'',
+        //对象类型
+        f_category:'',
+        //检测内容
+        f_item:'',
+        //数据类型
+        f_type:'',
       },
       // 所属模组下拉框数组
       BelongingSystems: [{
@@ -244,32 +332,6 @@ export default{
       ObjectTypes: [],
       // 数据类型下拉框数组
       DataTypes: [],
-      //监控的id
-      f_object_id:'',
-      //所属系统
-      f_system_name:'',
-      //所属模块
-      f_object_name:'',
-      //对象名称
-      f_module_name:'',
-      //对象类型
-      f_category:'',
-      //检测内容
-      f_item:'',
-      //数据类型
-      f_type:'',
-      //用于返回新增的数据值
-      Value:[
-        {
-          f_object_id:'',
-          f_system_name:'',
-          f_object_name:'',
-          f_module_name:'',
-          f_category:'',
-          f_item:'',
-          f_type:''
-        }
-      ],
       scope:''
     }
   },
@@ -279,29 +341,18 @@ export default{
       this.$message('取消成功')
     },
     Confirm(id) {
-      //非空验证
+      //非空验证与数据传送
       if(id === ""){
         this.dialogVisible = true;
         this.$message.error('监控的id不能为空');
       }
       else{
-        //储存新增的值到Value
-        this.Value.f_object_id = this.f_object_id;
-        this.Value.f_system_name = this.f_system_name;
-        this.Value.f_object_name = this.f_object_name;
-        this.Value.f_module_name = this.f_module_name;
-        this.Value.f_category = this.f_category;
-        this.Value.f_item = this.f_item;
-        this.Value.f_type = this.f_type;
         this.$message({
           message: '新增成功',
           type: 'success'
         });
-        console.log(this.Value)
+        console.log(this.form)
       }
-    },
-    handleEdit(row) {
-      console.log(row);
     },
     Find(){
       const msg = [this.FilterParameter_value , this.CompleteValue];

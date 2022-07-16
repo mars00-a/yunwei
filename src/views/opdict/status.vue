@@ -110,46 +110,46 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_status_id-->
+        <!--运维状态id：f_status_id-->
         <el-table-column
           prop="f_status_id"
-          label="f_status_id"
+          label="运维状态id"
         >
         </el-table-column>
-        <!--f_status_name-->
+        <!--运维状态名称：f_status_name-->
         <el-table-column
           prop="f_status_name"
-          label="f_status_name"
+          label="运维状态名称"
         >
         </el-table-column>
-        <!--f_opsignal_id-->
+        <!--运维指标id：f_opsignal_id-->
         <el-table-column
           prop="f_opsignal_id"
-          label="f_opsignal_id"
+          label="运维指标id"
         >
         </el-table-column>
-        <!--f_upthres-->
+        <!--阈值默认上限：f_upthres-->
         <el-table-column
           prop="f_upthres"
-          label="f_upthres"
+          label="阈值默认上限"
         >
         </el-table-column>
-        <!--f_downthres-->
+        <!--阈值默认下限：f_downthres-->
         <el-table-column
           prop="f_downthres"
-          label="f_downthres"
+          label="阈值默认下限"
         >
         </el-table-column>
-        <!--f_level-->
+        <!--事件默认级别：f_level-->
         <el-table-column
           prop="f_level"
-          label="f_level"
+          label="事件默认级别"
         >
         </el-table-column>
-        <!--f_note-->
+        <!--备注：f_note-->
         <el-table-column
           prop="f_note"
-          label="f_note"
+          label="备注"
         >
         </el-table-column>
         <!--操作栏-->
@@ -170,13 +170,11 @@
 
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
-import OpControl from '../../components/Opdict/OpControl'
 import Status from '../../components/Opdict/OpOperate/Status'
 export default {
   name: 'MonitorObjectPage',
   components: {
     OpStatus,
-    OpControl,
     Status
   },
   data() {
