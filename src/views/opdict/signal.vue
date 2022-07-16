@@ -112,7 +112,8 @@ export default {
   },
   data() {
     return {
-      tableData: [{
+      tableData: [
+        {
         f_service_type: '1',
         f_service_name: '安防服务',
         f_service_table: 'Opsv_security',
@@ -143,7 +144,8 @@ export default {
         f_service_table: 'Opsv_security',
         f_note: 'SK3000,SK2008,SK6800等',
       }],
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: '选项1',
         label: '黄金糕'
       }, {

@@ -386,17 +386,17 @@ export default {
       // console.log("点击了某个东西")
     }
   },
-  watch:{
+  // watch:{
     //当对应指标中输入东西的时候搜索
-    'form.target':{
-      immediate:true,
-      handler(val){
-        this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
-        })
-      }
-    }
-  },
+    // 'form.target':{
+    //   immediate:true,
+    //   handler(val){
+    //     this.targetTable = this.serverTargetTable.filter(p =>{
+    //       return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+    //     })
+    //   }
+    // }
+  // },
   props:{
     MyData:Array
   }
