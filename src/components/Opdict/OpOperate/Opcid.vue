@@ -370,24 +370,26 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(index,row){
-      this.form.target = row.id;
-      this.targetTable = row
+      this.form.target = "@"+row.id;
+      // this.targetTable = row
       // event
       // console.log(row.id)
       // console.log("点击了某个东西")
     }
   },
-  // watch:{
-    //当对应指标中输入东西的时候搜索
-    // 'form.target':{
-    //   immediate:true,
-    //   handler(val){
-    //     this.targetTable = this.serverTargetTable.filter(p =>{
-    //       return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
-    //     })
-    //   }
-    // }
-  // },
+  watch:{
+    // 当对应指标中输入东西的时候搜索
+    'form.target':{
+      immediate:true,
+      handler(val){
+        let Arr = val.split("@")
+        val = Arr[0]
+        this.targetTable = this.serverTargetTable.filter(p =>{
+          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+        })
+      }
+    }
+  },
   props:{
     MyData:Array
   }
