@@ -306,7 +306,23 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(row){
-      this.form.f_para = row.id;
+      let val = this.form.f_para
+      let myVal = val.split("@");
+      let FrontArr = val.split("@",myVal.length-1);
+      let FrontStr = '';
+      for(let i = 0;i<myVal.length-1;i++){
+        if (FrontArr[i] === "(") {
+          FrontStr += FrontArr[i]
+        }else if(FrontArr[i] === ""){
+        }else{
+          FrontStr += "@"+FrontArr[i]
+        }
+      }
+      console.log("maVal:",myVal)
+      console.log("FrontArr",FrontArr)
+      console.log("FrontStr",FrontStr)
+      val = myVal[myVal.length-1];
+      this.form.f_para = FrontStr+"@"+row.id;
     }
   },
   watch:{
@@ -316,7 +332,7 @@ export default {
       handler(val){
         let myVal = val.split("@");
         val = myVal[myVal.length-1];
-        console.log("Arr值为：",val)
+        // console.log("Arr值为：",val)
         // console.log(typeof myVal)
         // let testString = "@123+@123-@78";
         // let testArr = testString.split("@");
