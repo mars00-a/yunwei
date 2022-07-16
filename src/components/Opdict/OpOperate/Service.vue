@@ -19,12 +19,12 @@
           </el-form-item>
           <!--备注-->
           <el-form-item label="备注">
-            <el-input v-model="form.f_note" />
+            <el-input v-model="form.f_note"  type="textarea"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
         </span>
       </el-dialog>
     </div></el-col>
@@ -82,13 +82,19 @@ export default {
       this.$message('取消成功')
     },
     //编辑弹窗点击确认时响应
-    Confirm() {
-      //储存修改的值到Value
-      this.$message({
-        message: '修改成功',
-        type: 'success'
-      });
-      this.$emit("Revise",this.form);
+    Confirm(id) {
+      if(id === ""){
+        this.dialogVisible = true;
+        this.$message.error('服务类型id不能为空');
+      }
+      else{
+        //储存修改的值到Value
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        });
+        this.$emit("Revise",this.form);
+      }
     }
   },
   //接入来自../../../views/opdict/object的数据

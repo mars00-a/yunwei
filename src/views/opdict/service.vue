@@ -40,7 +40,7 @@
               </el-form-item>
               <!--备注-->
               <el-form-item label="备注">
-                <el-input v-model="form.f_note" />
+                <el-input v-model="form.f_note"  type="textarea"/>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -180,7 +180,7 @@ export default {
       //非空验证
       if(id === ""){
         this.dialogVisible = true;
-        this.$message.error('监控的id不能为空');
+        this.$message.error('服务类型id不能为空');
       }
       else{
         //储存新增的值到Value

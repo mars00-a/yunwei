@@ -474,7 +474,7 @@ export default {
     Confirm(id) {
       if(id === ""){
         this.dialogVisible = true;
-        this.$message.error('监控的id不能为空');
+        this.$message.error('运维状态的id不能为空');
       }
       else{
         //储存新增的值到Value

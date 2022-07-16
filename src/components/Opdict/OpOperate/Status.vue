@@ -2,54 +2,37 @@
   <el-row :gutter="10">
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
+      <!--弹窗-->
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="监控的id">
-            <el-input v-model="f_object_id" />
+          <!--f_status_id-->
+          <el-form-item label="状态的id" :rules="[{ required: true}]">
+            <el-input v-model="form.f_status_id" />
           </el-form-item>
-          <el-form-item label="所属系统">
+          <!--f_status_name-->
+          <el-form-item label="状态名称">
+            <el-input v-model="form.f_status_name" />
+          </el-form-item>
+          <!--f_opsignal_id-->
+          <el-form-item label="对应指标">
+            <el-input v-model="form.f_opsignal_id" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
+          </el-form-item>
+          <!--f_upthres-->
+          <el-form-item label="阈值上限">
+            <el-input v-model="form.f_upthres" />
+          </el-form-item>
+          <!--f_downthres-->
+          <el-form-item label="阈值下限">
+            <el-input v-model="form.f_downthres" />
+          </el-form-item>
+          <!--f_level-->
+          <el-form-item label="状态类型">
             <el-select
-              v-model="f_system_name"
+              v-model="form.f_level"
               filterable
               allow-create
               default-first-option
-              placeholder="请选择所属系统"
-            >
-              <el-option
-                v-for="item in BelongingSystems"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="所属模块">
-            <el-select
-              v-model="f_module_name"
-              filterable
-              allow-create
-              default-first-option
-              placeholder="请选择所属模块"
-            >
-              <el-option
-                v-for="item in BelongingModules"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="对象名称">
-            <el-input v-model="f_object_name" />
-          </el-form-item>
-          <el-form-item label="对象类型">
-            <el-select
-              v-model="f_category"
-              filterable
-              allow-create
-              default-first-option
-              placeholder="请选择对象类型"
-            >
+              placeholder="请选择状态类型">
               <el-option
                 v-for="item in ObjectTypes"
                 :key="item.value"
@@ -58,25 +41,44 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="检测内容">
-            <el-input v-model="f_item" />
-          </el-form-item>
-          <el-form-item label="数据类型">
-            <el-select v-model="f_type" placeholder="请选择数据类型">
-              <el-option
-                v-for="item in DataTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+          <!--f_note-->
+          <el-form-item label="备注">
+            <el-input v-model="form.f_note"  type="textarea"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_status_id)">确 定</el-button>
         </span>
+        <!--对应指标列表-->
+        <div v-show = controlShow id="targetTable">
+          <el-table
+            :data="targetTable"
+            height="625"
+            border
+            style="width: 100%">
+            <el-table-column
+              active-class="targetTableGetFocus"
+              prop="id"
+              label="指标id"
+              width="100%">
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="指标名称"
+              width="100%">
+            </el-table-column>
+            <el-table-column label="添加">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-dialog>
+
     </div></el-col>
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="Del">删除</el-button>
@@ -90,47 +92,142 @@ export default {
     return {
       //用于弹窗的显示
       dialogVisible: false,
-      //编辑弹窗的表单头部（暂无使用）
+      controlShow: false,
       form: {
-        name: '',
-        number: ''
+        f_status_id: '',
+        f_status_name: '',
+        f_opsignal_id: '',
+        f_upthres: '',
+        f_downthres: '',
+        f_level: '',
+        f_note: ''
       },
-      // 所属系统下拉框数组
-      BelongingSystems: [{
-        value: '',
-        label: ''
-      }],
-      // 所属模组下拉框数组
-      BelongingModules: [],
-      // 对象类型下拉框数组
-      ObjectTypes: [],
-      // 数据类型下拉框数组
-      DataTypes: [],
-      //监控的id
-      f_object_id:'',
-      //所属系统
-      f_system_name:'',
-      //所属模块
-      f_object_name:'',
-      //对象名称
-      f_module_name:'',
-      //对象类型
-      f_category:'',
-      //检测内容
-      f_item:'',
-      //数据类型
-      f_type:'',
-      Value:[
+      targetTable:[
         {
-          f_object_id:'',
-          f_system_name:'',
-          f_object_name:'',
-          f_module_name:'',
-          f_category:'',
-          f_item:'',
-          f_type:''
-        }
-      ]
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
+      serverTargetTable:[
+        {
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
     }
   },
   methods: {
@@ -142,7 +239,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$emit("Del",this.myData.f_object_id);
+        this.$emit("Del",this.myData.f_status_id);
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -156,30 +253,49 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
-      this.f_object_id = this.myData.f_object_id;
-      this.f_system_name = this.myData.f_system_name;
-      this.f_object_name = this.myData.f_object_name;
-      this.f_module_name = this.myData.f_module_name;
-      this.f_category = this.myData.f_category;
-      this.f_item = this.myData.f_item;
-      this.f_type = this.myData.f_type;
+      this.form.f_status_id = this.myData.f_status_id;
+      this.form.f_status_name = this.myData.f_status_name;
+      this.form.f_opsignal_id = this.myData.f_opsignal_id;
+      this.form.f_upthres = this.myData.f_upthres;
+      this.form.f_downthres = this.myData.f_downthres;
+      this.form.f_level = this.myData.f_level;
+      this.form.f_note = this.myData.f_note;
     },
     //编辑弹窗点击取消时响应
     Cancel() {
       this.$message('取消成功')
     },
     //编辑弹窗点击确认时响应
-    Confirm() {
-      //储存修改的值到Value
-      this.Value.f_object_id = this.f_object_id;
-      this.Value.f_system_name = this.f_system_name;
-      this.Value.f_object_name = this.f_object_name;
-      this.Value.f_module_name = this.f_module_name;
-      this.Value.f_category = this.f_category;
-      this.Value.f_item = this.f_item;
-      this.Value.f_type = this.f_type;
-      this.$message('修改成功');
-      this.$emit("Revise",this.Value);
+    Confirm(id) {
+      if(id === ""){
+        this.dialogVisible = true;
+        this.$message.error('状态的id不能为空');
+      }
+      else{
+        this.$message('修改成功');
+        this.$emit("Revise",this.form);
+      }
+    },
+    getFocus(){
+      this.controlShow = true
+    },
+    targetTableGetFocus(index,row){
+      this.form.f_opsignal_id = row.id;
+      this.targetTable = row
+      // event
+      // console.log(row.id)
+      // console.log("点击了某个东西")
+    }
+  },
+  watch:{
+    //当对应指标中输入东西的时候搜索
+    'form.f_opsignal_id':{
+      immediate:true,
+      handler(val){
+        this.targetTable = this.serverTargetTable.filter(p =>{
+          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+        })
+      }
     }
   },
   //接入来自../../../views/opdict/object的数据
@@ -191,5 +307,15 @@ export default {
 </script>
 
 <style scoped>
-
+  .dialog-footer{
+    margin: 0 auto;
+  }
+  #targetTable{
+    position: absolute;
+    top: 1%;
+    left:103%;
+  }
+  .targetTableGetFocus{
+    background-color: #4A9FF9;
+  }
 </style>

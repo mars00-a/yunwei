@@ -117,17 +117,8 @@
                       @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
                   </template>
                 </el-table-column>
-
-<!--                <template slot-scope="scope">-->
-<!--                  -->
-<!--                </template>-->
               </el-table>
             </div>
-
-<!--        <el-row>-->
-
-<!--        </el-row>-->
-
       </el-dialog>
     </div></el-col>
     <el-col :span="12"><div class="grid-content bg-purple">
@@ -362,7 +353,7 @@ export default {
       console.log(id);
       if(id === ""){
         this.dialogVisible = true;
-        this.$message.error('监控的id不能为空');
+        this.$message.error('运维状态id不能为空');
       }
       else{
         this.$message({
