@@ -24,29 +24,80 @@
           <el-button type="primary" id="Find">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="90px">
-              <!--服务类型-->
-              <el-form-item label="服务类型" :rules="[{ required: true}]">
-                <el-input v-model="form.f_service_type" />
+          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+            <el-form ref="form" :model="form" label-width="80px">
+              <!--f_status_id-->
+              <el-form-item label="状态的id" :rules="[{ required: true}]">
+                <el-input v-model="form.f_status_id" />
               </el-form-item>
-              <!--服务名称-->
-              <el-form-item label="服务名称">
-                <el-input v-model="form.f_service_name" />
+              <!--f_status_name-->
+              <el-form-item label="状态名称">
+                <el-input v-model="form.f_status_name" />
               </el-form-item>
-              <!--服务数据表-->
-              <el-form-item label="服务数据表">
-                <el-input v-model="form.f_service_table" />
+              <!--f_opsignal_id-->
+              <el-form-item label="对应指标">
+                <el-input v-model="form.f_opsignal_id" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
               </el-form-item>
-              <!--备注-->
+              <!--f_upthres-->
+              <el-form-item label="阈值上限">
+                <el-input v-model="form.f_upthres" />
+              </el-form-item>
+              <!--f_downthres-->
+              <el-form-item label="阈值下限">
+                <el-input v-model="form.f_downthres" />
+              </el-form-item>
+              <!--f_level-->
+              <el-form-item label="状态类型">
+                <el-select
+                  v-model="form.f_level"
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="请选择状态类型">
+                  <el-option
+                    v-for="item in ObjectTypes"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+              <!--f_note-->
               <el-form-item label="备注">
-                <el-input v-model="form.f_note" />
+                <el-input v-model="form.f_note"  type="textarea"/>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_status_id)">确 定</el-button>
         </span>
+            <!--对应指标列表-->
+            <div v-show = controlShow id="targetTable">
+              <el-table
+                :data="targetTable"
+                height="625"
+                border
+                style="width: 100%">
+                <el-table-column
+                  active-class="targetTableGetFocus"
+                  prop="id"
+                  label="指标id"
+                  width="100%">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  label="指标名称"
+                  width="100%">
+                </el-table-column>
+                <el-table-column label="添加">
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
           </el-dialog>
         </div></el-col>
         <el-col :span="6"><div class="grid-content bg-purple">
@@ -59,22 +110,40 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_service_type-->
+        <!--f_status_id-->
         <el-table-column
-          prop="f_service_type"
-          label="f_service_type"
+          prop="f_status_id"
+          label="f_status_id"
         >
         </el-table-column>
-        <!--f_service_name-->
+        <!--f_status_name-->
         <el-table-column
-          prop="f_service_name"
-          label="f_service_name"
+          prop="f_status_name"
+          label="f_status_name"
         >
         </el-table-column>
-        <!--f_service_table-->
+        <!--f_opsignal_id-->
         <el-table-column
-          prop="f_service_table"
-          label="f_service_table"
+          prop="f_opsignal_id"
+          label="f_opsignal_id"
+        >
+        </el-table-column>
+        <!--f_upthres-->
+        <el-table-column
+          prop="f_upthres"
+          label="f_upthres"
+        >
+        </el-table-column>
+        <!--f_downthres-->
+        <el-table-column
+          prop="f_downthres"
+          label="f_downthres"
+        >
+        </el-table-column>
+        <!--f_level-->
+        <el-table-column
+          prop="f_level"
+          label="f_level"
         >
         </el-table-column>
         <!--f_note-->
@@ -113,35 +182,29 @@ export default {
   data() {
     return {
       tableData: [{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_status_id: 'A000100001',
+        f_status_name: '服务器存活',
+        f_opsignal_id: 'S000100001',
+        f_upthres: '1',
+        f_downthres: '1',
+        f_level: '1',
+        f_note: ''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_status_id: 'A000100001',
+        f_status_name: '服务器存活',
+        f_opsignal_id: 'S000100001',
+        f_upthres: '1',
+        f_downthres: '1',
+        f_level: '1',
+        f_note: ''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_status_id: 'A000100001',
+        f_status_name: '服务器存活',
+        f_opsignal_id: 'S000100001',
+        f_upthres: '1',
+        f_downthres: '1',
+        f_level: '1',
+        f_note: ''
       }],
       FilterParameters: [{
         value: '选项1',
@@ -164,9 +227,12 @@ export default {
       //新增
       dialogVisible: false,
       form: {
-        f_service_type: '',
-        f_service_name: '',
-        f_service_table: '',
+        f_status_id: '',
+        f_status_name: '',
+        f_opsignal_id: '',
+        f_upthres: '',
+        f_downthres: '',
+        f_level: '',
         f_note: ''
       }
     }
@@ -180,7 +246,7 @@ export default {
       //非空验证
       if(id === ""){
         this.dialogVisible = true;
-        this.$message.error('监控的id不能为空');
+        this.$message.error('状态的id不能为空');
       }
       else{
         //储存新增的值到Value

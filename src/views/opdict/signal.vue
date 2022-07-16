@@ -59,22 +59,28 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_service_type-->
+        <!--f_opsignal_id-->
         <el-table-column
-          prop="f_service_type"
-          label="f_service_type"
+          prop="f_opsignal_id"
+          label="f_opsignal_id"
         >
         </el-table-column>
-        <!--f_service_name-->
+        <!--f_opsignal_name-->
         <el-table-column
-          prop="f_service_name"
-          label="f_service_name"
+          prop="f_opsignal_name"
+          label="f_opsignal_name"
         >
         </el-table-column>
-        <!--f_service_table-->
+        <!--f_para_type-->
         <el-table-column
-          prop="f_service_table"
-          label="f_service_table"
+          prop="f_para_type"
+          label="f_para_type"
+        >
+        </el-table-column>
+        <!--f_para-->
+        <el-table-column
+          prop="f_para"
+          label="f_para"
         >
         </el-table-column>
         <!--f_note-->
@@ -112,40 +118,44 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+      tableData: [{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
       }],
-      FilterParameters: [
-        {
+      FilterParameters: [{
         value: '选项1',
         label: '黄金糕'
       }, {
@@ -162,13 +172,13 @@ export default {
         label: '北京烤鸭'
       }],
       FilterParameter_value: '',
-
       //新增
       dialogVisible: false,
       form: {
-        f_service_type: '',
-        f_service_name: '',
-        f_service_table: '',
+        f_opsignal_id: '',
+        f_opsignal_name: '',
+        f_para_type: '',
+        f_para: '',
         f_note: ''
       }
     }

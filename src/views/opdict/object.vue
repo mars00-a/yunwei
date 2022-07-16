@@ -17,11 +17,11 @@
           <span id="Value">值：</span>
           <!--远程搜索框-->
           <el-autocomplete
-            v-model="state"
+            v-model="CompleteValue"
             :fetch-suggestions="querySearchAsync"
             placeholder="请输入内容"
             @select="handleSelect"/>
-          <el-button type="primary" id="Find">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <el-dialog title="新增" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="form" label-width="80px">
@@ -214,6 +214,7 @@ export default{
         label: '北京烤鸭'
       }],
       FilterParameter_value: '',
+      CompleteValue:'',
       //值查询
 
       //新增
@@ -301,6 +302,10 @@ export default{
     },
     handleEdit(row) {
       console.log(row);
+    },
+    Find(){
+      const msg = [this.FilterParameter_value , this.CompleteValue];
+      console.log(msg);
     },
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
