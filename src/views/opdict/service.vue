@@ -59,28 +59,28 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_service_type-->
+        <!--服务类型id：f_service_type-->
         <el-table-column
           prop="f_service_type"
-          label="f_service_type"
+          label="服务类型id"
         >
         </el-table-column>
-        <!--f_service_name-->
+        <!--服务类型名称：f_service_name-->
         <el-table-column
           prop="f_service_name"
-          label="f_service_name"
+          label="服务类型名称"
         >
         </el-table-column>
-        <!--f_service_table-->
+        <!--服务信息存放表：f_service_table-->
         <el-table-column
           prop="f_service_table"
-          label="f_service_table"
+          label="服务信息存放表"
         >
         </el-table-column>
-        <!--f_note-->
+        <!--说明：f_note-->
         <el-table-column
           prop="f_note"
-          label="f_note"
+          label="说明"
         >
         </el-table-column>
         <!--操作栏-->
@@ -101,13 +101,11 @@
 
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
-import OpControl from '../../components/Opdict/OpControl'
 import Service from '../../components/Opdict/OpOperate/Service'
 export default {
   name: 'MonitorObjectPage',
   components: {
     OpStatus,
-    OpControl,
     Service
   },
   data() {

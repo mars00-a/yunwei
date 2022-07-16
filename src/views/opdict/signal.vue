@@ -24,29 +24,69 @@
           <el-button type="primary" id="Find">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="90px">
-              <!--服务类型-->
-              <el-form-item label="服务类型" :rules="[{ required: true}]">
-                <el-input v-model="form.f_service_type" />
+          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+            <el-form ref="form" :model="form" label-width="80px">
+              <el-form-item label="指标id" :rules="[{ required: true}]">
+                <el-input v-model="form.f_opsignal_id" />
               </el-form-item>
-              <!--服务名称-->
-              <el-form-item label="服务名称">
-                <el-input v-model="form.f_service_name" />
+              <el-form-item label="指标名称">
+                <el-input v-model="form.f_opsignal_name" />
               </el-form-item>
-              <!--服务数据表-->
-              <el-form-item label="服务数据表">
-                <el-input v-model="form.f_service_table" />
+              <el-form-item label="指标类型">
+                <el-select
+                  v-model="form.f_para_type"
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="请选择指标类型">
+                  <el-option
+                    v-for="item in f_para_types"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+                </el-select>
               </el-form-item>
-              <!--备注-->
+              <el-form-item label="指标公式">
+                <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
+              </el-form-item>
+              <!--note-->
               <el-form-item label="备注">
-                <el-input v-model="form.f_note" />
+                <el-input type="textarea" v-model="form.f_note"/>
               </el-form-item>
             </el-form>
+
             <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_opsignal_id)">确 定</el-button>
         </span>
+
+            <!--        弹窗的右侧表单-->
+            <div v-show = controlShow id="targetTable">
+              <el-table
+                :data="targetTable"
+                height="480"
+                border
+                style="width: 100%">
+                <el-table-column
+                  active-class="targetTableGetFocus"
+                  prop="id"
+                  label="指标id"
+                  width="100%">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  label="指标名称"
+                  width="100%">
+                </el-table-column>
+                <el-table-column label="添加">
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      @click="targetTableGetFocus(scope.row)">添加</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
           </el-dialog>
         </div></el-col>
         <el-col :span="6"><div class="grid-content bg-purple">
@@ -59,34 +99,34 @@
         height="520"
         border
         style="width: 87.8rem">
-        <!--f_opsignal_id-->
+        <!--运维指标id：f_opsignal_id-->
         <el-table-column
           prop="f_opsignal_id"
-          label="f_opsignal_id"
+          label="运维指标id"
         >
         </el-table-column>
-        <!--f_opsignal_name-->
+        <!--运维指标名称：f_opsignal_name-->
         <el-table-column
           prop="f_opsignal_name"
-          label="f_opsignal_name"
+          label="运维指标名称"
         >
         </el-table-column>
-        <!--f_para_type-->
+        <!--运维指标参数类型：f_para_type-->
         <el-table-column
           prop="f_para_type"
-          label="f_para_type"
+          label="运维指标参数类型"
         >
         </el-table-column>
-        <!--f_para-->
+        <!--运维指标计算公式：f_para-->
         <el-table-column
           prop="f_para"
-          label="f_para"
+          label="运维指标计算公式"
         >
         </el-table-column>
-        <!--f_note-->
+        <!--备注：f_note-->
         <el-table-column
           prop="f_note"
-          label="f_note"
+          label="备注"
         >
         </el-table-column>
         <!--操作栏-->
@@ -107,13 +147,11 @@
 
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
-import OpControl from '../../components/Opdict/OpControl'
 import Signal from '../../components/Opdict/OpOperate/Signal'
 export default {
   name: 'MonitorObjectPage',
   components: {
     OpStatus,
-    OpControl,
     Signal
   },
   data() {
@@ -172,15 +210,155 @@ export default {
         label: '北京烤鸭'
       }],
       FilterParameter_value: '',
-      //新增
+      //新增功能的弹窗
+      //用于显示弹窗
       dialogVisible: false,
+      //用于显示公式表格
+      controlShow: false,
+      //弹窗的内容
       form: {
         f_opsignal_id: '',
         f_opsignal_name: '',
         f_para_type: '',
         f_para: '',
         f_note: ''
-      }
+      },
+      //右侧的指标表格
+      targetTable:[
+        {
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
+      //右侧的指标表格
+      serverTargetTable:[
+        {
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
+      //指标类型
+      f_para_types:[{
+        value:'0',
+        label:'0--监控对象',
+      },{
+        value:'1',
+        label:'1--计算公式',
+      }]
     }
   },
   methods:{
@@ -192,7 +370,7 @@ export default {
       //非空验证
       if(id === ""){
         this.dialogVisible = true;
-        this.$message.error('监控的id不能为空');
+        this.$message.error('运维指标id不能为空');
       }
       else{
         //储存新增的值到Value
@@ -213,6 +391,47 @@ export default {
     GetDel(msg){
       console.log(msg);
     },
+    getFocus(){
+      this.controlShow = true
+    },
+    targetTableGetFocus(row){
+      let val = this.form.f_para
+      let myVal = val.split("@");
+      let FrontArr = val.split("@",myVal.length-1);
+      let FrontStr = '';
+      for(let i = 0;i<myVal.length-1;i++){
+        if (FrontArr[i] === "(") {
+          FrontStr += FrontArr[i]
+        }else if(FrontArr[i] === ""){
+        }else{
+          FrontStr += "@"+FrontArr[i]
+        }
+      }
+      // console.log("maVal:",myVal)
+      // console.log("FrontArr",FrontArr)
+      // console.log("FrontStr",FrontStr)
+      val = myVal[myVal.length-1];
+      this.form.f_para = FrontStr+"@"+row.id;
+    }
+  },
+  watch:{
+    // 当对应指标中输入东西的时候搜索
+    'form.f_para':{
+      immediate:true,
+      handler(val){
+        let myVal = val.split("@");
+        val = myVal[myVal.length-1];
+        // console.log("Arr值为：",val)
+        // console.log(typeof myVal)
+        // let testString = "@123+@123-@78";
+        // let testArr = testString.split("@");
+        // let myStr = testArr[testArr.length-1]
+        // console.log(myVal,myVal.length);
+        this.targetTable = this.serverTargetTable.filter(p =>{
+          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+        })
+      }
+    }
   }
 }
 </script>
@@ -226,4 +445,13 @@ export default {
   }
   #Control{
     margin-top: 0.8rem;
-  }</style>
+  }
+  .dialog-footer{
+    margin: 0 auto;
+  }
+  #targetTable{
+    position: absolute;
+    top: 1%;
+    left:103%;
+  }
+</style>

@@ -141,51 +141,61 @@
         height="520"
         border
         style="width: 87.8rem">
+        <!--运维事件id：f_opcid-->
         <el-table-column
           prop="f_opcid"
-          label="f_opcid"
+          label="运维事件id"
         >
         </el-table-column>
+        <!--运维事件名称：f_opcid_name-->
         <el-table-column
           prop="f_opcid_name"
-          label="f_opcid_name"
+          label="运维事件名称"
         >
         </el-table-column>
+        <!--所属系统id：f_system_id-->
         <el-table-column
           prop="f_system_id"
-          label="f_system_id"
+          label="所属系统id"
         >
         </el-table-column>
+        <!--事件类型：f_type-->
         <el-table-column
           prop="f_type"
-          label="f_type"
+          label="事件类型"
         >
         </el-table-column>
+        <!--运维指标id：f_opsignal_id-->
         <el-table-column
           prop="f_opsignal_id"
-          label="f_opsignal_id"
+          label="运维指标id"
         >
         </el-table-column>
+        <!--事件类型：f_event_type-->
         <el-table-column
           prop="f_event_type"
-          label="f_event_type"
+          label="事件类型"
         >
         </el-table-column>
+        <!--默认阈值：f_threshold-->
         <el-table-column
           prop="f_threshold"
-          label="f_threshold"
+          label="默认阈值"
         >
         </el-table-column>
+        <!--事件默认级别：f_level-->
         <el-table-column
           prop="f_level"
-          label="f_level"
+          label="事件默认级别"
         >
         </el-table-column>
+        <!--备注：f_note-->
         <el-table-column
           prop="f_note"
-          label="f_note"
+          label="备注"
         >
         </el-table-column>
+        <!--操作-->
         <el-table-column
           label="操作" width="180">
           <template slot-scope="scope">

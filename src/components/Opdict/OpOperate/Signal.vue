@@ -4,7 +4,7 @@
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="指标id">
+          <el-form-item label="指标id" :rules="[{ required: true}]">
             <el-input v-model="form.f_opsignal_id" />
           </el-form-item>
           <el-form-item label="指标名称">
@@ -12,7 +12,7 @@
           </el-form-item>
           <el-form-item label="指标类型">
             <el-select
-              v-model="form.f_system_name"
+              v-model="form.f_para_type"
               filterable
               allow-create
               default-first-option
@@ -31,7 +31,7 @@
           </el-form-item>
           <!--note-->
           <el-form-item label="备注">
-            <el-input type="textarea" v-model="form.Remark"/>
+            <el-input type="textarea" v-model="form.f_note"/>
           </el-form-item>
         </el-form>
 
@@ -79,6 +79,7 @@ export default {
   name: 'OpOperate',
   data() {
     return {
+      //用于显示公式表格
       controlShow: false,
       //右侧的指标表格
       targetTable:[
@@ -210,11 +211,10 @@ export default {
       ],
       //用于弹窗的显示
       dialogVisible: false,
-      //编辑弹窗的表单头部（暂无使用）
       form: {
         f_opsignal_id:'',
         f_opsignal_name:'',
-        f_system_name:'',
+        f_para_type:'',
         f_para:'',
         target:'',
       },
@@ -225,33 +225,7 @@ export default {
       },{
         value:'1',
         label:'1--计算公式',
-      }
-      ],
-      //监控的id
-      f_object_id:'',
-      //所属系统
-      f_system_name:'',
-      //所属模块
-      f_object_name:'',
-      //对象名称
-      f_module_name:'',
-      //对象类型
-      f_category:'',
-      //检测内容
-      f_item:'',
-      //数据类型
-      f_type:'',
-      Value:[
-        {
-          f_object_id:'',
-          f_system_name:'',
-          f_object_name:'',
-          f_module_name:'',
-          f_category:'',
-          f_item:'',
-          f_type:''
-        }
-      ]
+      }]
     }
   },
   methods: {
@@ -263,7 +237,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$emit("Del",this.myData.f_object_id);
+        this.$emit("Del",this.myData.f_opsignal_id);
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -277,30 +251,29 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
-      this.f_object_id = this.myData.f_object_id;
-      this.f_system_name = this.myData.f_system_name;
-      this.f_object_name = this.myData.f_object_name;
-      this.f_module_name = this.myData.f_module_name;
-      this.f_category = this.myData.f_category;
-      this.f_item = this.myData.f_item;
-      this.f_type = this.myData.f_type;
+      this.form.f_opsignal_id = this.myData.f_opsignal_id;
+      this.form.f_opsignal_name = this.myData.f_opsignal_name;
+      this.form.f_para_type = this.myData.f_para_type;
+      this.form.f_para = this.myData.f_para;
+      this.form.target = this.myData.target;
     },
     //编辑弹窗点击取消时响应
     Cancel() {
       this.$message('取消成功')
     },
     //编辑弹窗点击确认时响应
-    Confirm() {
-      //储存修改的值到Value
-      this.Value.f_object_id = this.f_object_id;
-      this.Value.f_system_name = this.f_system_name;
-      this.Value.f_object_name = this.f_object_name;
-      this.Value.f_module_name = this.f_module_name;
-      this.Value.f_category = this.f_category;
-      this.Value.f_item = this.f_item;
-      this.Value.f_type = this.f_type;
-      this.$message('修改成功');
-      this.$emit("Revise",this.Value);
+    Confirm(id) {
+      if(id === ""){
+        this.dialogVisible = true;
+        this.$message.error('运维指标id不能为空');
+      }
+      else{
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        });
+        this.$emit("Revise",this.form);
+      }
     },
     getFocus(){
       this.controlShow = true
@@ -318,9 +291,9 @@ export default {
           FrontStr += "@"+FrontArr[i]
         }
       }
-      console.log("maVal:",myVal)
-      console.log("FrontArr",FrontArr)
-      console.log("FrontStr",FrontStr)
+      // console.log("maVal:",myVal)
+      // console.log("FrontArr",FrontArr)
+      // console.log("FrontStr",FrontStr)
       val = myVal[myVal.length-1];
       this.form.f_para = FrontStr+"@"+row.id;
     }

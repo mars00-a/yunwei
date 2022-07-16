@@ -2,14 +2,17 @@
   <el-row :gutter="10">
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
+      <!--弹窗-->
       <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
+          <!--监测对象id：f_object_id-->
           <el-form-item label="监控的id" :rules="[{ required: true}]">
-            <el-input v-model="f_object_id" />
+            <el-input v-model="form.f_object_id" />
           </el-form-item>
+          <!--监控对象所属系统：f_system_name-->
           <el-form-item label="所属系统">
             <el-select
-              v-model="f_system_name"
+              v-model="form.f_system_name"
               filterable
               allow-create
               default-first-option
@@ -23,9 +26,10 @@
               />
             </el-select>
           </el-form-item>
+          <!--监控对象所属模块：f_module_name-->
           <el-form-item label="所属模块">
             <el-select
-              v-model="f_module_name"
+              v-model="form.f_module_name"
               filterable
               allow-create
               default-first-option
@@ -39,12 +43,14 @@
               />
             </el-select>
           </el-form-item>
+          <!--监测对象名称：f_object_name-->
           <el-form-item label="对象名称">
-            <el-input v-model="f_object_name" />
+            <el-input v-model="form.f_object_name" />
           </el-form-item>
+          <!--监测对象类型：f_category-->
           <el-form-item label="对象类型">
             <el-select
-              v-model="f_category"
+              v-model="form.f_category"
               filterable
               allow-create
               default-first-option
@@ -58,11 +64,13 @@
               />
             </el-select>
           </el-form-item>
+          <!--监测内容：f_item-->
           <el-form-item label="检测内容">
-            <el-input v-model="f_item" />
+            <el-input v-model="form.f_item" />
           </el-form-item>
+          <!--数据类型：f_type-->
           <el-form-item label="数据类型">
-            <el-select v-model="f_type" placeholder="请选择数据类型">
+            <el-select v-model="form.f_type" placeholder="请选择数据类型">
               <el-option
                 v-for="item in DataTypes"
                 :key="item.value"
@@ -74,7 +82,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false, Confirm(f_object_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_object_id)">确 定</el-button>
         </span>
       </el-dialog>
     </div></el-col>
@@ -90,10 +98,22 @@ export default {
     return {
       //用于弹窗的显示
       dialogVisible: false,
-      //编辑弹窗的表单头部（暂无使用）
+      //弹窗表单数据
       form: {
-        name: '',
-        number: ''
+        //监控的id
+        f_object_id:'',
+        //所属系统
+        f_system_name:'',
+        //所属模块
+        f_object_name:'',
+        //对象名称
+        f_module_name:'',
+        //对象类型
+        f_category:'',
+        //检测内容
+        f_item:'',
+        //数据类型
+        f_type:'',
       },
       // 所属系统下拉框数组
       BelongingSystems: [{
@@ -106,31 +126,6 @@ export default {
       ObjectTypes: [],
       // 数据类型下拉框数组
       DataTypes: [],
-      //监控的id
-      f_object_id:'',
-      //所属系统
-      f_system_name:'',
-      //所属模块
-      f_object_name:'',
-      //对象名称
-      f_module_name:'',
-      //对象类型
-      f_category:'',
-      //检测内容
-      f_item:'',
-      //数据类型
-      f_type:'',
-      Value:[
-        {
-          f_object_id:'',
-          f_system_name:'',
-          f_object_name:'',
-          f_module_name:'',
-          f_category:'',
-          f_item:'',
-          f_type:''
-        }
-      ]
     }
   },
   methods: {
@@ -156,13 +151,13 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
-      this.f_object_id = this.myData.f_object_id;
-      this.f_system_name = this.myData.f_system_name;
-      this.f_object_name = this.myData.f_object_name;
-      this.f_module_name = this.myData.f_module_name;
-      this.f_category = this.myData.f_category;
-      this.f_item = this.myData.f_item;
-      this.f_type = this.myData.f_type;
+      this.form.f_object_id = this.myData.f_object_id;
+      this.form.f_system_name = this.myData.f_system_name;
+      this.form.f_object_name = this.myData.f_object_name;
+      this.form.f_module_name = this.myData.f_module_name;
+      this.form.f_category = this.myData.f_category;
+      this.form.f_item = this.myData.f_item;
+      this.form.f_type = this.myData.f_type;
     },
     //编辑弹窗点击取消时响应
     Cancel() {
@@ -170,24 +165,17 @@ export default {
     },
     //编辑弹窗点击确认时响应
     Confirm(id) {
-      //储存修改的值到Value
+      //非空判断与数据传送
       if(id === ""){
         this.dialogVisible = true;
         this.$message.error('监控的id不能为空');
       }
       else{
-        this.Value.f_object_id = this.f_object_id;
-        this.Value.f_system_name = this.f_system_name;
-        this.Value.f_object_name = this.f_object_name;
-        this.Value.f_module_name = this.f_module_name;
-        this.Value.f_category = this.f_category;
-        this.Value.f_item = this.f_item;
-        this.Value.f_type = this.f_type;
         this.$message({
           message: '编辑成功',
           type: 'success'
         });
-        this.$emit("Revise",this.Value);
+        this.$emit("Revise",this.form);
       }
     }
   },
