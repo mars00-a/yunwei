@@ -88,7 +88,7 @@ export default {
       controlShow: false,
       //右侧的指标表格
       targetTable:[],
-      serverTargetTable: server
+      serverTargetTable: server,
       // [
       //   {
       //     id:'001',
