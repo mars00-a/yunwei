@@ -2,7 +2,6 @@
   <el-container>
     <el-header id="Header">
       <el-row :gutter="10" id="Control">
-        <!--过滤参数选择-->
         <el-col :span="6">
           <span id="FilterParameters">过滤参数：</span>
           <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
@@ -19,11 +18,11 @@
           <span id="Value">值：</span>
         </el-col>
         <el-col :span="4">
+          <!--查找输入框-->
           <el-input v-model="CompleteValue" placeholder="请输入内容"/>
         </el-col>
-        <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
             <!--            左侧表单栏-->
@@ -133,6 +132,8 @@
             </div>
           </el-dialog>
         </el-col>
+        <el-col :span="6"><div class="grid-content bg-purple">
+        </div></el-col>
       </el-row>
     </el-header>
     <el-main id="Main" >
@@ -242,47 +243,7 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      }],
+      //*******************控制区*******************
       FilterParameters: [{
         value: '选项1',
         label: '黄金糕'
@@ -299,9 +260,10 @@ export default {
         value: '选项5',
         label: '北京烤鸭'
       }],
+      //过滤参数
       FilterParameter_value: '',
-      //值查询
-
+      //查找输入框
+      CompleteValue:'',
       //新增
       controlShow: false,
       dialogVisible: false,
@@ -485,6 +447,50 @@ export default {
           label: '2--恢复'
         }
       ],
+      //*******************中间主体*******************
+      //表格数据
+      tableData: [{
+        f_opcid: 'E000100001',
+        f_opcid_name: '服务器失联报警',
+        f_system_id: '0',
+        f_type: '硬件',
+        f_opsignal_id: 'S000100001',
+        f_event_type: '1',
+        f_threshold: '0',
+        f_level: '6',
+        f_note: ''
+      },{
+        f_opcid: 'E000100001',
+        f_opcid_name: '服务器失联报警',
+        f_system_id: '0',
+        f_type: '硬件',
+        f_opsignal_id: 'S000100001',
+        f_event_type: '1',
+        f_threshold: '0',
+        f_level: '6',
+        f_note: ''
+      },{
+        f_opcid: 'E000100001',
+        f_opcid_name: '服务器失联报警',
+        f_system_id: '0',
+        f_type: '硬件',
+        f_opsignal_id: 'S000100001',
+        f_event_type: '1',
+        f_threshold: '0',
+        f_level: '6',
+        f_note: ''
+      },{
+        f_opcid: 'E000100001',
+        f_opcid_name: '服务器失联报警',
+        f_system_id: '0',
+        f_type: '硬件',
+        f_opsignal_id: 'S000100001',
+        f_event_type: '1',
+        f_threshold: '0',
+        f_level: '6',
+        f_note: ''
+      }],
+      //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
@@ -518,6 +524,7 @@ export default {
     targetTableGetFocus(index,row){
       this.form.target = "@"+row.id;
     },
+    //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
@@ -536,9 +543,12 @@ export default {
         console.log(this.form)
       }
     },
-    handleEdit(row) {
-      console.log(row);
+    //查找按钮的事件
+    Find(){
+      const msg = [this.FilterParameter_value , this.CompleteValue];
+      console.log(msg);
     },
+    //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg) {
       console.log(msg);

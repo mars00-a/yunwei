@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
           <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
@@ -125,6 +125,37 @@ export default {
   },
   data() {
     return {
+      //*******************控制区*******************
+      FilterParameters: [{
+        value: '黄金糕',
+        label: '黄金糕'
+      }, {
+        value: '双皮奶',
+        label: '双皮奶'
+      }, {
+        value: '蚵仔煎',
+        label: '蚵仔煎'
+      }, {
+        value: '龙须面',
+        label: '龙须面'
+      }, {
+        value: '北京烤鸭',
+        label: '北京烤鸭'
+      }],
+      //过滤参数
+      FilterParameter_value: '',
+      //查找输入框
+      CompleteValue:'',
+      //新增
+      dialogVisible: false,
+      form: {
+        f_service_type: '',
+        f_service_name: '',
+        f_service_table: '',
+        f_note: ''
+      },
+      //*******************中间主体*******************
+      //表格数据
       tableData: [{
         f_service_type: '1',
         f_service_name: '安防服务',
@@ -156,32 +187,7 @@ export default {
         f_service_table: 'Opsv_security',
         f_note: 'SK3000,SK2008,SK6800等',
       }],
-      FilterParameters: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      FilterParameter_value: '',
-
-      //新增
-      dialogVisible: false,
-      form: {
-        f_service_type: '',
-        f_service_name: '',
-        f_service_table: '',
-        f_note: ''
-      },
+      //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
@@ -209,6 +215,7 @@ export default {
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`)
     },
+    //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
@@ -228,9 +235,12 @@ export default {
         console.log(this.form)
       }
     },
-    handleEdit(row) {
-      console.log(row);
+    //查找按钮的事件
+    Find(){
+      const msg = [this.FilterParameter_value , this.CompleteValue];
+      console.log(msg);
     },
+    //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
       console.log(msg);

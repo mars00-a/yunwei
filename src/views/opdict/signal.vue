@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
           <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
@@ -178,60 +178,27 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      }],
+      //*******************控制区*******************
       FilterParameters: [{
-        value: '选项1',
+        value: '黄金糕',
         label: '黄金糕'
       }, {
-        value: '选项2',
+        value: '双皮奶',
         label: '双皮奶'
       }, {
-        value: '选项3',
+        value: '蚵仔煎',
         label: '蚵仔煎'
       }, {
-        value: '选项4',
+        value: '龙须面',
         label: '龙须面'
       }, {
-        value: '选项5',
+        value: '北京烤鸭',
         label: '北京烤鸭'
       }],
+      //过滤参数
       FilterParameter_value: '',
+      //查找输入框
+      CompleteValue:'',
       //新增功能的弹窗
       //用于显示弹窗
       dialogVisible: false,
@@ -382,6 +349,46 @@ export default {
         value:'1',
         label:'1--计算公式',
       }],
+      //*******************中间主体*******************
+      //表格数据
+      tableData: [{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      },{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      },{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      },{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      },{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      },{
+        f_opsignal_id: 'S00010000',
+        f_opsignal_name: '服务器是否存活',
+        f_para_type: '1',
+        f_para: '@0001000',
+        f_note:''
+      }],
+      //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
@@ -409,6 +416,7 @@ export default {
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`)
     },
+    //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
@@ -428,9 +436,12 @@ export default {
         console.log(this.form)
       }
     },
-    handleEdit(row) {
-      console.log(row);
+    //查找按钮的事件
+    Find(){
+      const msg = [this.FilterParameter_value , this.CompleteValue];
+      console.log(msg);
     },
+    //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
       console.log(msg);
