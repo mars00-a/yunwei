@@ -122,15 +122,7 @@ export const constantRoutes = [
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
-  }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-
+  },
 
   // 字典表
   {
@@ -172,7 +164,14 @@ export const asyncRoutes = [
     ]
   },
 
-  // 404 page must be placed at the end !!!
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+// 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
@@ -188,6 +187,8 @@ const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
+
+
 }
 
 export default router

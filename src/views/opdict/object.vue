@@ -196,6 +196,7 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateObject from '../../components/Opdict/OpOperate/Object'
+import getMonitorObjectPageList from '@/api/opdict'
 export default{
 
   name: 'MonitorObjectPage',
@@ -366,7 +367,13 @@ export default{
     //************************分页************************
     //处理页面初始数据
     dealData(){
+      let index = 1;
+      let size = 10;
+      getMonitorObjectPageList(index,size).then(request=>{
+        console.log(request.data);
 
+        this.tableData = request.data;
+      })
     },
     //鼠标放到某一行上就触发
     getNowRow(row){
