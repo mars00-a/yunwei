@@ -201,7 +201,12 @@
         <el-table-column
           label="操作" width="180">
           <template slot-scope="scope">
-            <OpOperateOpcid :MyData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
+            <OpOperateOpcid
+              :target-table="targetTable"
+              :server-target-table="serverTargetTable"
+              :MyData="scope.row"
+              @Revise='GetRevise'
+              @Del='GetDel'/>
           </template>
         </el-table-column>
       </el-table>
@@ -512,11 +517,7 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(index,row){
-      this.form.target = row.id;
-      this.targetTable = row
-      // event
-      // console.log(row.id)
-      // console.log("点击了某个东西")
+      this.form.target = "@"+row.id;
     },
     //新增功能弹窗的取消和确认
     Cancel() {
@@ -552,6 +553,15 @@ export default {
     'form.target':{
       immediate:true,
       handler(val){
+        let Arr = val.split("@")
+        // console.log(Arr)
+        if (Arr[0] === '')
+          val = Arr[1]
+        else
+          val = Arr[0]
+        if (val === undefined)
+          val = ''
+        // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
         })

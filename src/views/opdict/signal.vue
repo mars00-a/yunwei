@@ -49,7 +49,9 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="指标公式">
+                <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
                 <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
+                </el-tooltip>
               </el-form-item>
               <!--note-->
               <el-form-item label="备注">
@@ -134,7 +136,12 @@
         <el-table-column
           label="操作" width="180">
           <template slot-scope="scope">
-            <Signal :myData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
+            <Signal
+              :target-table="targetTable"
+              :server-target-table="serverTargetTable"
+              :myData="scope.row"
+              @Revise='GetRevise'
+              @Del='GetDel'/>
           </template>
         </el-table-column>
       </el-table>
@@ -236,7 +243,8 @@ export default {
         f_opsignal_name: '',
         f_para_type: '',
         f_para: '',
-        f_note: ''
+        f_note: '',
+        tip:'此处输入指标公式'
       },
       //右侧的指标表格
       targetTable:[
@@ -435,10 +443,10 @@ export default {
     },
     targetTableGetFocus(row){
       let val = this.form.f_para
-      let myVal = val.split("@");
-      let FrontArr = val.split("@",myVal.length-1);
+      let myValArr = val.split("@");
+      let FrontArr = val.split("@",myValArr.length-1);
       let FrontStr = '';
-      for(let i = 0;i<myVal.length-1;i++){
+      for(let i = 0;i<myValArr.length-1;i++){
         if (FrontArr[i] === "(") {
           FrontStr += FrontArr[i]
         }else if(FrontArr[i] === ""){
@@ -449,7 +457,7 @@ export default {
       // console.log("maVal:",myVal)
       // console.log("FrontArr",FrontArr)
       // console.log("FrontStr",FrontStr)
-      val = myVal[myVal.length-1];
+      val = myValArr[myValArr.length-1];
       this.form.f_para = FrontStr+"@"+row.id;
     }
   },
@@ -458,17 +466,57 @@ export default {
     'form.f_para':{
       immediate:true,
       handler(val){
-        let myVal = val.split("@");
-        val = myVal[myVal.length-1];
-        // console.log("Arr值为：",val)
-        // console.log(typeof myVal)
-        // let testString = "@123+@123-@78";
-        // let testArr = testString.split("@");
-        // let myStr = testArr[testArr.length-1]
-        // console.log(myVal,myVal.length);
+        //当输入框里值为空时，将提示标为指定内容
+        if(val === ''||val === undefined||val === null){
+          // console.log("发生了改变，值为：",val)
+          this.form.tip = '请输入指标公式'
+        }
+        //获取@符号后面的数据，用于搜索
+        let myValArr = val.split("@");
+        let mySearch = myValArr[myValArr.length-1];
+        //获取所有的id变成数组，用于查找指标名称
+        let myIdArr = val.split(/[-,+,*,/,(,),^,@]/);
+        myIdArr = myIdArr.filter(function (s) {
+          return s && s.trim();
+        });
+        // console.log("id数组为：",myIdArr)
+        //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
+        let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
+        myOperatorArr = myOperatorArr.filter(function (s) {
+          return s && s.trim();
+        });
+        // console.log("符号数组为：",myOperatorArr)
+        //以id为依据获取到对应的指标名称
+        let myNameArr = []
+        for(let i=0; i<myIdArr.length; i++){
+          for(let j=0; j<this.serverTargetTable.length; j++){
+            if(this.serverTargetTable[j].id === myIdArr[i]){
+              // console.log("发现了指定id的指标")
+              // console.log("对应的指标id和指标名称为：",this.serverTargetTable[j].id,this.serverTargetTable[j].name)
+              myNameArr[i] = this.serverTargetTable[j].name
+            }
+          }
+        }
+        // console.log("指标名称数组为：",myNameArr)
+        //将指标名称和运算符组合成一句话传入到form.tip中
+        this.form.tip = ''
+        for(let i=0;i<myOperatorArr.length;i++){
+          this.form.tip += myOperatorArr[i]
+          if (myNameArr[i])
+            this.form.tip += myNameArr[i]
+        }
+
+
         this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+          return p.name.indexOf(mySearch) !== -1 || p.id.indexOf(mySearch) !== -1
         })
+      }
+    },
+    'form.tip':{
+      handler(val){
+        if(val === ''){
+          this.form.tip = "请输入指标公式"
+        }
       }
     }
   },
