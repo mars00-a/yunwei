@@ -75,7 +75,7 @@
       </el-dialog>
     </div></el-col>
     <el-col :span="12"><div class="grid-content bg-purple">
-      <el-button type="primary" @click="Del">删除</el-button>
+      <el-button type="danger" @click="Del">删除</el-button>
     </div></el-col>
   </el-row>
 </template>

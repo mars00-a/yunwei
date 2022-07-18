@@ -2,7 +2,8 @@
   <el-container>
     <el-header id="Header">
       <el-row :gutter="10" id="Control">
-        <el-col :span="6"><div class="grid-content bg-purple">
+        <!--过滤参数选择-->
+        <el-col :span="6">
           <span id="FilterParameters">过滤参数：</span>
           <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
             <el-option
@@ -12,15 +13,16 @@
               :value="item.value">
             </el-option>
           </el-select>
-        </div></el-col>
-        <el-col :span="12"><div class="grid-content bg-purple">
+        </el-col>
+        <!--查找输入框-->
+        <el-col :span="1">
           <span id="Value">值：</span>
-          <!--远程搜索框-->
-          <el-autocomplete
-            v-model="state"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="请输入内容"
-            @select="handleSelect"/>
+        </el-col>
+        <el-col :span="4">
+          <el-input v-model="CompleteValue" placeholder="请输入内容"/>
+        </el-col>
+        <!--查找、新增功能按钮-->
+        <el-col :span="13">
           <el-button type="primary" id="Find">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
@@ -88,9 +90,7 @@
               </el-table>
             </div>
           </el-dialog>
-        </div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple">
-        </div></el-col>
+        </el-col>
       </el-row>
     </el-header>
     <el-main id="Main" >
@@ -507,5 +507,9 @@ export default {
   #paginate{
     float:right;
     margin-right: 2rem;
+  }
+  #Value{
+    line-height: 2.2rem;
+    padding-left: 1.2rem;
   }
 </style>
