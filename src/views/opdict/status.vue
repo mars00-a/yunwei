@@ -109,7 +109,8 @@
         :data="tableData"
         height="520"
         border
-        style="width: 87.8rem">
+        style="width: 87.8rem"
+        @cell-mouse-enter="getNowRow">
         <!--运维状态id：f_status_id-->
         <el-table-column
           prop="f_status_id"
@@ -163,7 +164,21 @@
     </el-main>
     <el-footer id="Footer">
       <!--分页功能-->
-      <OpStatus/>
+      <!--当前行数与总数据条数-->
+      <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
+      <!--分页-->
+      <div id="paginate">
+        <el-pagination
+          background
+          :current-page="currentPage"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="sizes, prev, pager, next, jumper"
+          :total="12000"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </el-footer>
   </el-container>
 </template>
@@ -232,10 +247,34 @@ export default {
         f_downthres: '',
         f_level: '',
         f_note: ''
-      }
+      },
+      // 分页
+      //currentPage进入的第一页是第几页
+      currentPage: 1,
+      //当前行数
+      nowRow: 1,
+      //总页数
+      totalNumber: 1200
     }
   },
   methods:{
+    //************************分页************************
+    //处理页面初始数据
+    dealData(){
+
+    },
+    //鼠标放到某一行上就触发
+    getNowRow(row){
+      console.log(row);
+    },
+    //每页最大条数
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    //当前页数
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+    },
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
@@ -265,6 +304,9 @@ export default {
     GetDel(msg){
       console.log(msg);
     },
+  },
+  mounted(){
+    this.dealData();
   }
 }
 </script>
@@ -278,5 +320,17 @@ export default {
   }
   #Control{
     margin-top: 0.8rem;
+  }
+  /*设置分页属性*/
+  #now_line_number{
+    font-size: 0.85rem;
+    margin-left: 2rem;
+    margin-top: 0.6rem;
+    color: #606266;
+    float:left;
+  }
+  #paginate{
+    float:right;
+    margin-right: 2rem;
   }
 </style>
