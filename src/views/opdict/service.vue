@@ -199,15 +199,15 @@ export default {
     },
     //鼠标放到某一行上就触发
     getNowRow(row){
-      console.log(row);
+      // console.log(row);
     },
     //每页最大条数
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      // console.log(`每页 ${val} 条`)
     },
     //当前页数
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
     },
     //新增功能弹窗的取消和确认
     Cancel() {
