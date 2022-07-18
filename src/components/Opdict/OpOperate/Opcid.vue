@@ -109,11 +109,11 @@
                   label="指标名称"
                   width="100%">
                 </el-table-column>
-                <el-table-column label="添加">
+                <el-table-column label="选择">
                   <template slot-scope="scope">
                     <el-button
                       size="mini"
-                      @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+                      @click="targetTableGetFocus(scope.$index, scope.row)">选择</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -382,7 +382,14 @@ export default {
       immediate:true,
       handler(val){
         let Arr = val.split("@")
-        val = Arr[0]
+        // console.log(Arr)
+        if (Arr[0] === '')
+          val = Arr[1]
+        else
+          val = Arr[0]
+        if (val === undefined)
+          val = ''
+        // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
         })

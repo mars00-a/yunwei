@@ -280,8 +280,8 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(index,row){
-      this.form.f_opsignal_id = row.id;
-      this.targetTable = row
+      this.form.f_opsignal_id = "@" + row.id;
+      // this.targetTable = row
       // event
       // console.log(row.id)
       // console.log("点击了某个东西")
@@ -292,6 +292,15 @@ export default {
     'form.f_opsignal_id':{
       immediate:true,
       handler(val){
+        let Arr = val.split("@")
+        // console.log(Arr)
+        if (Arr[0] === '')
+          val = Arr[1]
+        else
+          val = Arr[0]
+        if (val === undefined)
+          val = ''
+        // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
         })
