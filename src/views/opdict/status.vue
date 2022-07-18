@@ -157,7 +157,13 @@
         <el-table-column
           label="操作" width="180">
           <template slot-scope="scope">
-            <Status :myData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
+            <Status
+              :target-table="targetTable"
+              :server-target-table="serverTargetTable"
+              :myData="scope.row"
+              @Revise='GetRevise'
+              @Del='GetDel'
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -194,7 +200,9 @@ export default {
   },
   data() {
     return {
-      tableData: [{
+      controlShow: false,
+      tableData: [
+        {
         f_status_id: 'A000100001',
         f_status_name: '服务器存活',
         f_opsignal_id: 'S000100001',
@@ -219,7 +227,8 @@ export default {
         f_level: '1',
         f_note: ''
       }],
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: '选项1',
         label: '黄金糕'
       }, {
@@ -236,6 +245,132 @@ export default {
         label: '北京烤鸭'
       }],
       FilterParameter_value: '',
+      targetTable:[
+        {
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
+      serverTargetTable:[
+        {
+          id:'001',
+          name:'指标名称1'
+        },{
+          id:'002',
+          name:'指标名称2'
+        },{
+          id:'003',
+          name:'指标名称3'
+        },{
+          id:'004',
+          name:'指标名称4'
+        },{
+          id:'005',
+          name:'指标名称1'
+        },{
+          id:'006',
+          name:'指标名称2'
+        },{
+          id:'007',
+          name:'指标名称3'
+        },{
+          id:'008',
+          name:'指标名称4'
+        },{
+          id:'009',
+          name:'指标名称1'
+        },{
+          id:'010',
+          name:'指标名称2'
+        },{
+          id:'011',
+          name:'指标名称3'
+        },{
+          id:'012',
+          name:'指标名称4'
+        },{
+          id:'013',
+          name:'指标名称1'
+        },{
+          id:'014',
+          name:'指标名称2'
+        },{
+          id:'015',
+          name:'指标名称3'
+        },{
+          id:'016',
+          name:'指标名称4'
+        },{
+          id:'017',
+          name:'指标名称1'
+        },{
+          id:'018',
+          name:'指标名称2'
+        },{
+          id:'019',
+          name:'指标名称3'
+        },{
+          id:'020',
+          name:'指标名称4'
+        },
+      ],
 
       //新增
       dialogVisible: false,
@@ -304,14 +439,50 @@ export default {
     GetDel(msg){
       console.log(msg);
     },
+    getFocus(){
+      this.controlShow = true
+    },
+    targetTableGetFocus(index,row){
+      this.form.f_opsignal_id = "@" + row.id;
+      // this.targetTable = row
+      // event
+      // console.log(row.id)
+      // console.log("点击了某个东西")
+    }
   },
   mounted(){
     this.dealData();
-  }
+  },
+  watch:{
+    //当对应指标中输入东西的时候搜索
+    'form.f_opsignal_id':{
+      immediate:true,
+      handler(val){
+        let Arr = val.split("@")
+        // console.log(Arr)
+        if (Arr[0] === '')
+          val = Arr[1]
+        else
+          val = Arr[0]
+        if (val === undefined)
+          val = ''
+        // console.log(val)
+        this.targetTable = this.serverTargetTable.filter(p =>{
+          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+        })
+      }
+    }
+  },
 }
 </script>
 
 <style scoped>
+
+  #targetTable{
+    position: absolute;
+    top: 1%;
+    left:103%;
+  }
   #Header{
     background: #f1f3f4;
   }
