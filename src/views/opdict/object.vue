@@ -205,6 +205,72 @@ export default{
   },
   data() {
     return {
+      //*******************控制区*******************
+      //过滤参数下拉框
+      FilterParameters: [{
+        value: '黄金糕',
+        label: '黄金糕'
+      }, {
+        value: '双皮奶',
+        label: '双皮奶'
+      }, {
+        value: '蚵仔煎',
+        label: '蚵仔煎'
+      }, {
+        value: '龙须面',
+        label: '龙须面'
+      }, {
+        value: '北京烤鸭',
+        label: '北京烤鸭'
+      }],
+      //过滤参数
+      FilterParameter_value: '',
+      //查找输入框
+      CompleteValue:'',
+      //新增按钮数据，如下：
+      //用于弹窗的显示
+      dialogVisible: false,
+      //弹窗表单数据
+      form: {
+        //监控的id
+        f_object_id:'',
+        //所属系统
+        f_system_name:'',
+        //所属模块
+        f_object_name:'',
+        //对象名称
+        f_module_name:'',
+        //对象类型
+        f_category:'',
+        //检测内容
+        f_item:'',
+        //数据类型
+        f_type:'',
+      },
+      // 所属模组下拉框数组
+      BelongingSystems: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
+      // 对象类型下拉框数组
+      ObjectTypes: [],
+      // 数据类型下拉框数组
+      DataTypes: [],
+      scope:'',
+      //*******************中间主体*******************
+      //表格数据
       tableData: [{
         f_object_id: '0001000',
         f_system_name: '所有系统',
@@ -286,66 +352,7 @@ export default{
         f_item:'存活',
         f_type:'2',
       },],
-      FilterParameters: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      FilterParameter_value: '',
-      CompleteValue:'',
-      //新增按钮数据，如下：
-      //用于弹窗的显示
-      dialogVisible: false,
-      //弹窗表单数据
-      form: {
-        //监控的id
-        f_object_id:'',
-        //所属系统
-        f_system_name:'',
-        //所属模块
-        f_object_name:'',
-        //对象名称
-        f_module_name:'',
-        //对象类型
-        f_category:'',
-        //检测内容
-        f_item:'',
-        //数据类型
-        f_type:'',
-      },
-      // 所属模组下拉框数组
-      BelongingSystems: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      // 对象类型下拉框数组
-      ObjectTypes: [],
-      // 数据类型下拉框数组
-      DataTypes: [],
-      scope:'',
+      //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
@@ -373,7 +380,7 @@ export default{
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`)
     },
-    //************************新增按钮************************
+    //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
@@ -392,6 +399,7 @@ export default{
         console.log(this.form)
       }
     },
+    //查找按钮的事件
     Find(){
       const msg = [this.FilterParameter_value , this.CompleteValue];
       console.log(msg);

@@ -2,7 +2,6 @@
   <el-container>
     <el-header id="Header">
       <el-row :gutter="10" id="Control">
-        <!--过滤参数选择-->
         <el-col :span="6">
           <span id="FilterParameters">过滤参数：</span>
           <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
@@ -19,9 +18,9 @@
           <span id="Value">值：</span>
         </el-col>
         <el-col :span="4">
+          <!--查找输入框-->
           <el-input v-model="CompleteValue" placeholder="请输入内容"/>
         </el-col>
-        <!--查找、新增功能按钮-->
         <el-col :span="13">
           <el-button type="primary" id="Find">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
@@ -133,6 +132,8 @@
             </div>
           </el-dialog>
         </el-col>
+        <el-col :span="6"><div class="grid-content bg-purple">
+        </div></el-col>
       </el-row>
     </el-header>
     <el-main id="Main" >
