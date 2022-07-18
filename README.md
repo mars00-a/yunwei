@@ -1,5 +1,5 @@
 #开发文档
-
+*请先阅读readme文件，在components->opdict->OpOperate中存在另一个readme文件*
 ##字典表opdict
 ###前端页面结构说明：
 ![img_5.png](img_5.png)

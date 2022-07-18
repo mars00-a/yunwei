@@ -134,6 +134,7 @@ export default {
   data() {
     return {
       controlShow: false,
+      // 弹窗右侧的指标列表显示与否
       dialogVisible: false,
       form: {
         EventId : '',//事件id
@@ -275,7 +276,8 @@ export default {
       //   },
       // ],
       // 所属系统
-      BelongingSystems: [//所属系统
+      //所属系统
+      BelongingSystems: [
         {
         value: '选项1',
         label: '黄金糕'
@@ -292,7 +294,8 @@ export default {
         value: '选项5',
         label: '北京烤鸭'
       }],
-      EventSourceTypes: [//事件来源类型
+      //事件来源类型
+      EventSourceTypes: [
         {
         value: '选项1',
         label: '事件来源1'
@@ -306,7 +309,8 @@ export default {
         value: '选项4',
         label: '事件来源4'
       }],
-      EventTypes: [//事件类型
+      //事件类型
+      EventTypes: [
         {
         value: '选项1',
         label: '1--报警'
@@ -365,9 +369,11 @@ export default {
     Cancel() {
       this.$message('取消成功')
     },
+    //当输入框被选中后显示右侧指标列表
     getFocus(){
       this.controlShow = true
     },
+    // 点击选择按钮后将输入框的值设置为选中的
     targetTableGetFocus(index,row){
       this.form.target = "@"+row.id;
       // this.targetTable = row
@@ -398,7 +404,9 @@ export default {
   },
   props:{
     MyData:Array,
+    // 未经过搜索的指标列表
     serverTargetTable:Array,
+    // 经过搜索的指标列表
     targetTable:Array
   }
 }
@@ -409,6 +417,7 @@ export default {
   .dialog-footer{
     margin: 0 auto;
   }
+  /*指标列表*/
   #targetTable{
     position: absolute;
     top: 1%;

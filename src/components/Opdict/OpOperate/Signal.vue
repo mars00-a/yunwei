@@ -87,7 +87,9 @@ export default {
       //用于显示公式表格
       controlShow: false,
       //右侧的指标表格
-      // targetTable:[
+      targetTable:[],
+      serverTargetTable: server
+      // [
       //   {
       //     id:'001',
       //     name:'指标名称1'
@@ -225,7 +227,8 @@ export default {
         tip:'此处输入指标公式'
       },
       //指标类型
-      f_para_types:[{
+      f_para_types:[
+        {
         value:'0',
         label:'0--监控对象',
       },{
@@ -281,9 +284,11 @@ export default {
         this.$emit("Revise",this.form);
       }
     },
+    // 输入框被选中时显示指标列表
     getFocus(){
       this.controlShow = true
     },
+    // 点击添加按钮后将输入的搜索内容替换成插入的指标id
     targetTableGetFocus(row){
       let val = this.form.f_para
       let myValArr = val.split("@");
@@ -305,7 +310,7 @@ export default {
     }
   },
   watch:{
-    // 当对应指标中输入东西的时候搜索
+    // 当对应指标中输入东西的时候搜索，并且更改提示内容
     'form.f_para':{
       immediate:true,
       handler(val){
@@ -355,6 +360,7 @@ export default {
         })
       }
     },
+    // 当提示为空时要有默认提示
     'form.tip':{
       handler(val){
         if(val === ''){
@@ -366,7 +372,9 @@ export default {
   //接入来自../../../views/opdict/object的数据
   props:{
     myData:Array,
+    // 父组件传过来的未经过搜索的指标列表
     serverTargetTable:Array,
+    //经过搜索的指标列表
     targetTable:Array
   }
 }
