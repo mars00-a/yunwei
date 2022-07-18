@@ -102,6 +102,8 @@ export default {
         f_level: '',
         f_note: ''
       },
+      targetTable: this.serverTable,
+      serverTargetTable: this.serverTable
       // targetTable:[
       //   {
       //     id:'001',
@@ -310,8 +312,7 @@ export default {
   //接入来自../../../views/opdict/object的数据
   props:{
     myData:Array,
-    serverTargetTable:Array,
-    targetTable:Array
+    serverTable:Array,
   }
 }
 

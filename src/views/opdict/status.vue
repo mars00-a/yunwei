@@ -158,8 +158,7 @@
           label="操作" width="180">
           <template slot-scope="scope">
             <Status
-              :target-table="targetTable"
-              :server-target-table="serverTargetTable"
+              :server-table="serverTargetTable"
               :myData="scope.row"
               @Revise='GetRevise'
               @Del='GetDel'

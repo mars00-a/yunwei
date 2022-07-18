@@ -202,8 +202,7 @@
           label="操作" width="180">
           <template slot-scope="scope">
             <OpOperateOpcid
-              :target-table="targetTable"
-              :server-target-table="serverTargetTable"
+              :server-table="serverTargetTable"
               :MyData="scope.row"
               @Revise='GetRevise'
               @Del='GetDel'/>

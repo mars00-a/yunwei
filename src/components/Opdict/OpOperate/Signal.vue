@@ -87,8 +87,8 @@ export default {
       //用于显示公式表格
       controlShow: false,
       //右侧的指标表格
-      targetTable:[],
-      serverTargetTable: server,
+      targetTable: this.targetTable,
+      serverTargetTable: this.serverTable,
       // [
       //   {
       //     id:'001',
@@ -373,9 +373,8 @@ export default {
   props:{
     myData:Array,
     // 父组件传过来的未经过搜索的指标列表
-    serverTargetTable:Array,
+    serverTable:Array,
     //经过搜索的指标列表
-    targetTable:Array
   }
 }
 
