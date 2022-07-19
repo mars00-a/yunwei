@@ -24,16 +24,17 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button @click="dealData" type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
-    <el-main id="Main" >
+    <el-main :style="myStyle" id="Main" >
       <!--表格主体-->
       <el-table
         :data="tableData"
-        height="520"
+        height="100%"
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow"
@@ -120,16 +121,19 @@
     </el-footer>
     <!--弹窗-->
     <div>
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+      <el-dialog top="7vh" title="新建检测对象" :visible.sync="dialogVisible" width="35%">
         <!--弹窗表单-->
         <el-form ref="form" :model="form" label-width="80px">
           <!--监测对象id：f_object_id-->
           <el-form-item label="监控的id" :rules="[{ required: true}]">
-            <el-input v-model="form.objectId" />
+            <el-input
+              :disabled="true"
+              v-model="form.objectId" />
           </el-form-item>
           <!--监控对象所属系统：f_system_name-->
           <el-form-item label="所属系统">
             <el-select
+              :style="controlWidth"
               v-model="form.systemName"
               filterable
               allow-create
@@ -147,6 +151,7 @@
           <!--监控对象所属模块：f_module_name-->
           <el-form-item label="所属模块">
             <el-select
+              :style="controlWidth"
               v-model="form.moduleName"
               filterable
               allow-create
@@ -168,6 +173,7 @@
           <!--监测对象类型：f_category-->
           <el-form-item label="对象类型">
             <el-select
+              :style="controlWidth"
               v-model="form.category"
               filterable
               allow-create
@@ -188,7 +194,10 @@
           </el-form-item>
           <!--数据类型：f_type-->
           <el-form-item label="数据类型">
-            <el-select v-model="form.type" placeholder="请选择数据类型">
+            <el-select
+              :style="controlWidth"
+              v-model="form.type"
+              placeholder="请选择数据类型">
               <el-option
                 v-for="item in DataTypes"
                 :key="item.value"
@@ -221,9 +230,16 @@ export default{
   },
   data() {
     return {
+      myStyle:{
+        height:"29rem"
+      },
+      controlWidth:{
+        width: "100%"
+      },
       //*******************控制区*******************
       //过滤参数下拉框
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: 'ObjectId',
         label: '监控对象ID'
       }, {
@@ -338,6 +354,48 @@ export default{
     //当前页数
     handleCurrentChange(val) {
       this.currentPage = val;
+      if(this.FilterParameter_value === 'ObjectId'){
+        getObjectFindObjectId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'SystemName'){
+        getObjectFindSystemName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'ModuleName'){
+        getObjectFindModuleName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'ObjectName'){
+        getObjectFindObjectName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Category'){
+        getObjectFindCategory(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Item'){
+        getObjectFindItem(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Type'){
+        getObjectFindType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
       this.dealData();
     },
     //************************新增与查找按钮************************
@@ -428,6 +486,9 @@ export default{
   mounted(){
     this.dealData();
     this.dropDownBox();
+    this.myStyle = {
+      height: document.body.clientHeight-50-30-64-70+"px"
+    }
   }
 }
 </script>
