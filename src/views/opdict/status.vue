@@ -112,7 +112,7 @@
         />
       </div>
     </el-footer>
-<!--    弹窗-->
+    <!--    弹窗-->
     <div>
       <el-dialog top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
@@ -198,392 +198,392 @@
 </template>
 
 <script>
-// window.onresize(function (){
-//
-// })
-import OpStatus from '../../components/Opdict/OpStatus'
-import Status from '../../components/Opdict/OpOperate/Status'
-export default {
-  name: 'MonitorObjectPage',
-  components: {
-    OpStatus,
-    Status
-  },
-  data() {
-    return {
-      myStyle:{
-        height:"29rem"
-      },
-      controlWidth:{
-        width: "100%"
-      },
-      //*******************控制区*******************
-      FilterParameters: [
-        {
-        value: '黄金糕',
-        label: '黄金糕'
-      }, {
-        value: '双皮奶',
-        label: '双皮奶'
-      }, {
-        value: '蚵仔煎',
-        label: '蚵仔煎'
-      }, {
-        value: '龙须面',
-        label: '龙须面'
-      }, {
-        value: '北京烤鸭',
-        label: '北京烤鸭'
-      }],
-      //过滤参数
-      FilterParameter_value: '',
-      //查找输入框
-      CompleteValue:'',
-      //新增弹窗
-      //用于显示弹窗中的表格
-      controlShow: false,
-      //用于显示弹窗
-      dialogVisible: false,
-      //弹窗表格内容
-      targetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
+  // window.onresize(function (){
+  //
+  // })
+  import OpStatus from '../../components/Opdict/OpStatus'
+  import Status from '../../components/Opdict/OpOperate/Status'
+  export default {
+    name: 'MonitorObjectPage',
+    components: {
+      OpStatus,
+      Status
+    },
+    data() {
+      return {
+        myStyle:{
+          height:"29rem"
         },
-      ],
-      serverTargetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
+        controlWidth:{
+          width: "100%"
         },
-      ],
-      //弹窗数据
-      form: {
-        f_status_id: '',
-        f_status_name: '',
-        f_opsignal_id: '',
-        f_upthres: '',
-        f_downthres: '',
-        f_level: '',
-        f_note: ''
-      },
-      //*******************中间主体*******************
-      //表格数据
-      tableData: [
-        {
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },{
-          f_status_id: 'A000100001',
-          f_status_name: '服务器存活',
-          f_opsignal_id: 'S000100001',
-          f_upthres: '1',
-          f_downthres: '1',
-          f_level: '1',
-          f_note: ''
-        },
+        //*******************控制区*******************
+        FilterParameters: [
+          {
+            value: '黄金糕',
+            label: '黄金糕'
+          }, {
+            value: '双皮奶',
+            label: '双皮奶'
+          }, {
+            value: '蚵仔煎',
+            label: '蚵仔煎'
+          }, {
+            value: '龙须面',
+            label: '龙须面'
+          }, {
+            value: '北京烤鸭',
+            label: '北京烤鸭'
+          }],
+        //过滤参数
+        FilterParameter_value: '',
+        //查找输入框
+        CompleteValue:'',
+        //新增弹窗
+        //用于显示弹窗中的表格
+        controlShow: false,
+        //用于显示弹窗
+        dialogVisible: false,
+        //弹窗表格内容
+        targetTable:[
+          {
+            id:'001',
+            name:'指标名称1'
+          },{
+            id:'002',
+            name:'指标名称2'
+          },{
+            id:'003',
+            name:'指标名称3'
+          },{
+            id:'004',
+            name:'指标名称4'
+          },{
+            id:'005',
+            name:'指标名称1'
+          },{
+            id:'006',
+            name:'指标名称2'
+          },{
+            id:'007',
+            name:'指标名称3'
+          },{
+            id:'008',
+            name:'指标名称4'
+          },{
+            id:'009',
+            name:'指标名称1'
+          },{
+            id:'010',
+            name:'指标名称2'
+          },{
+            id:'011',
+            name:'指标名称3'
+          },{
+            id:'012',
+            name:'指标名称4'
+          },{
+            id:'013',
+            name:'指标名称1'
+          },{
+            id:'014',
+            name:'指标名称2'
+          },{
+            id:'015',
+            name:'指标名称3'
+          },{
+            id:'016',
+            name:'指标名称4'
+          },{
+            id:'017',
+            name:'指标名称1'
+          },{
+            id:'018',
+            name:'指标名称2'
+          },{
+            id:'019',
+            name:'指标名称3'
+          },{
+            id:'020',
+            name:'指标名称4'
+          },
         ],
-      //*******************分页尾部*******************
-      // 分页
-      //currentPage进入的第一页是第几页
-      currentPage: 1,
-      //当前行数
-      nowRow: 1,
-      //总页数
-      totalNumber: 1200
-    }
-  },
-  methods:{
-    //************************分页************************
-    //处理页面初始数据
-    dealData(){
+        serverTargetTable:[
+          {
+            id:'001',
+            name:'指标名称1'
+          },{
+            id:'002',
+            name:'指标名称2'
+          },{
+            id:'003',
+            name:'指标名称3'
+          },{
+            id:'004',
+            name:'指标名称4'
+          },{
+            id:'005',
+            name:'指标名称1'
+          },{
+            id:'006',
+            name:'指标名称2'
+          },{
+            id:'007',
+            name:'指标名称3'
+          },{
+            id:'008',
+            name:'指标名称4'
+          },{
+            id:'009',
+            name:'指标名称1'
+          },{
+            id:'010',
+            name:'指标名称2'
+          },{
+            id:'011',
+            name:'指标名称3'
+          },{
+            id:'012',
+            name:'指标名称4'
+          },{
+            id:'013',
+            name:'指标名称1'
+          },{
+            id:'014',
+            name:'指标名称2'
+          },{
+            id:'015',
+            name:'指标名称3'
+          },{
+            id:'016',
+            name:'指标名称4'
+          },{
+            id:'017',
+            name:'指标名称1'
+          },{
+            id:'018',
+            name:'指标名称2'
+          },{
+            id:'019',
+            name:'指标名称3'
+          },{
+            id:'020',
+            name:'指标名称4'
+          },
+        ],
+        //弹窗数据
+        form: {
+          f_status_id: '',
+          f_status_name: '',
+          f_opsignal_id: '',
+          f_upthres: '',
+          f_downthres: '',
+          f_level: '',
+          f_note: ''
+        },
+        //*******************中间主体*******************
+        //表格数据
+        tableData: [
+          {
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },{
+            f_status_id: 'A000100001',
+            f_status_name: '服务器存活',
+            f_opsignal_id: 'S000100001',
+            f_upthres: '1',
+            f_downthres: '1',
+            f_level: '1',
+            f_note: ''
+          },
+        ],
+        //*******************分页尾部*******************
+        // 分页
+        //currentPage进入的第一页是第几页
+        currentPage: 1,
+        //当前行数
+        nowRow: 1,
+        //总页数
+        totalNumber: 1200
+      }
+    },
+    methods:{
+      //************************分页************************
+      //处理页面初始数据
+      dealData(){
 
-    },
-    //鼠标放到某一行上就触发
-    getNowRow(row){
-      // console.log(row);
-    },
-    //每页最大条数
-    handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`)
-    },
-    //当前页数
-    handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
-    },
-    //************************新增与查找按钮************************
-    //新增功能弹窗的取消和确认
-    Cancel() {
-      this.$message('取消成功')
-    },
-    Confirm(id) {
-      //非空验证
-      if(id === ""){
-        this.dialogVisible = true;
-        this.$message.error('状态的id不能为空');
+      },
+      //鼠标放到某一行上就触发
+      getNowRow(row){
+        // console.log(row);
+      },
+      //每页最大条数
+      handleSizeChange(val) {
+        // console.log(`每页 ${val} 条`)
+      },
+      //当前页数
+      handleCurrentChange(val) {
+        // console.log(`当前页: ${val}`)
+      },
+      //************************新增与查找按钮************************
+      //新增功能弹窗的取消和确认
+      Cancel() {
+        this.$message('取消成功')
+      },
+      Confirm(id) {
+        //非空验证
+        if(id === ""){
+          this.dialogVisible = true;
+          this.$message.error('状态的id不能为空');
+        }
+        else{
+          //储存新增的值到Value
+          this.$message({
+            message: '新增成功',
+            type: 'success'
+          });
+          console.log(this.form)
+        }
+      },
+      //查找按钮的事件
+      Find(){
+        const msg = [this.FilterParameter_value , this.CompleteValue];
+        console.log(msg);
+      },
+      //************************修改、删除按钮************************
+      //修改、删除后的表数据返回到以下两个函数
+      GetRevise(msg){
+        console.log(msg);
+      },
+      GetDel(msg){
+        console.log(msg);
+      },
+      getFocus(){
+        this.controlShow = true
+      },
+      targetTableGetFocus(index,row){
+        this.form.f_opsignal_id = "@" + row.id;
+        // this.targetTable = row
+        // event
+        // console.log(row.id)
+        // console.log("点击了某个东西")
       }
-      else{
-        //储存新增的值到Value
-        this.$message({
-          message: '新增成功',
-          type: 'success'
-        });
-        console.log(this.form)
+    },
+    mounted(){
+      this.dealData();
+      this.myStyle = {
+        height: document.body.clientHeight-50-30-64-70+"px"
+      }
+      console.log('浏览器高度为：',window.screen.height)
+      console.log('浏览器可见部分高度为：',document.body.clientHeight);
+      console.log('myStyle的值为：',this.myStyle)
+    },
+    watch:{
+      //当对应指标中输入东西的时候搜索
+      'form.f_opsignal_id':{
+        immediate:true,
+        handler(val){
+          let Arr = val.split("@")
+          // console.log(Arr)
+          if (Arr[0] === '')
+            val = Arr[1]
+          else
+            val = Arr[0]
+          if (val === undefined)
+            val = ''
+          // console.log(val)
+          this.targetTable = this.serverTargetTable.filter(p =>{
+            return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+          })
+        }
       }
     },
-    //查找按钮的事件
-    Find(){
-      const msg = [this.FilterParameter_value , this.CompleteValue];
-      console.log(msg);
-    },
-    //************************修改、删除按钮************************
-    //修改、删除后的表数据返回到以下两个函数
-    GetRevise(msg){
-      console.log(msg);
-    },
-    GetDel(msg){
-      console.log(msg);
-    },
-    getFocus(){
-      this.controlShow = true
-    },
-    targetTableGetFocus(index,row){
-      this.form.f_opsignal_id = "@" + row.id;
-      // this.targetTable = row
-      // event
-      // console.log(row.id)
-      // console.log("点击了某个东西")
-    }
-  },
-  mounted(){
-    this.dealData();
-    this.myStyle = {
-      height: document.body.clientHeight-50-30-64-70+"px"
-    }
-    console.log('浏览器高度为：',window.screen.height)
-    console.log('浏览器可见部分高度为：',document.body.clientHeight);
-    console.log('myStyle的值为：',this.myStyle)
-  },
-  watch:{
-    //当对应指标中输入东西的时候搜索
-    'form.f_opsignal_id':{
-      immediate:true,
-      handler(val){
-        let Arr = val.split("@")
-        // console.log(Arr)
-        if (Arr[0] === '')
-          val = Arr[1]
-        else
-          val = Arr[0]
-        if (val === undefined)
-          val = ''
-        // console.log(val)
-        this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
-        })
-      }
-    }
-  },
-}
+  }
 </script>
 
 <style scoped>
