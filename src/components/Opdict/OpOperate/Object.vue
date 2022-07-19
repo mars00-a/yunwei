@@ -20,9 +20,9 @@
             >
               <el-option
                 v-for="item in BelongingSystems"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key=item
+                :label=item
+                :value=item
               />
             </el-select>
           </el-form-item>
@@ -37,9 +37,9 @@
             >
               <el-option
                 v-for="item in BelongingModules"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key=item
+                :label=item
+                :value=item
               />
             </el-select>
           </el-form-item>
@@ -58,9 +58,9 @@
             >
               <el-option
                 v-for="item in ObjectTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key=item
+                :label=item
+                :value=item
               />
             </el-select>
           </el-form-item>
@@ -105,9 +105,9 @@ export default {
         //所属系统
         systemName:'',
         //所属模块
-        objectName:'',
-        //对象名称
         moduleName:'',
+        //对象名称
+        objectName:'',
         //对象类型
         category:'',
         //检测内容
@@ -116,16 +116,22 @@ export default {
         type:'',
       },
       // 所属系统下拉框数组
-      BelongingSystems: [{
-        value: '',
-        label: ''
-      }],
+      BelongingSystems: [],
       // 所属模组下拉框数组
       BelongingModules: [],
       // 对象类型下拉框数组
       ObjectTypes: [],
       // 数据类型下拉框数组
-      DataTypes: [],
+      DataTypes: [
+        {
+          value: 1,
+          label:'1——是/否'
+        },
+        {
+          value: 2,
+          label:'2——整型'
+        }
+      ],
     }
   },
   methods: {
@@ -151,6 +157,9 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
+      this.BelongingModules = this.Modules;
+      this.BelongingSystems = this.Systems;
+      this.ObjectTypes = this.Types;
       this.form.objectId = this.myData.objectId;
       this.form.systemName = this.myData.systemName;
       this.form.objectName = this.myData.objectName;
@@ -181,7 +190,10 @@ export default {
   },
   //接入来自../../../views/opdict/object的数据
   props:{
-    myData:Array
+    myData:Array,
+    Modules:Array,
+    Systems:Array,
+    Types:Array
   }
 }
 
