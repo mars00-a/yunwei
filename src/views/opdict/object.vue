@@ -127,7 +127,6 @@
           <!--监测对象id：f_object_id-->
           <el-form-item label="监控的id" :rules="[{ required: true}]">
             <el-input
-              :disabled="true"
               v-model="form.objectId" />
           </el-form-item>
           <!--监控对象所属系统：f_system_name-->
@@ -326,7 +325,9 @@ export default{
       getObjectPageList(this.currentPage,this.size).then(request=>{
         this.totalNumber = request.data.body.total;
         this.tableData = request.data.body.data;
-      })
+      });
+      this.FilterParameter_value = '';
+      this.CompleteValue='';
     },
     //下拉框数据
     dropDownBox(){
@@ -350,54 +351,12 @@ export default{
     //每页最大条数
     handleSizeChange(val) {
       this.size = val;
-      this.dealData();
+      this.Find();
     },
     //当前页数
     handleCurrentChange(val) {
       this.currentPage = val;
-      if(this.FilterParameter_value === 'ObjectId'){
-        getObjectFindObjectId(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'SystemName'){
-        getObjectFindSystemName(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'ModuleName'){
-        getObjectFindModuleName(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'ObjectName'){
-        getObjectFindObjectName(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'Category'){
-        getObjectFindCategory(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'Item'){
-        getObjectFindItem(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      if(this.FilterParameter_value === 'Type'){
-        getObjectFindType(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
-        })
-      }
-      this.dealData();
+      this.Find();
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -413,7 +372,7 @@ export default{
       else{
         getObjectCreate(this.form).then(request=>{
           if(request.data.body){
-            this.dealData();
+            this.Find();
             this.$message({
               message: '新增成功',
               type: 'success'
@@ -430,41 +389,44 @@ export default{
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'SystemName'){
+      else if(this.FilterParameter_value === 'SystemName'){
         getObjectFindSystemName(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'ModuleName'){
+      else if(this.FilterParameter_value === 'ModuleName'){
         getObjectFindModuleName(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'ObjectName'){
+      else if(this.FilterParameter_value === 'ObjectName'){
         getObjectFindObjectName(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'Category'){
+      else if(this.FilterParameter_value === 'Category'){
         getObjectFindCategory(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'Item'){
+      else if(this.FilterParameter_value === 'Item'){
         getObjectFindItem(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       }
-      if(this.FilterParameter_value === 'Type'){
+      else if(this.FilterParameter_value === 'Type'){
         getObjectFindType(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
+      }
+      else{
+        this.dealData();
       }
     },
     //************************修改、删除按钮************************
@@ -472,14 +434,14 @@ export default{
     GetRevise(msg){
       getObjectUpdate(msg).then(request=>{
         if(request.data.body){
-          this.dealData();
+          this.Find();
         }
       });
     },
     GetDel(msg){
       getObjectDelete(msg).then(request=>{
         if(request.data.body){
-          this.dealData();
+          this.Find();
         }
       });
     },

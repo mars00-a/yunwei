@@ -126,6 +126,90 @@ export  function getOpcidCreate(data) {
     data
   })
 }
+export  function getOpcidTypeList() {
+  return request({
+    url: '/api/OpEventCid/TypeList',
+    method: 'get',
+  })
+}
+export  function getOpcidDelete(objectId) {
+  return request({
+    url: '/api/OpEventCid/Delete',
+    method: 'post',
+    params:{objectId}
+  })
+}
+export  function getOpcidUpdate(data) {
+  return request({
+    url: '/api/OpEventCid/Update',
+    method: 'post',
+    data
+  })
+}
+//Opcid查找
+export  function getOpcidFindOpcid(Opcid,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {Opcid,index,size}
+  })
+}
+export  function getOpcidFindOpcidName(OpcidName,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {OpcidName,index,size}
+  })
+}
+export  function getOpcidFindSystemId(SystemId,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {SystemId,index,size}
+  })
+}
+export  function getOpcidFindType(Type,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {Type,index,size}
+  })
+}
+export  function getOpcidFindOpsignalId(OpsignalId,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {OpsignalId,index,size}
+  })
+}
+export  function getOpcidFindEventType(EventType,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {EventType,index,size}
+  })
+}
+export  function getOpcidFindThreshold(Threshold,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {Threshold,index,size}
+  })
+}
+export  function getOpcidFindLevel(Level,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {Level,index,size}
+  })
+}
+export  function getOpcidFindNote(Note,index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {Note,index,size}
+  })
+}
 
 
 

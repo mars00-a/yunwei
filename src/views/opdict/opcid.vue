@@ -23,7 +23,7 @@
         </el-col>
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" @click="dealData">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
         <el-col :span="6"><div class="grid-content bg-purple">
@@ -135,16 +135,15 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="事件id" :rules="[{ required: true}]">
             <el-input
-              :disabled="true"
-              v-model="form.EventId" />
+              v-model="form.opcid" />
           </el-form-item>
           <el-form-item label="事件名称">
-            <el-input v-model="form.EventName" />
+            <el-input v-model="form.opcidName" />
           </el-form-item>
           <el-form-item label="所属系统">
             <el-select
               :style="controlWidth"
-              v-model="form.System"
+              v-model="form.systemId"
               filterable
               allow-create
               default-first-option
@@ -162,7 +161,7 @@
           <el-form-item label="事件来源类型">
             <el-select
               :style="controlWidth"
-              v-model="form.EventSourceType"
+              v-model="form.type"
               filterable
               allow-create
               default-first-option
@@ -171,19 +170,19 @@
               <!--              label是展示在页面选项中的内容-->
               <el-option
                 v-for="item in EventSourceTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key=item
+                :label=item
+                :value=item
               />
             </el-select>
           </el-form-item>
           <el-form-item label="对应指标">
-            <el-input  placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.target" />
+            <el-input  placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.opsignalId" />
           </el-form-item>
           <el-form-item label="事件类型">
             <el-select
               :style="controlWidth"
-              v-model="form.EventType"
+              v-model="form.eventType"
               filterable
               allow-create
               default-first-option
@@ -199,13 +198,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="事件阈值">
-            <el-input v-model="form.Threshold" />
+            <el-input v-model="form.threshold" />
           </el-form-item>
           <el-form-item label="事件默认级别">
-            <el-input v-model="form.Level" />
+            <el-input v-model="form.level" />
           </el-form-item>
           <el-form-item label="备注">
-            <el-input type="textarea" v-model="form.Remark"/>
+            <el-input type="textarea" v-model="form.note"/>
           </el-form-item>
         </el-form>
         <span id="myFooter" slot="footer" class="dialog-footer">
@@ -247,7 +246,9 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateOpcid from '../../components/Opdict/OpOperate/Opcid'
-import {getOpcidPageList, getOpcidCreate, } from '@/api/opdict'
+import {getOpcidPageList, getOpcidCreate, getOpcidTypeList, getOpcidDelete, getOpcidUpdate, getOpcidFindOpcid, getOpcidFindOpcidName,
+  getOpcidFindSystemId, getOpcidFindType, getOpcidFindOpsignalId, getOpcidFindEventType, getOpcidFindThreshold, getOpcidFindLevel,
+  getOpcidFindNote} from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -263,7 +264,34 @@ export default {
         width: "100%"
       },
       //*******************控制区*******************
-      FilterParameters: [],
+      FilterParameters: [{
+        value: 'opcid',
+        label: '运维事件id'
+      },{
+        value: 'opcidName',
+        label: '运维事件名称'
+      },{
+        value: 'systemId',
+        label: '所属系统id'
+      },{
+        value: 'type',
+        label: '事件来源类型'
+      },{
+        value: 'opsignalId',
+        label: '运维指标id'
+      },{
+        value: 'eventType',
+        label: '事件类型'
+      },{
+        value: 'threshold',
+        label: '默认阈值'
+      },{
+        value: 'level',
+        label: '事件默认级别'
+      },{
+        value: 'note',
+        label: '备注'
+      }],
       //过滤参数
       FilterParameter_value: '',
       //查找输入框
@@ -272,15 +300,15 @@ export default {
       controlShow: false,
       dialogVisible: false,
       form: {
-        EventId : '',//事件id
-        EventName: '',//事件名称
-        System:'',//所属系统
-        EventSourceType:'',//事件来源类型
-        target:'',//对应指标
-        EventType:'',//事件类型
-        Threshold: '',//阈值
-        Level:'',//事件默认级别
-        Remark: '',//备注
+        opcid : '',//事件id
+        opcidName: '',//事件名称
+        systemId:'',//所属系统
+        type:'',//事件来源类型
+        opsignalId:'',//对应指标
+        eventType:'',//事件类型
+        threshold: '',//阈值
+        level:'',//事件默认级别
+        note: '',//备注
       },
       //右侧的指标表格
       targetTable:[
@@ -439,7 +467,15 @@ export default {
       getOpcidPageList(this.currentPage,this.size).then(request=>{
         this.totalNumber = request.data.body.total;
         this.tableData = request.data.body.data;
-      })
+      });
+      this.FilterParameter_value = '';
+      this.CompleteValue='';
+    },
+    //下拉框数据
+    dropDownBox(){
+      getOpcidTypeList().then(request=>{
+        this.EventSourceTypes = request.data.body;
+      });
     },
     tableCellClassName({row,rowIndex}){
       row.index=rowIndex;
@@ -451,12 +487,12 @@ export default {
     //每页最大条数
     handleSizeChange(val) {
       this.size = val;
-      this.dealData();
+      this.Find();
     },
     //当前页数
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.dealData();
+      this.Find();
     },
     getFocus(){
       this.controlShow = true
@@ -475,9 +511,10 @@ export default {
         this.$message.error('运维状态的id不能为空');
       }
       else{
+        console.log(this.form);
         getOpcidCreate(this.form).then(request=>{
           if(request.data.body){
-            this.dealData();
+            this.Find();
             this.$message({
               message: '新增成功',
               type: 'success'
@@ -488,16 +525,80 @@ export default {
     },
     //查找按钮的事件
     Find(){
-      const msg = [this.FilterParameter_value , this.CompleteValue];
-      console.log(msg);
+      if(this.FilterParameter_value === 'opcid'){
+        getOpcidFindOpcid(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'opcidName') {
+        getOpcidFindOpcidName(this.CompleteValue, this.currentPage, this.size).then(request => {
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'systemId'){
+        getOpcidFindSystemId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'type'){
+        getOpcidFindType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'opsignalId'){
+        getOpcidFindOpsignalId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'eventType'){
+        getOpcidFindEventType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'threshold'){
+        getOpcidFindThreshold(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'level'){
+        getOpcidFindLevel(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'note'){
+        getOpcidFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else{
+        this.dealData();
+      }
     },
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg) {
-      console.log(msg);
+      getOpcidUpdate(msg).then(request=>{
+        if(request.data.body){
+          this.Find();
+        }
+      });
     },
     GetDel(msg) {
-      console.log(msg);
+      console.log(msg)
+      getOpcidDelete(msg).then(request=>{
+        if(request.data.body){
+          this.Find();
+        }
+      });
     },
   },
   watch:{
@@ -512,7 +613,7 @@ export default {
         else
           val = Arr[0]
         if (val === undefined)
-          val = ''
+          val = '';
         // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
@@ -524,7 +625,8 @@ export default {
     this.dealData();
     this.myStyle = {
       height: document.body.clientHeight-50-30-64-70+"px"
-    }
+    };
+    this.dropDownBox();
   }
 }
 </script>
