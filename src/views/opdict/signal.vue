@@ -23,82 +23,17 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
-            <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="指标id" :rules="[{ required: true}]">
-                <el-input v-model="form.f_opsignal_id" />
-              </el-form-item>
-              <el-form-item label="指标名称">
-                <el-input v-model="form.f_opsignal_name" />
-              </el-form-item>
-              <el-form-item label="指标类型">
-                <el-select
-                  v-model="form.f_para_type"
-                  filterable
-                  allow-create
-                  default-first-option
-                  placeholder="请选择指标类型">
-                  <el-option
-                    v-for="item in f_para_types"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"/>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="指标公式">
-                <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
-                <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
-                </el-tooltip>
-              </el-form-item>
-              <!--note-->
-              <el-form-item label="备注">
-                <el-input type="textarea" v-model="form.f_note"/>
-              </el-form-item>
-            </el-form>
-
-            <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_opsignal_id)">确 定</el-button>
-        </span>
-
-            <!--        弹窗的右侧表单-->
-            <div v-show = controlShow id="targetTable">
-              <el-table
-                :data="targetTable"
-                height="480"
-                border
-                style="width: 100%">
-                <el-table-column
-                  active-class="targetTableGetFocus"
-                  prop="id"
-                  label="指标id"
-                  width="100%">
-                </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="指标名称"
-                  width="100%">
-                </el-table-column>
-                <el-table-column label="添加">
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      @click="targetTableGetFocus(scope.row)">添加</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-dialog>
         </el-col>
       </el-row>
     </el-header>
-    <el-main id="Main" >
+    <el-main  :style="myStyle" id="Main" >
       <el-table
         :data="tableData"
-        height="520"
+        height="100%"
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow">
@@ -163,6 +98,76 @@
         />
       </div>
     </el-footer>
+<!--    弹窗-->
+    <el-dialog title="新增运维指标" :visible.sync="dialogVisible" width="35%">
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="指标id" :rules="[{ required: true}]">
+          <el-input
+            :disabled="true"
+            v-model="form.f_opsignal_id" />
+        </el-form-item>
+        <el-form-item label="指标名称">
+          <el-input v-model="form.f_opsignal_name" />
+        </el-form-item>
+        <el-form-item label="指标类型">
+          <el-select
+            :style="controlWidth"
+            v-model="form.f_para_type"
+            filterable
+            allow-create
+            default-first-option
+            placeholder="请选择指标类型">
+            <el-option
+              v-for="item in f_para_types"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="指标公式">
+          <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
+            <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
+          </el-tooltip>
+        </el-form-item>
+        <!--note-->
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="form.f_note"/>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_opsignal_id)">确 定</el-button>
+        </span>
+
+      <!--        弹窗的右侧表单-->
+      <div v-show = controlShow id="targetTable">
+        <el-table
+          :data="targetTable"
+          height="480"
+          border
+          style="width: 100%">
+          <el-table-column
+            active-class="targetTableGetFocus"
+            prop="id"
+            label="对象id"
+            width="100%">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="对象名称"
+            width="100%">
+          </el-table-column>
+          <el-table-column label="添加">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="targetTableGetFocus(scope.row)">添加</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -177,8 +182,15 @@ export default {
   },
   data() {
     return {
+      myStyle:{
+        height:"29rem"
+      },
+      controlWidth:{
+        width: "100%"
+      },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: '黄金糕',
         label: '黄金糕'
       }, {
@@ -341,7 +353,8 @@ export default {
         },
       ],
       //指标类型
-      f_para_types:[{
+      f_para_types:[
+        {
         value:'0',
         label:'0--监控对象',
       },{
@@ -350,7 +363,8 @@ export default {
       }],
       //*******************中间主体*******************
       //表格数据
-      tableData: [{
+      tableData: [
+        {
         f_opsignal_id: 'S00010000',
         f_opsignal_name: '服务器是否存活',
         f_para_type: '1',
@@ -532,6 +546,9 @@ export default {
   },
   mounted(){
     this.dealData();
+    this.myStyle = {
+      height: document.body.clientHeight-50-30-64-70+"px"
+    }
   }
 }
 </script>

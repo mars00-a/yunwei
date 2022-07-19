@@ -22,124 +22,18 @@
           <el-input v-model="CompleteValue" placeholder="请输入内容"/>
         </el-col>
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
-            <!--            左侧表单栏-->
-            <div>
-              <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="事件id" :rules="[{ required: true}]">
-                  <el-input v-model="form.EventId" />
-                </el-form-item>
-                <el-form-item label="事件名称">
-                  <el-input v-model="form.EventName" />
-                </el-form-item>
-                <el-form-item label="所属系统">
-                  <el-select
-                    v-model="form.System"
-                    filterable
-                    allow-create
-                    default-first-option
-                    placeholder="请选择所属系统"
-                  >
-                    <!--              label是展示在页面选项中的内容-->
-                    <el-option
-                      v-for="item in BelongingSystems"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="事件来源类型">
-                  <el-select
-                    v-model="form.EventSourceType"
-                    filterable
-                    allow-create
-                    default-first-option
-                    placeholder="请选择所属系统"
-                  >
-                    <!--              label是展示在页面选项中的内容-->
-                    <el-option
-                      v-for="item in EventSourceTypes"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="对应指标">
-                  <el-input  placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.target" />
-                </el-form-item>
-                <el-form-item label="事件类型">
-                  <el-select
-                    v-model="form.EventType"
-                    filterable
-                    allow-create
-                    default-first-option
-                    placeholder="请选择所属系统"
-                  >
-                    <!--              label是展示在页面选项中的内容-->
-                    <el-option
-                      v-for="item in EventTypes"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="事件阈值">
-                  <el-input v-model="form.Threshold" />
-                </el-form-item>
-                <el-form-item label="事件默认级别">
-                  <el-input v-model="form.Level" />
-                </el-form-item>
-                <el-form-item label="备注">
-                  <el-input type="textarea" v-model="form.Remark"/>
-                </el-form-item>
-              </el-form>
-              <span  slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible=false,Confirm(form.EventId)">确 定</el-button>
-            </span>
-            </div>
-            <!--            右侧指标信息栏-->
-            <div v-show = controlShow id="targetTable">
-              <el-table
-                :data="targetTable"
-                height="625"
-                border
-                style="width: 100%">
-                <el-table-column
-                  active-class="targetTableGetFocus"
-                  prop="id"
-                  label="指标id"
-                  width="100%">
-                </el-table-column>
-                <el-table-column
-                  prop="name"
-                  label="指标名称"
-                  width="100%">
-                </el-table-column>
-                <el-table-column label="添加">
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-dialog>
         </el-col>
         <el-col :span="6"><div class="grid-content bg-purple">
         </div></el-col>
       </el-row>
     </el-header>
-    <el-main id="Main" >
+    <el-main :style="myStyle" id="Main" >
       <el-table
         :data="tableData"
-        height="520"
+        height="100%"
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow">
@@ -228,6 +122,119 @@
         />
       </div>
     </el-footer>
+<!--    弹窗-->
+    <el-dialog top="1vh" title="新增运维事件" :visible.sync="dialogVisible" width="30%">
+      <!--            左侧表单栏-->
+
+        <el-form ref="form" :model="form" label-width="100px">
+          <el-form-item label="事件id" :rules="[{ required: true}]">
+            <el-input
+              :disabled="true"
+              v-model="form.EventId" />
+          </el-form-item>
+          <el-form-item label="事件名称">
+            <el-input v-model="form.EventName" />
+          </el-form-item>
+          <el-form-item label="所属系统">
+            <el-select
+              :style="controlWidth"
+              v-model="form.System"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择所属系统"
+            >
+              <!--              label是展示在页面选项中的内容-->
+              <el-option
+                v-for="item in BelongingSystems"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="事件来源类型">
+            <el-select
+              :style="controlWidth"
+              v-model="form.EventSourceType"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择所属系统"
+            >
+              <!--              label是展示在页面选项中的内容-->
+              <el-option
+                v-for="item in EventSourceTypes"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="对应指标">
+            <el-input  placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.target" />
+          </el-form-item>
+          <el-form-item label="事件类型">
+            <el-select
+              :style="controlWidth"
+              v-model="form.EventType"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择所属系统"
+            >
+              <!--              label是展示在页面选项中的内容-->
+              <el-option
+                v-for="item in EventTypes"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="事件阈值">
+            <el-input v-model="form.Threshold" />
+          </el-form-item>
+          <el-form-item label="事件默认级别">
+            <el-input v-model="form.Level" />
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input type="textarea" v-model="form.Remark"/>
+          </el-form-item>
+        </el-form>
+        <span id="myFooter" slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible=false,Confirm(form.EventId)">确 定</el-button>
+        </span>
+
+      <!--            右侧指标信息栏-->
+      <div v-show = controlShow id="targetTable">
+        <el-table
+          :data="targetTable"
+          height="625"
+          border
+          style="width: 100%">
+          <el-table-column
+            active-class="targetTableGetFocus"
+            prop="id"
+            label="指标id"
+            width="100%">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="指标名称"
+            width="100%">
+          </el-table-column>
+          <el-table-column label="添加">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -242,8 +249,15 @@ export default {
   },
   data() {
     return {
+      myStyle:{
+        height:"29rem"
+      },
+      controlWidth:{
+        width: "100%"
+      },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: '选项1',
         label: '黄金糕'
       }, {
@@ -448,7 +462,12 @@ export default {
       ],
       //*******************中间主体*******************
       //表格数据
-      tableData: [],
+      tableData: [
+        {
+          f_opcid:"01111",
+          f_opcid_name:"名称1"
+        }
+      ],
       //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
@@ -538,6 +557,9 @@ export default {
   },
   mounted(){
     this.dealData();
+    this.myStyle = {
+      height: document.body.clientHeight-50-30-64-70+"px"
+    }
   }
 }
 </script>
@@ -575,5 +597,10 @@ export default {
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #myFooter{
+    position: absolute;
+    right: 4vh;
+    bottom: 2vh;
   }
 </style>

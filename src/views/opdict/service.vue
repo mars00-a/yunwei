@@ -23,40 +23,16 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">查找</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
-          <!--新增按钮的弹窗-->
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="90px">
-              <!--服务类型-->
-              <el-form-item label="服务类型" :rules="[{ required: true}]">
-                <el-input v-model="form.f_service_type" />
-              </el-form-item>
-              <!--服务名称-->
-              <el-form-item label="服务名称">
-                <el-input v-model="form.f_service_name" />
-              </el-form-item>
-              <!--服务数据表-->
-              <el-form-item label="服务数据表">
-                <el-input v-model="form.f_service_table" />
-              </el-form-item>
-              <!--备注-->
-              <el-form-item label="备注">
-                <el-input v-model="form.f_note"  type="textarea"/>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
-        </span>
-          </el-dialog>
         </el-col>
       </el-row>
     </el-header>
-    <el-main id="Main" >
+    <el-main :style="myStyle" id="Main" >
       <el-table
         :data="tableData"
-        height="520"
+        height="100%"
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow">
@@ -111,6 +87,33 @@
         />
       </div>
     </el-footer>
+    <!--新增按钮的弹窗-->
+    <el-dialog title="新增服务类型" :visible.sync="dialogVisible" width="30%">
+      <el-form ref="form" :model="form" label-width="90px">
+        <!--服务类型-->
+        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+          <el-input
+            :disabled="true"
+            v-model="form.f_service_type" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="服务名称">
+          <el-input v-model="form.f_service_name" />
+        </el-form-item>
+        <!--服务数据表-->
+        <el-form-item label="服务数据表">
+          <el-input v-model="form.f_service_table" />
+        </el-form-item>
+        <!--备注-->
+        <el-form-item label="备注">
+          <el-input v-model="form.f_note"  type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
+        </span>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -125,8 +128,12 @@ export default {
   },
   data() {
     return {
+      myStyle:{
+        height:"29rem"
+      },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: '黄金糕',
         label: '黄金糕'
       }, {
@@ -156,7 +163,8 @@ export default {
       },
       //*******************中间主体*******************
       //表格数据
-      tableData: [{
+      tableData: [
+        {
         f_service_type: '1',
         f_service_name: '安防服务',
         f_service_table: 'Opsv_security',
@@ -251,6 +259,9 @@ export default {
   },
   mounted(){
     this.dealData();
+    this.myStyle = {
+      height: document.body.clientHeight-50-30-64-70+"px"
+    }
   }
 }
 </script>

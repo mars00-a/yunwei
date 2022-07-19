@@ -2,13 +2,14 @@
   <el-row :gutter="10">
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
+      <el-dialog top="1vh" title="修改维运事件" :visible.sync="dialogVisible" width="30%">
 <!--            左侧表单栏-->
-            <div>
               <el-form ref="form" :model="form" label-width="100px">
                 <!--opcid-->
                 <el-form-item label="事件id" :rules="[{ required: true}]">
-                  <el-input v-model="form.EventId" />
+                  <el-input
+                    :disabled="true"
+                    v-model="form.EventId" />
                 </el-form-item>
                 <!--opcidname-->
                 <el-form-item label="事件名称">
@@ -17,6 +18,7 @@
                 <!--systemid-->
                 <el-form-item label="所属系统">
                   <el-select
+                    :style="controlWidth"
                     v-model="form.System"
                     filterable
                     allow-create
@@ -35,6 +37,7 @@
                 <!--type-->
                 <el-form-item label="事件来源类型">
                   <el-select
+                    :style="controlWidth"
                     v-model="form.EventSourceType"
                     filterable
                     allow-create
@@ -57,6 +60,7 @@
                 <!--eventtype-->
                 <el-form-item label="事件类型">
                   <el-select
+                    :style="controlWidth"
                     v-model="form.EventType"
                     filterable
                     allow-create
@@ -85,11 +89,10 @@
                   <el-input type="textarea" v-model="form.Remark"/>
                 </el-form-item>
               </el-form>
-              <span  slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible=false,Confirm(form.EventId)">确 定</el-button>
-            </span>
-            </div>
+              <span id="myFooter"  slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible=false,Confirm(form.EventId)">确 定</el-button>
+              </span>
 
 <!--            右侧指标信息栏-->
             <div v-show = controlShow id="targetTable">
@@ -133,6 +136,9 @@ export default {
   name: 'OpOperate',
   data() {
     return {
+      controlWidth:{
+        width: "100%"
+      },
       controlShow: false,
       // 弹窗右侧的指标列表显示与否
       dialogVisible: false,
@@ -297,5 +303,10 @@ export default {
   }
   .targetTableGetFocus{
     background-color: #4A9FF9;
+  }
+  #myFooter{
+    position: absolute;
+    right: 4vh;
+    bottom: 2vh;
   }
 </style>

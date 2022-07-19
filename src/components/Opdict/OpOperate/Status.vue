@@ -3,7 +3,7 @@
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <!--弹窗-->
-      <el-dialog top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
+      <el-dialog top="5vh" title="修改运维状态" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
           <!--f_status_id-->
           <el-form-item label="状态的id" :rules="[{ required: true}]">
@@ -18,7 +18,10 @@
           </el-form-item>
           <!--f_opsignal_id-->
           <el-form-item label="对应指标">
-            <el-input v-model="form.f_opsignal_id" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
+            <el-input
+              v-model="form.f_opsignal_id"
+              placeholder="输入指标名称可查找指标id"
+              @focus="getFocus"/>
           </el-form-item>
           <!--f_upthres-->
           <el-form-item label="阈值上限">

@@ -3,11 +3,13 @@
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <!--弹窗-->
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="30%">
+      <el-dialog title="修改服务类型" :visible.sync="dialogVisible" width="30%">
         <el-form ref="form" :model="form" label-width="90px">
           <!--服务类型-->
-          <el-form-item label="服务类型" :rules="[{ required: true}]">
-            <el-input v-model="form.f_service_type" />
+          <el-form-item label="服务类型id" :rules="[{ required: true}]">
+            <el-input
+              :disabled="true"
+              v-model="form.f_service_type" />
           </el-form-item>
           <!--服务名称-->
           <el-form-item label="服务名称">

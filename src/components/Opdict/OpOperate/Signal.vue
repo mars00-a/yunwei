@@ -2,16 +2,19 @@
   <el-row :gutter="10">
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+      <el-dialog title="修改运维指标" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="指标id" :rules="[{ required: true}]">
-            <el-input v-model="form.f_opsignal_id" />
+            <el-input
+              :disabled="true"
+              v-model="form.f_opsignal_id" />
           </el-form-item>
           <el-form-item label="指标名称">
             <el-input v-model="form.f_opsignal_name" />
           </el-form-item>
           <el-form-item label="指标类型">
             <el-select
+              :style="controlWidth"
               v-model="form.f_para_type"
               filterable
               allow-create
@@ -55,12 +58,12 @@
             <el-table-column
               active-class="targetTableGetFocus"
               prop="id"
-              label="指标id"
+              label="对象id"
               width="100%">
             </el-table-column>
             <el-table-column
               prop="name"
-              label="指标名称"
+              label="对象名称"
               width="100%">
             </el-table-column>
             <el-table-column label="添加">
@@ -84,139 +87,14 @@ export default {
   name: 'OpOperate',
   data() {
     return {
+      controlWidth:{
+        width: "100%"
+      },
       //用于显示公式表格
       controlShow: false,
       //右侧的指标表格
       targetTable: this.targetTable,
       serverTargetTable: this.serverTable,
-      // [
-      //   {
-      //     id:'001',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'002',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'003',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'004',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'005',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'006',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'007',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'008',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'009',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'010',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'011',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'012',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'013',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'014',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'015',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'016',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'017',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'018',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'019',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'020',
-      //     name:'指标名称4'
-      //   },
-      // ],
-      // //右侧的指标表格
-      // serverTargetTable:[
-      //   {
-      //     id:'001',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'002',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'003',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'004',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'005',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'006',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'007',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'008',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'009',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'010',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'011',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'012',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'013',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'014',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'015',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'016',
-      //     name:'指标名称4'
-      //   },{
-      //     id:'017',
-      //     name:'指标名称1'
-      //   },{
-      //     id:'018',
-      //     name:'指标名称2'
-      //   },{
-      //     id:'019',
-      //     name:'指标名称3'
-      //   },{
-      //     id:'020',
-      //     name:'指标名称4'
-      //   },
-      // ],
-      //用于弹窗的显示
       dialogVisible: false,
       form: {
         f_opsignal_id:'',

@@ -32,7 +32,6 @@
     </el-header>
     <el-main  :style="myStyle" id="Main" >
       <el-table
-        :style="myStyle"
         :data="tableData"
         height="100%"
         border
@@ -198,9 +197,6 @@
 </template>
 
 <script>
-  // window.onresize(function (){
-  //
-  // })
   import OpStatus from '../../components/Opdict/OpStatus'
   import Status from '../../components/Opdict/OpOperate/Status'
   export default {
@@ -559,9 +555,6 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
-      console.log('浏览器高度为：',window.screen.height)
-      console.log('浏览器可见部分高度为：',document.body.clientHeight);
-      console.log('myStyle的值为：',this.myStyle)
     },
     watch:{
       //当对应指标中输入东西的时候搜索
