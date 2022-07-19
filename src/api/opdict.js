@@ -56,11 +56,53 @@ export  function getObjectUpdate(data) {
   })
 }
 //Object查找
-export  function getObjectFind(ObjectId,SystemName,ModuleName,index,size) {
+export  function getObjectFindObjectId(ObjectId,index,size) {
   return request({
     url: '/api/MonitorObject/PageList',
     method: 'get',
-    params: {index,size}
+    params: {ObjectId,index,size}
+  })
+}
+export  function getObjectFindSystemName(SystemName,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {SystemName,index,size}
+  })
+}
+export  function getObjectFindModuleName(ModuleName,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {ModuleName,index,size}
+  })
+}
+export  function getObjectFindObjectName(ObjectName,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {ObjectName,index,size}
+  })
+}
+export  function getObjectFindCategory(Category,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {Category,Item,Type,index,size}
+  })
+}
+export  function getObjectFindItem(Item,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {Item,index,size}
+  })
+}
+export  function getObjectFindType(Type,index,size) {
+  return request({
+    url: '/api/MonitorObject/PageList',
+    method: 'get',
+    params: {Type,index,size}
   })
 }
 

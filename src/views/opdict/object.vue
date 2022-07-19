@@ -36,7 +36,13 @@
         height="520"
         border
         style="width: 87.8rem"
-        @cell-mouse-enter="getNowRow">
+        @cell-mouse-enter="getNowRow"
+        :cell-class-name="tableCellClassName">
+        <el-table-column
+          type="index"
+          label="序号"
+        >
+        </el-table-column>
         <!--监测对象id：objectId-->
         <el-table-column
           prop="objectId"
@@ -82,8 +88,14 @@
         <!--操作栏-->
         <el-table-column
           label="操作" width="180">
-          <template slot-scope="scope" @click="getNowRow(scope.row)">
-            <OpOperateObject :myData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
+          <template slot-scope="scope">
+            <OpOperateObject
+              :myData="scope.row"
+              :Modules="BelongingModules"
+              :Systems="BelongingSystems"
+              :Types="ObjectTypes"
+              @Revise='GetRevise'
+              @Del='GetDel'/>
           </template>
         </el-table-column>
       </el-table>
@@ -188,7 +200,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_object_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.objectId)">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -198,7 +210,8 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateObject from '../../components/Opdict/OpOperate/Object'
-import {getObjectPageList, getObjectSystemList, getObjectModuleList, getObjectCategoryList, getObjectCreate, getObjectDelete, getObjectUpdate} from '@/api/opdict'
+import {getObjectPageList, getObjectSystemList, getObjectModuleList, getObjectCategoryList, getObjectCreate, getObjectDelete, getObjectUpdate,
+  getObjectFindObjectId, getObjectFindSystemName, getObjectFindModuleName, getObjectFindObjectName, getObjectFindCategory, getObjectFindItem, getObjectFindType,} from '@/api/opdict'
 export default{
 
   name: 'MonitorObjectPage',
@@ -211,20 +224,26 @@ export default{
       //*******************控制区*******************
       //过滤参数下拉框
       FilterParameters: [{
-        value: '黄金糕',
-        label: '黄金糕'
+        value: 'ObjectId',
+        label: '监控对象ID'
       }, {
-        value: '双皮奶',
-        label: '双皮奶'
+        value: 'SystemName',
+        label: '系统名称'
       }, {
-        value: '蚵仔煎',
-        label: '蚵仔煎'
+        value: 'ModuleName',
+        label: '模块名称'
       }, {
-        value: '龙须面',
-        label: '龙须面'
+        value: 'ObjectName',
+        label: '监控对象名称'
       }, {
-        value: '北京烤鸭',
-        label: '北京烤鸭'
+        value: 'Category',
+        label: '监控对象列表'
+      }, {
+        value: 'Item',
+        label: '监控内容'
+      }, {
+        value: 'Type',
+        label: '数据类型'
       }],
       //过滤参数
       FilterParameter_value: '',
@@ -304,9 +323,12 @@ export default{
         this.ObjectTypes = request.data.body;
       });
     },
+    tableCellClassName({row,rowIndex}){
+      row.index=rowIndex;
+    },
     //鼠标放到某一行上就触发
     getNowRow(row){
-      // console.log(row);
+      this.nowRow = row.index+1+(this.currentPage-1)*this.size;
     },
     //每页最大条数
     handleSizeChange(val) {
@@ -330,27 +352,76 @@ export default{
         this.$message.error('监控的id不能为空');
       }
       else{
-        this.$message({
-          message: '新增成功',
-          type: 'success'
-        });
         getObjectCreate(this.form).then(request=>{
+          if(request.data.body){
+            this.dealData();
+            this.$message({
+              message: '新增成功',
+              type: 'success'
+            });
+          }
         });
       }
     },
     //查找按钮的事件
     Find(){
-      const msg = [this.FilterParameter_value , this.CompleteValue];
-      console.log(msg);
+      if(this.FilterParameter_value === 'ObjectId'){
+        getObjectFindObjectId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'SystemName'){
+        getObjectFindSystemName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'ModuleName'){
+        getObjectFindModuleName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'ObjectName'){
+        getObjectFindObjectName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Category'){
+        getObjectFindCategory(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Item'){
+        getObjectFindItem(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      if(this.FilterParameter_value === 'Type'){
+        getObjectFindType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
     },
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
       getObjectUpdate(msg).then(request=>{
+        if(request.data.body){
+          this.dealData();
+        }
       });
     },
     GetDel(msg){
       getObjectDelete(msg).then(request=>{
+        if(request.data.body){
+          this.dealData();
+        }
       });
     },
   },
