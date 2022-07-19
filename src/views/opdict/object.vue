@@ -26,90 +26,6 @@
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">查找</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
-          <!--弹窗-->
-          <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
-            <!--弹窗表单-->
-            <el-form ref="form" :model="form" label-width="80px">
-              <!--监测对象id：f_object_id-->
-              <el-form-item label="监控的id" :rules="[{ required: true}]">
-                <el-input v-model="form.f_object_id" />
-              </el-form-item>
-              <!--监控对象所属系统：f_system_name-->
-              <el-form-item label="所属系统">
-                <el-select
-                  v-model="form.f_system_name"
-                  filterable
-                  allow-create
-                  default-first-option
-                  placeholder="请选择所属系统"
-                >
-                  <el-option
-                    v-for="item in BelongingSystems"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-              <!--监控对象所属模块：f_module_name-->
-              <el-form-item label="所属模块">
-                <el-select
-                  v-model="form.f_module_name"
-                  filterable
-                  allow-create
-                  default-first-option
-                  placeholder="请选择所属模块"
-                >
-                  <el-option
-                    v-for="item in BelongingModules"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-              <!--监测对象名称：f_object_name-->
-              <el-form-item label="对象名称">
-                <el-input v-model="form.f_object_name" />
-              </el-form-item>
-              <!--监测对象类型：f_category-->
-              <el-form-item label="对象类型">
-                <el-select
-                  v-model="form.f_category"
-                  filterable
-                  allow-create
-                  default-first-option
-                  placeholder="请选择对象类型"
-                >
-                  <el-option
-                    v-for="item in ObjectTypes"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-              <!--监测内容：f_item-->
-              <el-form-item label="检测内容">
-                <el-input v-model="form.f_item" />
-              </el-form-item>
-              <!--数据类型：f_type-->
-              <el-form-item label="数据类型">
-                <el-select v-model="form.f_type" placeholder="请选择数据类型">
-                  <el-option
-                    v-for="item in DataTypes"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_object_id)">确 定</el-button>
-        </span>
-          </el-dialog>
         </el-col>
       </el-row>
     </el-header>
@@ -121,45 +37,45 @@
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow">
-        <!--监测对象id：f_object_id-->
+        <!--监测对象id：objectId-->
         <el-table-column
-          prop="f_object_id"
+          prop="objectId"
           label="监测对象id"
          >
         </el-table-column>
-        <!--监控对象所属系统：f_system_name-->
+        <!--监控对象所属系统：systemName-->
         <el-table-column
-          prop="f_system_name"
+          prop="systemName"
           label="监控对象所属系统"
           >
         </el-table-column>
-        <!--监控对象所属模块：f_module_name-->
+        <!--监控对象所属模块：moduleName-->
         <el-table-column
-          prop="f_module_name"
+          prop="moduleName"
           label="监控对象所属模块"
          >
         </el-table-column>
-        <!--监测对象名称：f_object_name-->
+        <!--监测对象名称：objectName-->
         <el-table-column
-          prop="f_object_name"
+          prop="objectName"
           label="监测对象名称"
           >
         </el-table-column>
-        <!--监测对象类型：f_category-->
+        <!--监测对象类型：category-->
         <el-table-column
-          prop="f_category"
+          prop="category"
           label="监测对象类型"
          >
         </el-table-column>
-        <!--监测内容：f_item-->
+        <!--监测内容：item-->
         <el-table-column
-          prop="f_item"
+          prop="item"
           label="监测内容"
         >
         </el-table-column>
-        <!--数据类型：f_type-->
+        <!--数据类型：type-->
         <el-table-column
-          prop="f_type"
+          prop="type"
           label="数据类型"
         >
         </el-table-column>
@@ -181,22 +97,108 @@
         <el-pagination
           background
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-sizes="[20, 50, 100, 200, 300]"
+          :page-size="size"
           layout="sizes, prev, pager, next, jumper"
-          :total="12000"
+          :total="totalNumber"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
       </div>
     </el-footer>
+    <!--弹窗-->
+    <div>
+      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+        <!--弹窗表单-->
+        <el-form ref="form" :model="form" label-width="80px">
+          <!--监测对象id：f_object_id-->
+          <el-form-item label="监控的id" :rules="[{ required: true}]">
+            <el-input v-model="form.objectId" />
+          </el-form-item>
+          <!--监控对象所属系统：f_system_name-->
+          <el-form-item label="所属系统">
+            <el-select
+              v-model="form.systemName"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择所属系统"
+            >
+              <el-option
+                v-for="item in BelongingSystems"
+                :key=item
+                :label=item
+                :value=item
+              />
+            </el-select>
+          </el-form-item>
+          <!--监控对象所属模块：f_module_name-->
+          <el-form-item label="所属模块">
+            <el-select
+              v-model="form.moduleName"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择所属模块"
+            >
+              <el-option
+                v-for="item in BelongingModules"
+                :key=item
+                :label=item
+                :value=item
+              />
+            </el-select>
+          </el-form-item>
+          <!--监测对象名称：f_object_name-->
+          <el-form-item label="对象名称">
+            <el-input v-model="form.objectName" />
+          </el-form-item>
+          <!--监测对象类型：f_category-->
+          <el-form-item label="对象类型">
+            <el-select
+              v-model="form.category"
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请选择对象类型"
+            >
+              <el-option
+                v-for="item in ObjectTypes"
+                :key=item
+                :label=item
+                :value=item
+              />
+            </el-select>
+          </el-form-item>
+          <!--监测内容：f_item-->
+          <el-form-item label="检测内容">
+            <el-input v-model="form.item" />
+          </el-form-item>
+          <!--数据类型：f_type-->
+          <el-form-item label="数据类型">
+            <el-select v-model="form.type" placeholder="请选择数据类型">
+              <el-option
+                v-for="item in DataTypes"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_object_id)">确 定</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </el-container>
 </template>
 
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateObject from '../../components/Opdict/OpOperate/Object'
-import getMonitorObjectPageList from '@/api/opdict'
+import {getObjectPageList, getObjectSystemList, getObjectModuleList, getObjectCategoryList, getObjectCreate, getObjectDelete, getObjectUpdate} from '@/api/opdict'
 export default{
 
   name: 'MonitorObjectPage',
@@ -234,146 +236,73 @@ export default{
       //弹窗表单数据
       form: {
         //监控的id
-        f_object_id:'',
+        objectId:'',
         //所属系统
-        f_system_name:'',
+        systemName:'',
         //所属模块
-        f_object_name:'',
+        moduleName:'',
         //对象名称
-        f_module_name:'',
+        objectName:'',
         //对象类型
-        f_category:'',
+        category:'',
         //检测内容
-        f_item:'',
+        item:'',
         //数据类型
-        f_type:'',
+        type:'',
       },
       // 所属模组下拉框数组
-      BelongingSystems: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      BelongingModules:[],
+      // 所属系统下拉框
+      BelongingSystems: [],
       // 对象类型下拉框数组
       ObjectTypes: [],
       // 数据类型下拉框数组
-      DataTypes: [],
+      DataTypes: [
+        {
+          value: 1,
+          label:'1——是/否'
+        },
+        {
+          value: 2,
+          label:'2——整型'
+        }
+      ],
       scope:'',
       //*******************中间主体*******************
       //表格数据
-      tableData: [{
-        f_object_id: '0001000',
-        f_system_name: '所有系统',
-        f_module_name: '硬件',
-        f_object_name:'服务器是否存活',
-        f_category:'服务器',
-        f_item:'存活状态',
-        f_type:'1',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },{
-        f_object_id: '0001001',
-        f_system_name: '系统',
-        f_module_name: '硬',
-        f_object_name:'服务器是否',
-        f_category:'服务',
-        f_item:'存活',
-        f_type:'2',
-      },],
+      tableData: [],
       //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
       //当前行数
       nowRow: 1,
-      //总页数
-      totalNumber: 1200
+      //数据总数
+      totalNumber: '',
+      //当前页面显示最大数量
+      size: 20,
     }
   },
   methods:{
     //************************分页************************
     //处理页面初始数据
     dealData(){
-      let index = 1;
-      let size = 10;
-      getMonitorObjectPageList(index,size).then(request=>{
-        console.log(request.data);
-
-        this.tableData = request.data;
+      getObjectPageList(this.currentPage,this.size).then(request=>{
+        this.totalNumber = request.data.body.total;
+        this.tableData = request.data.body.data;
       })
+    },
+    //下拉框数据
+    dropDownBox(){
+      getObjectSystemList().then(request=>{
+        this.BelongingSystems = request.data.body;
+      });
+      getObjectModuleList().then(request=>{
+        this.BelongingModules = request.data.body;
+      });
+      getObjectCategoryList().then(request=>{
+        this.ObjectTypes = request.data.body;
+      });
     },
     //鼠标放到某一行上就触发
     getNowRow(row){
@@ -381,11 +310,13 @@ export default{
     },
     //每页最大条数
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`)
+      this.size = val;
+      this.dealData();
     },
     //当前页数
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
+      this.currentPage = val;
+      this.dealData();
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -403,7 +334,8 @@ export default{
           message: '新增成功',
           type: 'success'
         });
-        console.log(this.form)
+        getObjectCreate(this.form).then(request=>{
+        });
       }
     },
     //查找按钮的事件
@@ -414,14 +346,17 @@ export default{
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
-      console.log(msg);
+      getObjectUpdate(msg).then(request=>{
+      });
     },
     GetDel(msg){
-      console.log(msg);
+      getObjectDelete(msg).then(request=>{
+      });
     },
   },
   mounted(){
     this.dealData();
+    this.dropDownBox();
   }
 }
 </script>

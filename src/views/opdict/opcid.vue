@@ -448,47 +448,7 @@ export default {
       ],
       //*******************中间主体*******************
       //表格数据
-      tableData: [{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      },{
-        f_opcid: 'E000100001',
-        f_opcid_name: '服务器失联报警',
-        f_system_id: '0',
-        f_type: '硬件',
-        f_opsignal_id: 'S000100001',
-        f_event_type: '1',
-        f_threshold: '0',
-        f_level: '6',
-        f_note: ''
-      }],
+      tableData: [],
       //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
