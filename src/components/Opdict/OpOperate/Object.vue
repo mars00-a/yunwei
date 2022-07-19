@@ -3,15 +3,18 @@
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <!--弹窗-->
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+      <el-dialog  top="7vh" title="修改检测对象" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
           <!--监测对象id：f_object_id-->
           <el-form-item label="监控的id" :rules="[{ required: true}]">
-            <el-input v-model="form.objectId" />
+            <el-input
+              :disabled="true"
+              v-model="form.objectId" />
           </el-form-item>
           <!--监控对象所属系统：f_system_name-->
           <el-form-item label="所属系统">
             <el-select
+              :style="controlWidth"
               v-model="form.systemName"
               filterable
               allow-create
@@ -29,6 +32,7 @@
           <!--监控对象所属模块：f_module_name-->
           <el-form-item label="所属模块">
             <el-select
+              :style="controlWidth"
               v-model="form.moduleName"
               filterable
               allow-create
@@ -50,6 +54,7 @@
           <!--监测对象类型：f_category-->
           <el-form-item label="对象类型">
             <el-select
+              :style="controlWidth"
               v-model="form.category"
               filterable
               allow-create
@@ -70,7 +75,10 @@
           </el-form-item>
           <!--数据类型：f_type-->
           <el-form-item label="数据类型">
-            <el-select v-model="form.type" placeholder="请选择数据类型">
+            <el-select
+              :style="controlWidth"
+              v-model="form.type"
+              placeholder="请选择数据类型">
               <el-option
                 v-for="item in DataTypes"
                 :key="item.value"
@@ -96,6 +104,9 @@ export default {
   name: 'OpOperate',
   data() {
     return {
+      controlWidth:{
+        width: "100%"
+      },
       //用于弹窗的显示
       dialogVisible: false,
       //弹窗表单数据
