@@ -3,11 +3,14 @@
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
       <!--弹窗-->
-      <el-dialog title="表单弹框" :visible.sync="dialogVisible" width="35%">
+      <el-dialog top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
           <!--f_status_id-->
           <el-form-item label="状态的id" :rules="[{ required: true}]">
-            <el-input v-model="form.f_status_id" />
+            <el-input
+              v-model="form.f_status_id"
+              :disabled="true"
+            />
           </el-form-item>
           <!--f_status_name-->
           <el-form-item label="状态名称">
@@ -28,11 +31,13 @@
           <!--f_level-->
           <el-form-item label="状态类型">
             <el-select
+              :style="controlWidth"
               v-model="form.f_level"
               filterable
               allow-create
               default-first-option
-              placeholder="请选择状态类型">
+              placeholder="请选择状态类型"
+            >
               <el-option
                 v-for="item in ObjectTypes"
                 :key="item.value"
@@ -54,7 +59,7 @@
         <div v-show = controlShow id="targetTable">
           <el-table
             :data="targetTable"
-            height="625"
+            height="95%"
             border
             style="width: 100%">
             <el-table-column
@@ -90,6 +95,9 @@ export default {
   name: 'OpOperate',
   data() {
     return {
+      controlWidth:{
+        width: "100%"
+      },
       //用于弹窗的显示
       dialogVisible: false,
       controlShow: false,
@@ -326,6 +334,7 @@ export default {
     position: absolute;
     top: 1%;
     left:103%;
+    height: 100%;
   }
   .targetTableGetFocus{
     background-color: #4A9FF9;
