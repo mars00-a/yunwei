@@ -37,45 +37,45 @@
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow">
-        <!--运维状态id：f_status_id-->
+        <!--运维状态id：statusId-->
         <el-table-column
-          prop="f_status_id"
+          prop="statusId"
           label="运维状态id"
         >
         </el-table-column>
-        <!--运维状态名称：f_status_name-->
+        <!--运维状态名称：statusName-->
         <el-table-column
-          prop="f_status_name"
+          prop="statusName"
           label="运维状态名称"
         >
         </el-table-column>
-        <!--运维指标id：f_opsignal_id-->
+        <!--运维指标id：opsignalId-->
         <el-table-column
-          prop="f_opsignal_id"
+          prop="opsignalId"
           label="运维指标id"
         >
         </el-table-column>
-        <!--阈值默认上限：f_upthres-->
+        <!--阈值默认上限：upthres-->
         <el-table-column
-          prop="f_upthres"
+          prop="upthres"
           label="阈值默认上限"
         >
         </el-table-column>
-        <!--阈值默认下限：f_downthres-->
+        <!--阈值默认下限：downthres-->
         <el-table-column
-          prop="f_downthres"
+          prop="downthres"
           label="阈值默认下限"
         >
         </el-table-column>
-        <!--事件默认级别：f_level-->
+        <!--事件默认级别：level-->
         <el-table-column
-          prop="f_level"
-          label="事件默认级别"
+          prop="level"
+          label="状态类型"
         >
         </el-table-column>
-        <!--备注：f_note-->
+        <!--备注：note-->
         <el-table-column
-          prop="f_note"
+          prop="note"
           label="备注"
         >
         </el-table-column>
@@ -115,34 +115,34 @@
     <div>
       <el-dialog top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
-          <!--f_status_id-->
+          <!--statusId-->
           <el-form-item label="状态的id" :rules="[{ required: true}]">
             <el-input
-              v-model="form.f_status_id"
+              v-model="form.statusId"
               :disabled="true"
             />
           </el-form-item>
-          <!--f_status_name-->
+          <!--statusName-->
           <el-form-item label="状态名称">
-            <el-input v-model="form.f_status_name" />
+            <el-input v-model="form.statusName" />
           </el-form-item>
-          <!--f_opsignal_id-->
+          <!--opsignalId-->
           <el-form-item label="对应指标">
-            <el-input v-model="form.f_opsignal_id" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
+            <el-input v-model="form.opsignalId" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
           </el-form-item>
-          <!--f_upthres-->
+          <!--upthres-->
           <el-form-item label="阈值上限">
-            <el-input v-model="form.f_upthres" />
+            <el-input v-model="form.upthres" />
           </el-form-item>
-          <!--f_downthres-->
+          <!--downthres-->
           <el-form-item label="阈值下限">
-            <el-input v-model="form.f_downthres" />
+            <el-input v-model="form.downthres" />
           </el-form-item>
-          <!--f_level-->
+          <!--level-->
           <el-form-item label="状态类型">
             <el-select
               :style="controlWidth"
-              v-model="form.f_level"
+              v-model="form.level"
               filterable
               allow-create
               default-first-option
@@ -155,14 +155,14 @@
               />
             </el-select>
           </el-form-item>
-          <!--f_note-->
+          <!--note-->
           <el-form-item label="备注">
-            <el-input v-model="form.f_note"  type="textarea"/>
+            <el-input v-model="form.note"  type="textarea"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false, Confirm(form.f_status_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false, Confirm(form.statusId)">确 定</el-button>
         </span>
         <!--对应指标列表-->
         <div v-show = controlShow id="targetTable">
@@ -199,6 +199,8 @@
 <script>
   import OpStatus from '../../components/Opdict/OpStatus'
   import Status from '../../components/Opdict/OpOperate/Status'
+  import {getStatusFindStatusId,getStatusDelete,getStatusCreate} from '@/api/opdictWang'
+  import {getObjectCreate, getObjectPageList} from "@/api/opdict";
   export default {
     name: 'MonitorObjectPage',
     components: {
@@ -369,113 +371,115 @@
         ],
         //弹窗数据
         form: {
-          f_status_id: '',
-          f_status_name: '',
-          f_opsignal_id: '',
-          f_upthres: '',
-          f_downthres: '',
-          f_level: '',
-          f_note: ''
+          // 状态id
+          statusId: '1',
+          statusName: '',
+          opsignalId: '',
+          upthres: '',
+          downthres: '',
+          level: [
+          ],
+          note: ''
         },
         //*******************中间主体*******************
         //表格数据
         tableData: [
           {
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },{
-            f_status_id: 'A000100001',
-            f_status_name: '服务器存活',
-            f_opsignal_id: 'S000100001',
-            f_upthres: '1',
-            f_downthres: '1',
-            f_level: '1',
-            f_note: ''
+            statusId: 'A000100001',
+            statusName: '服务器存活',
+            opsignalId: 'S000100001',
+            upthres: '1',
+            downthres: '1',
+            level: '1',
+            note: ''
           },
         ],
         //*******************分页尾部*******************
@@ -492,7 +496,12 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-
+        this.FilterParameter_value = ''
+        this.CompleteValue = ''
+        getObjectPageList(this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
       },
       //鼠标放到某一行上就触发
       getNowRow(row){
@@ -512,18 +521,27 @@
         this.$message('取消成功')
       },
       Confirm(id) {
+        console.log(this.form)
         //非空验证
         if(id === ""){
           this.dialogVisible = true;
           this.$message.error('状态的id不能为空');
         }
         else{
-          //储存新增的值到Value
-          this.$message({
-            message: '新增成功',
-            type: 'success'
+          getStatusCreate(this.form).then(request=>{
+            if(request.data.body){
+              this.dealData();
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              });
+            }else{
+              this.$message({
+                message: '新增失败',
+                type: 'warning'
+              });
+            }
           });
-          console.log(this.form)
         }
       },
       //查找按钮的事件
@@ -543,7 +561,7 @@
         this.controlShow = true
       },
       targetTableGetFocus(index,row){
-        this.form.f_opsignal_id = "@" + row.id;
+        this.form.opsignalId = "@" + row.id;
         // this.targetTable = row
         // event
         // console.log(row.id)
@@ -558,7 +576,7 @@
     },
     watch:{
       //当对应指标中输入东西的时候搜索
-      'form.f_opsignal_id':{
+      'form.opsignalId':{
         immediate:true,
         handler(val){
           let Arr = val.split("@")

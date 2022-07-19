@@ -42,6 +42,7 @@
         <el-table-column
           type="index"
           label="序号"
+          width="80px"
         >
         </el-table-column>
         <!--监测对象id：objectId-->
@@ -322,6 +323,8 @@ export default{
     //************************分页************************
     //处理页面初始数据
     dealData(){
+      this.FilterParameter_value = ''
+      this.CompleteValue = ''
       getObjectPageList(this.currentPage,this.size).then(request=>{
         this.totalNumber = request.data.body.total;
         this.tableData = request.data.body.data;
@@ -396,7 +399,9 @@ export default{
           this.tableData = request.data.body.data;
         })
       }
-      this.dealData();
+      if(this.FilterParameter_value ===''){
+        this.dealData();
+      }
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -408,6 +413,7 @@ export default{
       if(id === ""){
         this.dialogVisible = true;
         this.$message.error('监控的id不能为空');
+        // console.log(this)
       }
       else{
         getObjectCreate(this.form).then(request=>{
@@ -417,12 +423,18 @@ export default{
               message: '新增成功',
               type: 'success'
             });
+          }else{
+            this.$message({
+              message: '新增失败',
+              type: 'warning'
+            });
           }
         });
       }
     },
     //查找按钮的事件
     Find(){
+      this.currentPage = 1;
       if(this.FilterParameter_value === 'ObjectId'){
         getObjectFindObjectId(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
