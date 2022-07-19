@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+//****************************************Object****************************************
 //Object分页
 export  function getObjectPageList(index,size) {
   return request({
@@ -105,4 +106,26 @@ export  function getObjectFindType(Type,index,size) {
     params: {Type,index,size}
   })
 }
+
+
+
+
+//****************************************Opcid****************************************
+//Opcid分页
+export  function getOpcidPageList(index,size) {
+  return request({
+    url: '/api/OpEventCid/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}
+export  function getOpcidCreate(data) {
+  return request({
+    url: '/api/OpEventCid/Create',
+    method: 'post',
+    data
+  })
+}
+
+
 

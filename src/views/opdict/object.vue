@@ -211,7 +211,8 @@
 import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateObject from '../../components/Opdict/OpOperate/Object'
 import {getObjectPageList, getObjectSystemList, getObjectModuleList, getObjectCategoryList, getObjectCreate, getObjectDelete, getObjectUpdate,
-  getObjectFindObjectId, getObjectFindSystemName, getObjectFindModuleName, getObjectFindObjectName, getObjectFindCategory, getObjectFindItem, getObjectFindType,} from '@/api/opdict'
+  getObjectFindObjectId, getObjectFindSystemName, getObjectFindModuleName, getObjectFindObjectName, getObjectFindCategory, getObjectFindItem,
+  getObjectFindType,} from '@/api/opdict'
 export default{
 
   name: 'MonitorObjectPage',
