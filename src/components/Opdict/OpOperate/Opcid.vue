@@ -173,10 +173,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$emit("Del",this.MyData.opcid);
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -191,10 +187,6 @@ export default {
         this.$message.error('运维状态id不能为空');
       }
       else{
-        this.$message({
-          message: '编辑成功',
-          type: 'success'
-        });
         this.$emit("Revise",this.form);
       }
     },

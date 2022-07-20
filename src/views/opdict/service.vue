@@ -229,6 +229,11 @@ export default {
               message: '新增成功',
               type: 'success'
             });
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
           }
         });
       }
@@ -274,13 +279,27 @@ export default {
             message: '修改成功',
             type: 'success'
           });
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },
     GetDel(msg){
       getOpDictServiceDelete(msg).then(request=>{
+        this.Find();
         if(request.data.body){
-          this.Find();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },

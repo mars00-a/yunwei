@@ -381,7 +381,7 @@ export default{
             });
           }else {
             this.$message({
-              message: request.msg,
+              message: request.data.msg,
               type: 'error'
             });
           }
@@ -448,7 +448,7 @@ export default{
           this.Find();
         }else{
           super.$message({
-            message: '修改',
+            message: request.data.msg,
             type: 'warning'
           });
         }
@@ -457,7 +457,16 @@ export default{
     GetDel(msg){
       getObjectDelete(msg).then(request=>{
         if(request.data.body){
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
           this.Find();
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },

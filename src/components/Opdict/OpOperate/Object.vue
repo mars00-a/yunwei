@@ -157,10 +157,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$emit("Del",this.myData.objectId);
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
+
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -193,19 +190,6 @@ export default {
         this.$message.error('监控的id不能为空');
       }
       else{
-        // getObjectUpdate(this.form).then(request=>{
-        //   if(request.data.body){
-        //     this.$message({
-        //       message: '修改成功',
-        //       type: 'success'
-        //     });
-        //   }else{
-        //     super.$message({
-        //       message: '修改',
-        //       type: 'warning'
-        //     });
-        //   }
-        // });
         this.$emit("Revise",this.form);
       }
     }

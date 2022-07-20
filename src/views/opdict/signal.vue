@@ -447,6 +447,11 @@ export default {
               message: '新增成功',
               type: 'success'
             });
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
           }
         });
       }
@@ -498,6 +503,11 @@ export default {
             message: '修改成功',
             type: 'success'
           });
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },
@@ -506,8 +516,13 @@ export default {
         if(request.data.body){
           this.Find();
           this.$message({
-            message: '修改成功',
+            message: '删除成功',
             type: 'success'
+          });
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
           });
         }
       });

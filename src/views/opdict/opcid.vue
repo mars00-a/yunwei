@@ -199,10 +199,15 @@
             </el-select>
           </el-form-item>
           <el-form-item label="事件阈值">
-            <el-input v-model="form.threshold" />
+            <el-tooltip class="item" effect="dark" content="事件阈值取值范围：0-100" placement="right">
+              <el-input v-model="form.threshold" placeholder="事件阈值取值范围：0-100"/>
+            </el-tooltip>
           </el-form-item>
           <el-form-item label="事件默认级别">
-            <el-input v-model="form.level" />
+            <el-tooltip class="item" effect="dark" content="事件默认级别范围：1-6" placement="right">
+              <el-input v-model="form.level" placeholder="事件默认级别范围：1-6"/>
+            </el-tooltip>
+
           </el-form-item>
           <el-form-item label="备注">
             <el-input type="textarea" v-model="form.note"/>
@@ -210,7 +215,7 @@
         </el-form>
         <span id="myFooter" slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible=false,Confirm(form.EventId)">确 定</el-button>
+            <el-button type="primary" @click="dialogVisible=false,Confirm()">确 定</el-button>
         </span>
 
       <!--            右侧指标信息栏-->
@@ -499,26 +504,46 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(index,row){
-      this.form.target = "@"+row.id;
+      this.form.opsignalId = "@"+row.id;
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
     Cancel() {
       this.$message('取消成功')
     },
-    Confirm(id) {
-      if(id === ""){
+    Confirm() {
+      if(this.form.opcid === ""){
         this.dialogVisible = true;
         this.$message.error('运维状态的id不能为空');
       }
+      else if(isNaN(this.form.threshold*1)){
+        this.dialogVisible = true;
+        this.$message.error('事件阈值取值应为数字');
+      }
+      else if(this.form.threshold>100 || this.form.threshold<0){
+        this.dialogVisible = true;
+        this.$message.error('事件阈值取值范围为0到100');
+      }
+      else if(isNaN(this.form.level*1)){
+        this.dialogVisible = true;
+        this.$message.error('事件默认级别的值应为数字');
+      }
+      else if(this.form.level<1 || this.form.level>6){
+        this.dialogVisible = true;
+        this.$message.error('事件默认级别范围为1到6');
+      }
       else{
-        console.log(this.form);
         getOpcidCreate(this.form).then(request=>{
           if(request.data.body){
             this.Find();
             this.$message({
               message: '新增成功',
               type: 'success'
+            });
+          }else {
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
             });
           }
         });
@@ -589,7 +614,16 @@ export default {
     GetRevise(msg) {
       getOpcidUpdate(msg).then(request=>{
         if(request.data.body){
+          this.$message({
+            message: '编辑成功',
+            type: 'success'
+          });
           this.Find();
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },
@@ -597,14 +631,23 @@ export default {
       console.log(msg)
       getOpcidDelete(msg).then(request=>{
         if(request.data.body){
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
           this.Find();
+        }else{
+          super.$message({
+            message: request.data.msg,
+            type: 'warning'
+          });
         }
       });
     },
   },
   watch:{
     //当对应指标中输入东西的时候搜索
-    'form.target':{
+    'form.opsignalId':{
       immediate:true,
       handler(val){
         let Arr = val.split("@")
