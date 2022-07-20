@@ -9,19 +9,19 @@
           <el-form-item label="服务类型id" :rules="[{ required: true}]">
             <el-input
               :disabled="true"
-              v-model="form.f_service_type" />
+              v-model="form.serviceType" />
           </el-form-item>
           <!--服务名称-->
           <el-form-item label="服务名称">
-            <el-input v-model="form.f_service_name" />
+            <el-input v-model="form.serviceName" />
           </el-form-item>
           <!--服务数据表-->
           <el-form-item label="服务数据表">
-            <el-input v-model="form.f_service_table" />
+            <el-input v-model="form.serviceTable" />
           </el-form-item>
           <!--备注-->
           <el-form-item label="备注">
-            <el-input v-model="form.f_note"  type="textarea"/>
+            <el-input v-model="form.note"  type="textarea"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -44,10 +44,10 @@ export default {
       dialogVisible: false,
       //编辑弹窗的表单头部（暂无使用）
       form: {
-        f_service_type: '',
-        f_service_name: '',
-        f_service_table: '',
-        f_note: ''
+        serviceType: '',
+        serviceName: '',
+        serviceTable: '',
+        note: ''
       }
     }
   },
@@ -60,7 +60,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$emit("Del",this.myData.f_service_type);
+        this.$emit("Del",this.myData.serviceType);
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -74,10 +74,10 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
-      this.form.f_service_type = this.myData.f_service_type;
-      this.form.f_service_name = this.myData.f_service_name;
-      this.form.f_service_table = this.myData.f_service_table;
-      this.form.f_note = this.myData.f_note;
+      this.form.serviceType = this.myData.serviceType;
+      this.form.serviceName = this.myData.serviceName;
+      this.form.serviceTable = this.myData.serviceTable;
+      this.form.note = this.myData.note;
     },
     //编辑弹窗点击取消时响应
     Cancel() {
@@ -90,11 +90,6 @@ export default {
         this.$message.error('服务类型id不能为空');
       }
       else{
-        //储存修改的值到Value
-        this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
         this.$emit("Revise",this.form);
       }
     }

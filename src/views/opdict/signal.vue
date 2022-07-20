@@ -24,7 +24,7 @@
         <!--查找、新增功能按钮-->
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
         </el-col>
@@ -36,34 +36,41 @@
         height="100%"
         border
         style="width: 87.8rem"
-        @cell-mouse-enter="getNowRow">
-        <!--运维指标id：f_opsignal_id-->
+        @cell-mouse-enter="getNowRow"
+        :cell-class-name="tableCellClassName">
+        <!--序号-->
         <el-table-column
-          prop="f_opsignal_id"
+          type="index"
+          label="序号"
+        >
+        </el-table-column>
+        <!--运维指标id：opsignalId-->
+        <el-table-column
+          prop="opsignalId"
           label="运维指标id"
         >
         </el-table-column>
-        <!--运维指标名称：f_opsignal_name-->
+        <!--运维指标名称：opsignalName-->
         <el-table-column
-          prop="f_opsignal_name"
+          prop="opsignalName"
           label="运维指标名称"
         >
         </el-table-column>
-        <!--运维指标参数类型：f_para_type-->
+        <!--运维指标参数类型：paraType-->
         <el-table-column
-          prop="f_para_type"
+          prop="paraType"
           label="运维指标参数类型"
         >
         </el-table-column>
-        <!--运维指标计算公式：f_para-->
+        <!--运维指标计算公式：para-->
         <el-table-column
-          prop="f_para"
+          prop="para"
           label="运维指标计算公式"
         >
         </el-table-column>
-        <!--备注：f_note-->
+        <!--备注：note-->
         <el-table-column
-          prop="f_note"
+          prop="note"
           label="备注"
         >
         </el-table-column>
@@ -89,10 +96,10 @@
         <el-pagination
           background
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-sizes="[20, 50, 100, 200, 300]"
+          :page-size="size"
           layout="sizes, prev, pager, next, jumper"
-          :total="12000"
+          :total="totalNumber"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -103,16 +110,15 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="指标id" :rules="[{ required: true}]">
           <el-input
-            :disabled="true"
-            v-model="form.f_opsignal_id" />
+            v-model="form.opsignalId" />
         </el-form-item>
         <el-form-item label="指标名称">
-          <el-input v-model="form.f_opsignal_name" />
+          <el-input v-model="form.opsignalName" />
         </el-form-item>
         <el-form-item label="指标类型">
           <el-select
             :style="controlWidth"
-            v-model="form.f_para_type"
+            v-model="form.paraType"
             filterable
             allow-create
             default-first-option
@@ -126,12 +132,12 @@
         </el-form-item>
         <el-form-item label="指标公式">
           <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
-            <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
+            <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.para" />
           </el-tooltip>
         </el-form-item>
         <!--note-->
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="form.f_note"/>
+          <el-input type="textarea" v-model="form.note"/>
         </el-form-item>
       </el-form>
 
@@ -174,6 +180,8 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import Signal from '../../components/Opdict/OpOperate/Signal'
+import {getOpDictSignalPageList, getOpDictSignalFindopsignalId, getOpDictSignalFindopsignalName, getOpDictSignalFindparaType, getOpDictSignalFindpara,
+  getOpDictSignalFindnote, } from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -189,23 +197,22 @@ export default {
         width: "100%"
       },
       //*******************控制区*******************
-      FilterParameters: [
-        {
-        value: '黄金糕',
-        label: '黄金糕'
-      }, {
-        value: '双皮奶',
-        label: '双皮奶'
-      }, {
-        value: '蚵仔煎',
-        label: '蚵仔煎'
-      }, {
-        value: '龙须面',
-        label: '龙须面'
-      }, {
-        value: '北京烤鸭',
-        label: '北京烤鸭'
-      }],
+      FilterParameters: [{
+        value:'opsignalId',
+        label:'运维指标id'
+      },{
+        value:'opsignalName',
+        label:'运维指标名称'
+      },{
+        value:'paraType',
+        label:'运维指标参数类型'
+      },{
+        value:'para',
+        label:'运维指标计算公式'
+      },{
+        value:'note',
+        label:'备注'
+      },],
       //过滤参数
       FilterParameter_value: '',
       //查找输入框
@@ -217,11 +224,11 @@ export default {
       controlShow: false,
       //弹窗的内容
       form: {
-        f_opsignal_id: '',
-        f_opsignal_name: '',
-        f_para_type: '',
-        f_para: '',
-        f_note: '',
+        opsignalId: '',
+        opsignalName: '',
+        paraType: '',
+        para: '',
+        note: '',
         tip:'此处输入指标公式'
       },
       //右侧的指标表格
@@ -363,71 +370,47 @@ export default {
       }],
       //*******************中间主体*******************
       //表格数据
-      tableData: [
-        {
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      },{
-        f_opsignal_id: 'S00010000',
-        f_opsignal_name: '服务器是否存活',
-        f_para_type: '1',
-        f_para: '@0001000',
-        f_note:''
-      }],
+      tableData: [],
       //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
       //当前行数
       nowRow: 1,
-      //总页数
-      totalNumber: 1200
+      //数据总数
+      totalNumber: '',
+      //当前页面显示最大数量
+      size: 20,
     }
   },
   methods:{
     //************************分页************************
     //处理页面初始数据
     dealData(){
-
+      getOpDictSignalPageList(this.currentPage,this.size).then(request=>{
+        this.totalNumber = request.data.body.total;
+        this.tableData = request.data.body.data;
+      });
+      this.FilterParameter_value = '';
+      this.CompleteValue='';
+    },
+    //鼠标放到某一行上就触发
+    tableCellClassName({row,rowIndex}){
+      row.index=rowIndex;
     },
     //鼠标放到某一行上就触发
     getNowRow(row){
-      // console.log(row);
+      this.nowRow = row.index+1+(this.currentPage-1)*this.size;
     },
     //每页最大条数
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`)
+      this.size = val;
+      this.Find();
     },
     //当前页数
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
+      this.currentPage = val;
+      this.Find();
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -451,8 +434,40 @@ export default {
     },
     //查找按钮的事件
     Find(){
-      const msg = [this.FilterParameter_value , this.CompleteValue];
-      console.log(msg);
+      if(this.FilterParameter_value === 'opsignalId'){
+        getOpDictSignalFindopsignalId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          console.log(request);
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'opsignalName'){
+        getOpDictSignalFindopsignalName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'paraType'){
+        getOpDictSignalFindparaType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'para'){
+        getOpDictSignalFindpara(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'note'){
+        getOpDictSignalFindnote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else{
+        this.dealData()
+      }
     },
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
