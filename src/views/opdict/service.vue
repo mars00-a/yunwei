@@ -164,9 +164,6 @@ export default {
         serviceName: '',
         serviceTable: '',
         note: '',
-        objectIds: [
-          "string"
-        ]
       },
       //*******************中间主体*******************
       //表格数据
@@ -224,7 +221,6 @@ export default {
         this.$message.error('服务类型id不能为空');
       }
       else{
-        console.log(this.form);
         getOpDictServiceCreate(this.form).then(request=>{
           if(request.data.body){
             this.Find();
@@ -271,7 +267,6 @@ export default {
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
       getOpDictServiceUpdate(msg).then(request=>{
-        console.log(request.data);
         if(request.data.body){
           this.Find();
           this.$message({
@@ -282,7 +277,6 @@ export default {
       });
     },
     GetDel(msg){
-      console.log(msg);
       getOpDictServiceDelete(msg).then(request=>{
         if(request.data.body){
           this.Find();

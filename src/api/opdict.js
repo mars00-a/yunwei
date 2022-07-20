@@ -329,6 +329,22 @@ export  function getOpDictSignalCreate(body) {
   return request({
     url: '/api/OpDictSignal/Create',
     method: 'post',
-    body
+    data:body
+  })
+}
+//Signal删除
+export  function getOpDictSignalDelete(objectId) {
+  return request({
+    url: '/api/OpDictSignal/Delete',
+    method: 'post',
+    params: {objectId}
+  })
+}
+//Signal更新
+export  function getOpDictSignalUpdate(data) {
+  return request({
+    url: '/api/OpDictSignal/Update',
+    method: 'post',
+    data
   })
 }

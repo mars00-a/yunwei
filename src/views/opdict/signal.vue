@@ -124,14 +124,14 @@
             default-first-option
             placeholder="请选择指标类型">
             <el-option
-              v-for="item in f_para_types"
+              v-for="item in opsignalId_types"
               :key="item.value"
               :label="item.label"
               :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item label="指标公式">
-          <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
+          <el-tooltip class="item" effect="dark" :content="tip" placement="bottom">
             <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.para" />
           </el-tooltip>
         </el-form-item>
@@ -181,7 +181,7 @@
 import OpStatus from '../../components/Opdict/OpStatus'
 import Signal from '../../components/Opdict/OpOperate/Signal'
 import {getOpDictSignalPageList, getOpDictSignalFindopsignalId, getOpDictSignalFindopsignalName, getOpDictSignalFindparaType, getOpDictSignalFindpara,
-  getOpDictSignalFindnote, } from '@/api/opdict'
+  getOpDictSignalFindnote, getOpDictSignalCreate, getOpDictSignalDelete, getOpDictSignalUpdate} from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -229,8 +229,9 @@ export default {
         paraType: '',
         para: '',
         note: '',
-        tip:'此处输入指标公式'
+        objectIds: [],
       },
+      tip:'此处输入指标公式',
       //右侧的指标表格
       targetTable:[
         {
@@ -360,12 +361,12 @@ export default {
         },
       ],
       //指标类型
-      f_para_types:[
+      opsignalId_types:[
         {
-        value:'0',
+        value: 0,
         label:'0--监控对象',
       },{
-        value:'1',
+        value: 1,
         label:'1--计算公式',
       }],
       //*******************中间主体*******************
@@ -424,12 +425,16 @@ export default {
         this.$message.error('运维指标id不能为空');
       }
       else{
-        //储存新增的值到Value
-        this.$message({
-          message: '新增成功',
-          type: 'success'
+        console.log(this.form);
+        getOpDictSignalCreate(this.form).then(request=>{
+          if(request.data.body){
+            this.Find();
+            this.$message({
+              message: '新增成功',
+              type: 'success'
+            });
+          }
         });
-        console.log(this.form)
       }
     },
     //查找按钮的事件
@@ -472,16 +477,32 @@ export default {
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
-      console.log(msg);
+      getOpDictSignalUpdate(msg).then(request=>{
+        if(request.data.body){
+          this.Find();
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+        }
+      });
     },
     GetDel(msg){
-      console.log(msg);
+      getOpDictSignalDelete(msg).then(request=>{
+        if(request.data.body){
+          this.Find();
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+        }
+      });
     },
     getFocus(){
       this.controlShow = true
     },
     targetTableGetFocus(row){
-      let val = this.form.f_para
+      let val = this.form.para
       let myValArr = val.split("@");
       let FrontArr = val.split("@",myValArr.length-1);
       let FrontStr = '';
@@ -497,18 +518,18 @@ export default {
       // console.log("FrontArr",FrontArr)
       // console.log("FrontStr",FrontStr)
       val = myValArr[myValArr.length-1];
-      this.form.f_para = FrontStr+"@"+row.id;
+      this.form.para = FrontStr+"@"+row.id;
     }
   },
   watch:{
     // 当对应指标中输入东西的时候搜索
-    'form.f_para':{
+    'form.para':{
       immediate:true,
       handler(val){
         //当输入框里值为空时，将提示标为指定内容
         if(val === ''||val === undefined||val === null){
           // console.log("发生了改变，值为：",val)
-          this.form.tip = '请输入指标公式'
+          this.tip = '请输入指标公式'
         }
         //获取@符号后面的数据，用于搜索
         let myValArr = val.split("@");
@@ -518,6 +539,7 @@ export default {
         myIdArr = myIdArr.filter(function (s) {
           return s && s.trim();
         });
+        this.form.objectIds = myIdArr;
         // console.log("id数组为：",myIdArr)
         //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
         let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
@@ -537,12 +559,12 @@ export default {
           }
         }
         // console.log("指标名称数组为：",myNameArr)
-        //将指标名称和运算符组合成一句话传入到form.tip中
-        this.form.tip = ''
+        //将指标名称和运算符组合成一句话传入到tip中
+        this.tip = ''
         for(let i=0;i<myOperatorArr.length;i++){
-          this.form.tip += myOperatorArr[i]
+          this.tip += myOperatorArr[i]
           if (myNameArr[i])
-            this.form.tip += myNameArr[i]
+            this.tip += myNameArr[i]
         }
 
 
@@ -551,10 +573,10 @@ export default {
         })
       }
     },
-    'form.tip':{
+    'tip':{
       handler(val){
         if(val === ''){
-          this.form.tip = "请输入指标公式"
+          this.tip = "请输入指标公式"
         }
       }
     }

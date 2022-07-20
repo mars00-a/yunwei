@@ -6,23 +6,22 @@
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="指标id" :rules="[{ required: true}]">
             <el-input
-              :disabled="true"
-              v-model="form.f_opsignal_id" />
+              v-model="form.opsignalId" />
           </el-form-item>
           <el-form-item label="指标名称">
-            <el-input v-model="form.f_opsignal_name" />
+            <el-input v-model="form.opsignalName" />
           </el-form-item>
           <el-form-item label="指标类型">
             <el-select
               :style="controlWidth"
-              v-model="form.f_para_type"
+              v-model="form.paraType"
               filterable
               allow-create
               default-first-option
               placeholder="请选择指标类型"
             >
               <el-option
-                v-for="item in f_para_types"
+                v-for="item in para_types"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -30,8 +29,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="指标公式">
-            <el-tooltip class="item" effect="dark" :content="form.tip" placement="bottom">
-              <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.f_para" />
+            <el-tooltip class="item" effect="dark" :content="tip" placement="bottom">
+              <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.para" />
             </el-tooltip>
           </el-form-item>
           <div>
@@ -39,13 +38,13 @@
           </div>
           <!--note-->
           <el-form-item label="备注">
-            <el-input type="textarea" v-model="form.f_note"/>
+            <el-input type="textarea" v-model="form.note"/>
           </el-form-item>
         </el-form>
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_opsignal_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.opsignalId)">确 定</el-button>
         </span>
 
 <!--        弹窗的右侧表单-->
@@ -97,15 +96,16 @@ export default {
       serverTargetTable: this.serverTable,
       dialogVisible: false,
       form: {
-        f_opsignal_id:'',
-        f_opsignal_name:'',
-        f_para_type:'',
-        f_para:'',
-        target:'',
-        tip:'此处输入指标公式'
+        opsignalId: '',
+        opsignalName: '',
+        paraType: '',
+        para: '',
+        note: '',
+        objectIds: [],
       },
+      tip:'此处输入指标公式',
       //指标类型
-      f_para_types:[
+      para_types:[
         {
         value:'0',
         label:'0--监控对象',
@@ -124,7 +124,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$emit("Del",this.myData.f_opsignal_id);
+        this.$emit("Del",this.myData.opsignalId);
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -138,11 +138,11 @@ export default {
     },
     //点击编辑时将该行的数据传入弹窗中
     Revise(){
-      this.form.f_opsignal_id = this.myData.f_opsignal_id;
-      this.form.f_opsignal_name = this.myData.f_opsignal_name;
-      this.form.f_para_type = this.myData.f_para_type;
-      this.form.f_para = this.myData.f_para;
-      this.form.target = this.myData.target;
+      this.form.opsignalId = this.myData.opsignalId;
+      this.form.opsignalName = this.myData.opsignalName;
+      this.form.paraType = this.myData.paraType;
+      this.form.para = this.myData.para;
+      this.form.note = this.myData.note;
     },
     //编辑弹窗点击取消时响应
     Cancel() {
@@ -155,10 +155,6 @@ export default {
         this.$message.error('运维指标id不能为空');
       }
       else{
-        this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
         this.$emit("Revise",this.form);
       }
     },
@@ -168,7 +164,7 @@ export default {
     },
     // 点击添加按钮后将输入的搜索内容替换成插入的指标id
     targetTableGetFocus(row){
-      let val = this.form.f_para
+      let val = this.form.para
       let myValArr = val.split("@");
       let FrontArr = val.split("@",myValArr.length-1);
       let FrontStr = '';
@@ -184,18 +180,18 @@ export default {
       // console.log("FrontArr",FrontArr)
       // console.log("FrontStr",FrontStr)
       val = myValArr[myValArr.length-1];
-      this.form.f_para = FrontStr+"@"+row.id;
+      this.form.para = FrontStr+"@"+row.id;
     }
   },
   watch:{
     // 当对应指标中输入东西的时候搜索，并且更改提示内容
-    'form.f_para':{
+    'form.para':{
       immediate:true,
       handler(val){
         //当输入框里值为空时，将提示标为指定内容
         if(val === ''||val === undefined||val === null){
           // console.log("发生了改变，值为：",val)
-          this.form.tip = '请输入指标公式'
+          this.tip = '请输入指标公式'
         }
         //获取@符号后面的数据，用于搜索
         let myValArr = val.split("@");
@@ -205,6 +201,7 @@ export default {
         myIdArr = myIdArr.filter(function (s) {
           return s && s.trim();
         });
+        this.form.objectIds = myIdArr;
         // console.log("id数组为：",myIdArr)
         //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
         let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
@@ -224,12 +221,12 @@ export default {
           }
         }
         // console.log("指标名称数组为：",myNameArr)
-        //将指标名称和运算符组合成一句话传入到form.tip中
-        this.form.tip = ''
+        //将指标名称和运算符组合成一句话传入到tip中
+        this.tip = ''
         for(let i=0;i<myOperatorArr.length;i++){
-          this.form.tip += myOperatorArr[i]
+          this.tip += myOperatorArr[i]
           if (myNameArr[i])
-            this.form.tip += myNameArr[i]
+            this.tip += myNameArr[i]
         }
 
 
@@ -239,10 +236,10 @@ export default {
       }
     },
     // 当提示为空时要有默认提示
-    'form.tip':{
+    'tip':{
       handler(val){
         if(val === ''){
-          this.form.tip = "请输入指标公式"
+          this.tip = "请输入指标公式"
         }
       }
     }
