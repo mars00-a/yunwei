@@ -121,14 +121,14 @@
     </el-footer>
     <!--    弹窗-->
     <div>
-      <el-dialog top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
+      <el-dialog :before-close="handleClose" top="5vh" title="新增运维状态" :visible.sync="dialogVisible" width="35%">
         <el-form ref="form" :model="form" label-width="80px">
           <!--statusId-->
           <el-form-item label="状态的id" :rules="[{ required: true}]">
             <el-input
               v-model="form.statusId"
-              :disabled="true"
             />
+<!--            :disabled="true"-->
           </el-form-item>
           <!--statusName-->
           <el-form-item label="状态名称">
@@ -136,15 +136,15 @@
           </el-form-item>
           <!--opsignalId-->
           <el-form-item label="对应指标">
-            <el-input v-model="form.opsignalId" placeholder="输入指标名称可查找指标id" @focus="getFocus"/>
+            <el-input v-model="form.opsignalId" placeholder="输入指标名称或指标id可查找对应指标" @focus="getFocus"/>
           </el-form-item>
           <!--upthres-->
           <el-form-item label="阈值上限">
-            <el-input v-model="form.upthres" />
+            <el-input v-model="form.upthres" placeholder="按百分比形式输入，不需要输入百分号" />
           </el-form-item>
           <!--downthres-->
           <el-form-item label="阈值下限">
-            <el-input v-model="form.downthres" />
+            <el-input v-model="form.downthres"  placeholder="按百分比形式输入，不需要输入百分号"/>
           </el-form-item>
           <!--level-->
           <el-form-item label="状态类型">
@@ -410,13 +410,12 @@
         //弹窗数据
         form: {
           // 状态id
-          statusId: '8687',
+          statusId: '',
           statusName: '',
           opsignalId: '',
           upthres: '',
           downthres: '',
-          level: [
-          ],
+          level: '',
           note: ''
         },
         //*******************中间主体*******************
@@ -616,11 +615,24 @@
       },
       // 弹窗的新增
       Confirm(id) {
-        //非空验证
+        console.log(this.form)
         if(id === ""){
+            this.$message.error('状态的id不能为空');
+          }
+        else if(this.form.downthres > this.form.upthres){
           this.dialogVisible = true;
-          this.$message.error('状态的id不能为空');
+          this.$message.error('阈值上限需大于阈值下限');
         }
+        else if(this.form.downthres<0 || this.form.downthres>100 || this.form.upthres<0 || this.form.upthres>100){
+          this.dialogVisible = true;
+          this.$message.error('阈值下限或阈值上限需在0-100之内');
+        }
+        else if(this.form.level !== 1 && this.form.level !== 2 && this.form.level !== 3){
+          console.log(this.form.level)
+          this.dialogVisible = true;
+          this.$message.error('请正确的选择状态类型');
+        }
+        //id非空验证
         else{
           getStatusCreate(this.form).then(request=>{
             if(request.data.body){
@@ -689,6 +701,7 @@
       //************************修改、删除按钮************************
       //修改、删除后的表数据返回到以下两个函数
       GetRevise(msg){
+        console.log(msg)
         getStatusUpdate(msg).then(request=>{
           if(request.data.body){
             this.$message({
@@ -726,9 +739,20 @@
         this.controlShow = true
       },
       targetTableGetFocus(index,row){
-        this.form.opsignalId = "@" + row.id;
+        this.form.opsignalId = "S" + row.id;
         // this.targetTable = row
         // event
+      },
+      handleClose(done){
+          this.form.statusId = '';
+          this.form.statusName = '';
+          this.form.opsignalId = '';
+          this.form.upthres = '';
+          this.form.downthres = '';
+          this.form.level = '';
+          this.form.note = '';
+          this.controlShow = false
+          done();
       }
     },
     mounted(){
@@ -742,7 +766,7 @@
       'form.opsignalId':{
         immediate:true,
         handler(val){
-          let Arr = val.split("@")
+          let Arr = val.split("S")
           if (Arr[0] === '')
             val = Arr[1]
           else
