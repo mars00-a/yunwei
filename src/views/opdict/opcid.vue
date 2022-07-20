@@ -60,12 +60,13 @@
         <el-table-column
           prop="systemId"
           label="所属系统id"
+          :formatter="dealSystemId"
         >
         </el-table-column>
         <!--事件类型：type-->
         <el-table-column
           prop="type"
-          label="事件类型"
+          label="事件来源类型"
         >
         </el-table-column>
         <!--运维指标id：opsignalId-->
@@ -78,6 +79,7 @@
         <el-table-column
           prop="eventType"
           label="事件类型"
+          :formatter="dealEventType"
         >
         </el-table-column>
         <!--默认阈值：threshold-->
@@ -105,6 +107,7 @@
             <OpOperateOpcid
               :server-table="serverTargetTable"
               :MyData="scope.row"
+              :SourceTypes="EventSourceTypes"
               @Revise='GetRevise'
               @Del='GetDel'/>
           </template>
@@ -184,7 +187,6 @@
             <el-select
               :style="controlWidth"
               v-model="form.eventType"
-              filterable
               allow-create
               default-first-option
               placeholder="请选择所属系统"
@@ -199,15 +201,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="事件阈值">
-            <el-tooltip class="item" effect="dark" content="事件阈值取值范围：0-100" placement="right">
               <el-input v-model="form.threshold" placeholder="事件阈值取值范围：0-100"/>
-            </el-tooltip>
           </el-form-item>
           <el-form-item label="事件默认级别">
-            <el-tooltip class="item" effect="dark" content="事件默认级别范围：1-6" placement="right">
               <el-input v-model="form.level" placeholder="事件默认级别范围：1-6"/>
-            </el-tooltip>
-
           </el-form-item>
           <el-form-item label="备注">
             <el-input type="textarea" v-model="form.note"/>
@@ -449,7 +446,13 @@ export default {
       //事件来源类型
       EventSourceTypes: [],
       //事件类型
-      EventTypes: [],
+      EventTypes: [{
+          value:1,
+          label:'1-报警'
+        },{
+          value:2,
+          label:'2-恢复'
+        }],
       //*******************中间主体*******************
       //表格数据
       tableData: [],
@@ -468,6 +471,28 @@ export default {
   },
   methods: {
     //************************分页************************
+    dealSystemId(row){
+      switch (row.systemId){
+        case 0:
+          return "0-所有系统";
+        case 1:
+          return "1-SK3000";
+        case 2:
+          return "2-APP服务";
+        case 3:
+          return "3-智能家居";
+        case 4:
+          return "4-智慧用电";
+      }
+    },
+    dealEventType(row){
+      switch (row.eventType){
+        case 1:
+          return "1-报警";
+        case 2:
+          return "2-恢复";
+      }
+    },
     //处理页面初始数据
     dealData(){
       getOpcidPageList(this.currentPage,this.size).then(request=>{
@@ -520,7 +545,7 @@ export default {
         this.dialogVisible = true;
         this.$message.error('事件阈值取值应为数字');
       }
-      else if(this.form.threshold>100 || this.form.threshold<0){
+      else if(this.form.threshold<0 || this.form.threshold>100){
         this.dialogVisible = true;
         this.$message.error('事件阈值取值范围为0到100');
       }

@@ -79,6 +79,7 @@
         <el-table-column
           prop="level"
           label="状态类型"
+          :formatter="dealLevel"
         >
         </el-table-column>
         <!--备注：note-->
@@ -532,12 +533,22 @@
       }
     },
     methods:{
+      dealLevel(row){
+        switch (row.level){
+          case 1:
+            return "1-正常";
+          case 2:
+            return "2-隐患";
+          case 3:
+            return "3-危险";
+        }
+      },
       //************************分页************************
       //处理页面初始数据
       clearDealData(){
         // 将过滤的参数和数值都清空，直接查询列表
-        this.FilterParameter_value = ''
-        this.CompleteValue = ''
+        this.FilterParameter_value = '';
+        this.CompleteValue = '';
         getStatusPageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;

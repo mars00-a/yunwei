@@ -86,6 +86,7 @@
         <el-table-column
           prop="type"
           label="数据类型"
+          :formatter="stateFormat"
         >
         </el-table-column>
         <!--操作栏-->
@@ -119,6 +120,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
+        <el-button type="primary" round>跳转</el-button>
       </div>
     </el-footer>
     <!--弹窗-->
@@ -323,6 +325,14 @@ export default{
   methods:{
     //************************分页************************
     //处理页面初始数据
+    stateFormat(row, column){
+      if(row.type === 1){
+        return "1——是/否"
+      }
+      if(row.type === 2){
+        return "2——整型"
+      }
+    },
     dealData(){
       getObjectPageList(this.currentPage,this.size).then(request=>{
         this.totalNumber = request.data.body.total;

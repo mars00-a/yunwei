@@ -55,7 +55,6 @@
             <el-select
               :style="controlWidth"
               v-model="form.eventType"
-              filterable
               allow-create
               default-first-option
               placeholder="请选择所属系统"
@@ -70,10 +69,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="事件阈值">
-            <el-input v-model="form.threshold" />
+            <el-input v-model="form.threshold" placeholder="事件阈值取值范围：0-100"/>
           </el-form-item>
           <el-form-item label="事件默认级别">
-            <el-input v-model="form.level" />
+            <el-input v-model="form.level" placeholder="事件默认级别范围：1-6"/>
           </el-form-item>
           <el-form-item label="备注">
             <el-input type="textarea" v-model="form.note"/>
@@ -151,11 +150,18 @@ export default {
       //事件来源类型
       EventSourceTypes: [],
       //事件类型
-      EventTypes: [],
+      EventTypes: [{
+        value:1,
+        label:'1-报警'
+      },{
+        value:2,
+        label:'2-恢复'
+      }],
     }
   },
   methods: {
     Revise(){
+      this.EventSourceTypes = this.SourceTypes;
       this.form.opcid = this.MyData.opcid;
       this.form.opcidName = this.MyData.opcidName;
       this.form.systemId = this.MyData.systemId;
@@ -181,10 +187,25 @@ export default {
       })
     },
     Confirm(id) {
-      console.log(id);
-      if(id === ""){
+      if(this.form.opcid === ""){
         this.dialogVisible = true;
-        this.$message.error('运维状态id不能为空');
+        this.$message.error('运维状态的id不能为空');
+      }
+      else if(isNaN(this.form.threshold*1)){
+        this.dialogVisible = true;
+        this.$message.error('事件阈值取值应为数字');
+      }
+      else if(this.form.threshold<0 || this.form.threshold>100){
+        this.dialogVisible = true;
+        this.$message.error('事件阈值取值范围为0到100');
+      }
+      else if(isNaN(this.form.level*1)){
+        this.dialogVisible = true;
+        this.$message.error('事件默认级别的值应为数字');
+      }
+      else if(this.form.level<1 || this.form.level>6){
+        this.dialogVisible = true;
+        this.$message.error('事件默认级别范围为1到6');
       }
       else{
         this.$emit("Revise",this.form);
@@ -230,6 +251,7 @@ export default {
     MyData:Array,
     // 未经过搜索的指标列表
     serverTable:Array,
+    SourceTypes:Array
   }
 }
 

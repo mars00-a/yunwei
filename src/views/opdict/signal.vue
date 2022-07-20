@@ -61,6 +61,7 @@
         <el-table-column
           prop="paraType"
           label="运维指标参数类型"
+          :formatter="dealParaType"
         >
         </el-table-column>
         <!--运维指标计算公式：para-->
@@ -387,7 +388,15 @@ export default {
     }
   },
   methods:{
-    //************************分页************************
+  //************************分页************************
+    dealParaType(row){
+      switch (row.paraType){
+        case 1:
+          return "1-监控对象";
+        case 2:
+          return "2-计算公式";
+      }
+    },
     //处理页面初始数据
     dealData(){
       getOpDictSignalPageList(this.currentPage,this.size).then(request=>{
