@@ -30,7 +30,7 @@
           </el-form-item>
           <el-form-item label="指标公式">
             <el-tooltip class="item" effect="dark" :content="tip" placement="bottom">
-              <el-input placeholder="输入指标名称可查找指标id" @focus="getFocus" v-model="form.para" />
+              <el-input placeholder="输入对象名称或对象id可查找对应的对象" @focus="getFocus" v-model="form.para" />
             </el-tooltip>
           </el-form-item>
           <div>
@@ -44,7 +44,7 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.opsignalId)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
         </span>
 
 <!--        弹窗的右侧表单-->
@@ -107,11 +107,11 @@ export default {
       //指标类型
       para_types:[
         {
-        value:'0',
-        label:'0--监控对象',
+        value:1,
+        label:'1--监控对象',
       },{
-        value:'1',
-        label:'1--计算公式',
+        value:2,
+        label:'2--计算公式',
       }]
     }
   },
@@ -125,10 +125,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$emit("Del",this.myData.opsignalId);
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -149,10 +145,23 @@ export default {
       this.$message('取消成功')
     },
     //编辑弹窗点击确认时响应
-    Confirm(id) {
-      if(id === ""){
+    Confirm() {
+      console.log(this.form)
+      if(this.form.opsignalId === ""){
         this.dialogVisible = true;
         this.$message.error('运维指标id不能为空');
+      }
+      else if(this.form.paraType !== 1 && this.form.paraType !== 2){
+        this.dialogVisible = true;
+        this.$message.error('请正确选择指标类型');
+      }
+      else if(this.form.paraType === '1' || this.form.objectIds.length > 1){
+        this.dialogVisible = true;
+        this.$message.error('指标类型为1时请输入单独的对象id作为指标公式');
+      }
+      else if(this.form.paraType === 2 && this.form.objectIds.length === 1){
+        this.dialogVisible = true;
+        this.$message.error('指标类型为2时请输入对象的计算公式作为指标公式');
       }
       else{
         this.$emit("Revise",this.form);

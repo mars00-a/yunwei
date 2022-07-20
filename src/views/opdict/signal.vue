@@ -144,7 +144,7 @@
 
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_opsignal_id)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
         </span>
 
       <!--        弹窗的右侧表单-->
@@ -198,7 +198,8 @@ export default {
         width: "100%"
       },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value:'opsignalId',
         label:'运维指标id'
       },{
@@ -364,11 +365,11 @@ export default {
       //指标类型
       opsignalId_types:[
         {
-        value: 0,
-        label:'0--监控对象',
-      },{
         value: 1,
-        label:'1--计算公式',
+        label:'1--监控对象',
+      },{
+        value: 2,
+        label:'2--计算公式',
       }],
       //*******************中间主体*******************
       //表格数据
@@ -419,11 +420,23 @@ export default {
     Cancel() {
       this.$message('取消成功')
     },
-    Confirm(id) {
+    Confirm() {
       //非空验证
-      if(id === ""){
+      if(this.form.opsignalId === ""){
         this.dialogVisible = true;
         this.$message.error('运维指标id不能为空');
+      }
+      else if(this.form.paraType !== 1 && this.form.paraType !== 2){
+        this.dialogVisible = true;
+        this.$message.error('请正确选择指标类型');
+      }
+      else if(this.form.paraType === 1 && this.form.objectIds.length !== 1){
+        this.dialogVisible = true;
+        this.$message.error('指标类型为1时请输入单独的对象id作为指标公式');
+      }
+      else if(this.form.paraType === 2 && !(this.form.objectIds.length > 1)){
+        this.dialogVisible = true;
+        this.$message.error('指标类型为2时请输入对象的计算公式作为指标公式');
       }
       else{
         console.log(this.form);
@@ -515,9 +528,6 @@ export default {
           FrontStr += "@"+FrontArr[i]
         }
       }
-      // console.log("maVal:",myVal)
-      // console.log("FrontArr",FrontArr)
-      // console.log("FrontStr",FrontStr)
       val = myValArr[myValArr.length-1];
       this.form.para = FrontStr+"@"+row.id;
     }

@@ -140,11 +140,11 @@
             <el-input v-model="form.opsignalId" placeholder="输入指标名称或指标id可查找对应指标" @focus="getFocus"/>
           </el-form-item>
           <!--upthres-->
-          <el-form-item label="阈值上限">
+          <el-form-item label="阈值上限"  :rules="[{ required: true}]">
             <el-input v-model="form.upthres" placeholder="按百分比形式输入，不需要输入百分号" />
           </el-form-item>
           <!--downthres-->
-          <el-form-item label="阈值下限">
+          <el-form-item label="阈值下限"  :rules="[{ required: true}]">
             <el-input v-model="form.downthres"  placeholder="按百分比形式输入，不需要输入百分号"/>
           </el-form-item>
           <!--level-->
@@ -615,10 +615,23 @@
       },
       // 弹窗的新增
       Confirm(id) {
-        console.log(this.form)
+        // console.log(this.form)
         if(id === ""){
-            this.$message.error('状态的id不能为空');
-          }
+          this.dialogVisible = true;
+          this.$message.error('状态的id不能为空');
+        }
+        else if(this.form.downthres === '' || this.form.upthres === ''){
+          this.dialogVisible = true;
+          this.$message.error('请输入阈值');
+        }
+        else if(isNaN(this.form.downthres*1)){
+          this.dialogVisible = true;
+          this.$message.error('阈值上限请输入0-100数字');
+        }
+        else if(isNaN(this.form.upthres*1)){
+          this.dialogVisible = true;
+          this.$message.error('阈值下限请输入0-100数字');
+        }
         else if(this.form.downthres > this.form.upthres){
           this.dialogVisible = true;
           this.$message.error('阈值上限需大于阈值下限');
@@ -632,9 +645,9 @@
           this.dialogVisible = true;
           this.$message.error('请正确的选择状态类型');
         }
-        //id非空验证
         else{
           getStatusCreate(this.form).then(request=>{
+            console.log(request.data)
             if(request.data.body){
               this.dealData();
               this.$message({
@@ -642,6 +655,7 @@
                 type: 'success'
               });
             }else{
+              this.dialogVisible = true;
               this.$message({
                 message: '新增失败',
                 type: 'warning'

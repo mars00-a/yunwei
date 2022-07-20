@@ -20,16 +20,16 @@
           <el-form-item label="对应指标">
             <el-input
               v-model="form.opsignalId"
-              placeholder="输入指标名称可查找指标id"
+              placeholder="输入指标名称或指标id可查找对应指标"
               @focus="getFocus"/>
           </el-form-item>
           <!--upthres-->
-          <el-form-item label="阈值上限">
-            <el-input v-model="form.upthres" />
+          <el-form-item label="阈值上限" :rules="[{ required: true}]">
+            <el-input placeholder="按百分比形式输入，不需要输入百分号" v-model="form.upthres" />
           </el-form-item>
           <!--downthres-->
-          <el-form-item label="阈值下限">
-            <el-input v-model="form.downthres" />
+          <el-form-item label="阈值下限" :rules="[{ required: true}]">
+            <el-input placeholder="按百分比形式输入，不需要输入百分号" v-model="form.downthres" />
           </el-form-item>
           <!--level-->
           <el-form-item label="状态类型">
@@ -152,6 +152,18 @@ import {getStatusDelete,getStatusUpdate} from "@/api/opdict";
       Confirm(id) {
         if(id === ""){
           this.$message.error('状态的id不能为空');
+        }
+        else if(this.form.downthres === '' || this.form.upthres === ''){
+          this.dialogVisible = true;
+          this.$message.error('请输入阈值');
+        }
+        else if(isNaN(this.form.downthres*1)){
+          this.dialogVisible = true;
+          this.$message.error('阈值上限请输入0-100数字');
+        }
+        else if(isNaN(this.form.upthres*1)){
+          this.dialogVisible = true;
+          this.$message.error('阈值下限请输入0-100数字');
         }
         else if(this.form.downthres > this.form.upthres){
           this.dialogVisible = true;
