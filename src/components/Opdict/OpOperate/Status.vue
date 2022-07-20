@@ -94,7 +94,7 @@
   </el-row>
 </template>
 <script>
-import {getStatusDelete,getStatusUpdate} from "@/api/opdictWang";
+import {getStatusDelete,getStatusUpdate} from "@/api/opdict";
   export default {
     name: 'OpOperate',
     data() {

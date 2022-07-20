@@ -39,6 +39,7 @@
         :cell-class-name="tableCellClassName">
         <!--序号-->
         <el-table-column
+          width="50"
           type="index"
           label="序号"
         >

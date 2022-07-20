@@ -41,6 +41,7 @@
         :cell-class-name="tableCellClassName">
 <!--        序号列-->
         <el-table-column
+          width="50"
           type="index"
           label="序号"
         >
@@ -377,6 +378,11 @@ export default{
             this.$message({
               message: '新增成功',
               type: 'success'
+            });
+          }else {
+            this.$message({
+              message: request.msg,
+              type: 'error'
             });
           }
         });

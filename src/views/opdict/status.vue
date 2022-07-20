@@ -40,6 +40,7 @@
         :cell-class-name="tableCellClassName">
 <!--        序号列-->
         <el-table-column
+          width="50"
           type="index"
           label="序号"
         >
@@ -207,7 +208,7 @@
 <script>
   import OpStatus from '../../components/Opdict/OpStatus'
   import Status from '../../components/Opdict/OpOperate/Status'
-  import {getStatusCreate,getStatusDelete,getStatusPageList,getStatusUpdate} from '@/api/opdictWang'
+  import {getStatusCreate,getStatusDelete,getStatusPageList,getStatusUpdate} from '@/api/opdict'
   import {
     getStatusFindStatusId,
     getStatusFindStatusName,
@@ -216,8 +217,7 @@
     getStatusFindDownthres,
     getStatusFindLevel,
     getStatusFindNote
-
-  }from '@/api/opdictWang'
+  }from '@/api/opdict'
   import {getObjectDelete, getObjectUpdate} from "@/api/opdict";
 
   export default {

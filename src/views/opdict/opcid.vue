@@ -39,6 +39,7 @@
         @cell-mouse-enter="getNowRow"
         :cell-class-name="tableCellClassName">
         <el-table-column
+          width="50"
           type="index"
           label="序号"
         >
