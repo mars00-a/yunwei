@@ -151,8 +151,20 @@ import {getStatusDelete,getStatusUpdate} from "@/api/opdictWang";
       //编辑弹窗点击确认时响应
       Confirm(id) {
         if(id === ""){
-          this.dialogVisible = true;
           this.$message.error('状态的id不能为空');
+        }
+        else if(this.form.downthres > this.form.upthres){
+          this.dialogVisible = true;
+          this.$message.error('阈值上限需大于阈值下限');
+        }
+        else if(this.form.downthres<0 || this.form.downthres>100 || this.form.upthres<0 || this.form.upthres>100){
+          this.dialogVisible = true;
+          this.$message.error('阈值下限或阈值上限需在0-100之内');
+        }
+        else if(this.form.level !== 1 && this.form.level !== 2 && this.form.level !== 3){
+          console.log(this.form.level)
+          this.dialogVisible = true;
+          this.$message.error('请正确的选择状态类型');
         }
         else{
           this.$emit("Revise",this.form);
