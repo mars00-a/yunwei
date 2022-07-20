@@ -213,3 +213,122 @@ export  function getOpcidFindNote(Note,index,size) {
 
 
 
+
+
+
+//****************************************Service****************************************
+//Service分页
+export  function getOpDictServicePageList(index,size) {
+  return request({
+    url: '/api/OpDictService/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}
+//Service新增
+export  function getOpDictServiceCreate(data) {
+  return request({
+    url: '/api/OpDictService/Create',
+    method: 'post',
+    data
+  })
+}
+//Service查找
+export  function getOpDictServiceFindServiceType(ServiceType,index,size) {
+  return request({
+    url: '/api/OpDictService/PageList',
+    method: 'get',
+    params: {ServiceType,index,size}
+  })
+}
+export  function getOpDictServiceFindServiceName(ServiceName,index,size) {
+  return request({
+    url: '/api/OpDictService/PageList',
+    method: 'get',
+    params: {ServiceName,index,size}
+  })
+}
+export  function getOpDictServiceFindServiceTable(ServiceTable,index,size) {
+  return request({
+    url: '/api/OpDictService/PageList',
+    method: 'get',
+    params: {ServiceTable,index,size}
+  })
+}
+export  function getOpDictServiceFindNote(Note,index,size) {
+  return request({
+    url: '/api/OpDictService/PageList',
+    method: 'get',
+    params: {Note,index,size}
+  })
+}
+export  function getOpDictServiceDelete(objectId) {
+  return request({
+    url: '/api/OpDictService/Delete',
+    method: 'post',
+    params: {objectId}
+  })
+}
+export  function getOpDictServiceUpdate(data) {
+  return request({
+    url: '/api/OpDictService/Update',
+    method: 'post',
+    data
+  })
+}
+
+
+
+//****************************************Signal****************************************
+//Signal分页
+export  function getOpDictSignalPageList(index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}
+//Signal查询
+export  function getOpDictSignalFindopsignalId(opsignalId,index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {opsignalId,index,size}
+  })
+}
+export  function getOpDictSignalFindopsignalName(opsignalName,index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {opsignalName,index,size}
+  })
+}
+export  function getOpDictSignalFindparaType(paraType,index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {paraType,index,size}
+  })
+}
+export  function getOpDictSignalFindpara(para,index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {para,index,size}
+  })
+}
+export  function getOpDictSignalFindnote(note,index,size) {
+  return request({
+    url: '/api/OpDictSignal/PageList',
+    method: 'get',
+    params: {note,index,size}
+  })
+}
+//Signal新增
+export  function getOpDictSignalCreate(body) {
+  return request({
+    url: '/api/OpDictSignal/Create',
+    method: 'post',
+    body
+  })
+}

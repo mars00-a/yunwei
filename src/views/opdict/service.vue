@@ -24,7 +24,7 @@
         <!--查找、新增功能按钮-->
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
       </el-row>
@@ -35,28 +35,35 @@
         height="100%"
         border
         style="width: 87.8rem"
-        @cell-mouse-enter="getNowRow">
-        <!--服务类型id：f_service_type-->
+        @cell-mouse-enter="getNowRow"
+        :cell-class-name="tableCellClassName">
+        <!--序号-->
         <el-table-column
-          prop="f_service_type"
+          type="index"
+          label="序号"
+        >
+        </el-table-column>
+        <!--服务类型id：serviceType-->
+        <el-table-column
+          prop="serviceType"
           label="服务类型id"
         >
         </el-table-column>
-        <!--服务类型名称：f_service_name-->
+        <!--服务类型名称：serviceName-->
         <el-table-column
-          prop="f_service_name"
+          prop="serviceName"
           label="服务类型名称"
         >
         </el-table-column>
-        <!--服务信息存放表：f_service_table-->
+        <!--服务信息存放表：serviceTable-->
         <el-table-column
-          prop="f_service_table"
+          prop="serviceTable"
           label="服务信息存放表"
         >
         </el-table-column>
-        <!--说明：f_note-->
+        <!--说明：note-->
         <el-table-column
-          prop="f_note"
+          prop="note"
           label="说明"
         >
         </el-table-column>
@@ -78,10 +85,10 @@
         <el-pagination
           background
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-sizes="[20, 50, 100, 200, 300]"
+          :page-size="size"
           layout="sizes, prev, pager, next, jumper"
-          :total="12000"
+          :total="totalNumber"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -93,25 +100,24 @@
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
           <el-input
-            :disabled="true"
-            v-model="form.f_service_type" />
+            v-model="form.serviceType" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="服务名称">
-          <el-input v-model="form.f_service_name" />
+          <el-input v-model="form.serviceName" />
         </el-form-item>
         <!--服务数据表-->
         <el-form-item label="服务数据表">
-          <el-input v-model="form.f_service_table" />
+          <el-input v-model="form.serviceTable" />
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
-          <el-input v-model="form.f_note"  type="textarea"/>
+          <el-input v-model="form.note"  type="textarea"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.serviceType)">确 定</el-button>
         </span>
     </el-dialog>
   </el-container>
@@ -120,6 +126,8 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import Service from '../../components/Opdict/OpOperate/Service'
+import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
+  getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -132,22 +140,18 @@ export default {
         height:"29rem"
       },
       //*******************控制区*******************
-      FilterParameters: [
-        {
-        value: '黄金糕',
-        label: '黄金糕'
-      }, {
-        value: '双皮奶',
-        label: '双皮奶'
-      }, {
-        value: '蚵仔煎',
-        label: '蚵仔煎'
-      }, {
-        value: '龙须面',
-        label: '龙须面'
-      }, {
-        value: '北京烤鸭',
-        label: '北京烤鸭'
+      FilterParameters: [{
+        value: 'serviceType',
+        label: '服务类型的id'
+      },{
+        value: 'serviceName',
+        label: '服务类型名称'
+      },{
+        value: 'serviceTable',
+        label: '服务信息存放表'
+      },{
+        value: 'note',
+        label: '说明'
       }],
       //过滤参数
       FilterParameter_value: '',
@@ -156,72 +160,57 @@ export default {
       //新增
       dialogVisible: false,
       form: {
-        f_service_type: '',
-        f_service_name: '',
-        f_service_table: '',
-        f_note: ''
+        serviceType: '',
+        serviceName: '',
+        serviceTable: '',
+        note: '',
+        objectIds: [
+          "string"
+        ]
       },
       //*******************中间主体*******************
       //表格数据
-      tableData: [
-        {
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      },{
-        f_service_type: '1',
-        f_service_name: '安防服务',
-        f_service_table: 'Opsv_security',
-        f_note: 'SK3000,SK2008,SK6800等',
-      }],
+      tableData: [],
       //*******************分页尾部*******************
       // 分页
       //currentPage进入的第一页是第几页
       currentPage: 1,
       //当前行数
       nowRow: 1,
-      //总页数
-      totalNumber: 1200
+      //数据总数
+      totalNumber: '',
+      //当前页面显示最大数量
+      size: 20,
     }
   },
   methods:{
     //************************分页************************
     //处理页面初始数据
     dealData(){
-
+      getOpDictServicePageList(this.currentPage,this.size).then(request=>{
+        this.totalNumber = request.data.body.total;
+        this.tableData = request.data.body.data;
+      });
+      this.FilterParameter_value = '';
+      this.CompleteValue='';
+    },
+    //鼠标放到某一行上就触发
+    tableCellClassName({row,rowIndex}){
+      row.index=rowIndex;
     },
     //鼠标放到某一行上就触发
     getNowRow(row){
-      // console.log(row);
+      this.nowRow = row.index+1+(this.currentPage-1)*this.size;
     },
     //每页最大条数
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`)
+      this.size = val;
+      this.Find();
     },
     //当前页数
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`)
+      this.currentPage = val;
+      this.Find();
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -235,26 +224,70 @@ export default {
         this.$message.error('服务类型id不能为空');
       }
       else{
-        //储存新增的值到Value
-        this.$message({
-          message: '新增成功',
-          type: 'success'
+        console.log(this.form);
+        getOpDictServiceCreate(this.form).then(request=>{
+          if(request.data.body){
+            this.Find();
+            this.$message({
+              message: '新增成功',
+              type: 'success'
+            });
+          }
         });
-        console.log(this.form)
       }
     },
     //查找按钮的事件
     Find(){
-      const msg = [this.FilterParameter_value , this.CompleteValue];
-      console.log(msg);
+      if(this.FilterParameter_value === 'serviceType'){
+        getOpDictServiceFindServiceType(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          console.log(request);
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'serviceName'){
+        getOpDictServiceFindServiceName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'serviceTable'){
+        getOpDictServiceFindServiceTable(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else if(this.FilterParameter_value === 'note'){
+        getOpDictServiceFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        })
+      }
+      else{
+        this.dealData()
+      }
     },
     //************************修改、删除按钮************************
     //修改、删除后的表数据返回到以下两个函数
     GetRevise(msg){
-      console.log(msg);
+      getOpDictServiceUpdate(msg).then(request=>{
+        console.log(request.data);
+        if(request.data.body){
+          this.Find();
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+        }
+      });
     },
     GetDel(msg){
       console.log(msg);
+      getOpDictServiceDelete(msg).then(request=>{
+        if(request.data.body){
+          this.Find();
+        }
+      });
     },
   },
   mounted(){
