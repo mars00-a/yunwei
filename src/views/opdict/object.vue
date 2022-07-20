@@ -39,6 +39,7 @@
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow"
         :cell-class-name="tableCellClassName">
+<!--        序号列-->
         <el-table-column
           type="index"
           label="序号"
@@ -434,7 +435,16 @@ export default{
     GetRevise(msg){
       getObjectUpdate(msg).then(request=>{
         if(request.data.body){
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
           this.Find();
+        }else{
+          super.$message({
+            message: '修改',
+            type: 'warning'
+          });
         }
       });
     },

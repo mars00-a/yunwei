@@ -15,52 +15,53 @@ export  function getStatusFindStatusId(StatusId,index,size) {
     params: {StatusId,index,size}
   })
 }
-export  function getObjectFindSystemName(SystemName,index,size) {
+export  function getStatusFindStatusName(statusName,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {SystemName,index,size}
+    params: {statusName,index,size}
   })
 }
-export  function getObjectFindModuleName(ModuleName,index,size) {
+export  function getStatusFindOpsignalId(opsignalId,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {ModuleName,index,size}
+    params: {opsignalId,index,size}
   })
 }
-export  function getObjectFindObjectName(ObjectName,index,size) {
+export  function getStatusFindUpthres(upthres,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {ObjectName,index,size}
+    params: {upthres,index,size}
   })
 }
-export  function getObjectFindCategory(Category,index,size) {
+export  function getStatusFindDownthres(downthres,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {Category,Item,Type,index,size}
+    params: {downthres,index,size}
+    // params: {Category,Item,Type,index,size}
   })
 }
-export  function getObjectFindItem(Item,index,size) {
+export  function getStatusFindLevel(level,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {Item,index,size}
+    params: {level,index,size}
   })
 }
-export  function getObjectFindType(Type,index,size) {
+export  function getStatusFindNote(note,index,size) {
   return request({
     url: '/api/OpDictStatus/PageList',
     method: 'get',
-    params: {Type,index,size}
+    params: {note,index,size}
   })
 }
 // 删除
 export  function getStatusDelete(objectId) {
   return request({
-    url: '/api/OpDictStatus/Delete/',
+    url: '/api/OpDictStatus/Delete',
     method: 'post',
     params: {objectId}
   })
@@ -69,6 +70,14 @@ export  function getStatusDelete(objectId) {
 export  function getStatusCreate(data) {
   return request({
     url: '/api/OpDictStatus/Create',
+    method: 'post',
+    data
+  })
+}
+// 更新
+export  function getStatusUpdate(data) {
+  return request({
+    url: '/api/OpDictStatus/Update/',
     method: 'post',
     data
   })

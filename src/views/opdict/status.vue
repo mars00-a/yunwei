@@ -23,8 +23,8 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" id="Find" @click="find">过滤</el-button>
+          <el-button @click="clearDealData" type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
         </el-col>
@@ -36,7 +36,14 @@
         height="100%"
         border
         style="width: 87.8rem"
-        @cell-mouse-enter="getNowRow">
+        @cell-mouse-enter="getNowRow"
+        :cell-class-name="tableCellClassName">
+<!--        序号列-->
+        <el-table-column
+          type="index"
+          label="序号"
+        >
+        </el-table-column>
         <!--运维状态id：statusId-->
         <el-table-column
           prop="statusId"
@@ -86,6 +93,7 @@
             <Status
               :server-table="serverTargetTable"
               :myData="scope.row"
+              :level-list="levelList"
               @Revise='GetRevise'
               @Del='GetDel'
             />
@@ -102,10 +110,10 @@
         <el-pagination
           background
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-sizes="[20, 50, 100, 200, 300]"
+          :page-size="size"
           layout="sizes, prev, pager, next, jumper"
-          :total="12000"
+          :total="totalNumber"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -148,7 +156,7 @@
               default-first-option
               placeholder="请选择状态类型">
               <el-option
-                v-for="item in ObjectTypes"
+                v-for="item in levelList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -199,8 +207,19 @@
 <script>
   import OpStatus from '../../components/Opdict/OpStatus'
   import Status from '../../components/Opdict/OpOperate/Status'
-  import {getStatusFindStatusId,getStatusDelete,getStatusCreate} from '@/api/opdictWang'
-  import {getObjectCreate, getObjectPageList} from "@/api/opdict";
+  import {getStatusCreate,getStatusDelete,getStatusPageList,getStatusUpdate} from '@/api/opdictWang'
+  import {
+    getStatusFindStatusId,
+    getStatusFindStatusName,
+    getStatusFindOpsignalId,
+    getStatusFindUpthres,
+    getStatusFindDownthres,
+    getStatusFindLevel,
+    getStatusFindNote
+
+  }from '@/api/opdictWang'
+  import {getObjectDelete, getObjectUpdate} from "@/api/opdict";
+
   export default {
     name: 'MonitorObjectPage',
     components: {
@@ -216,24 +235,31 @@
           width: "100%"
         },
         //*******************控制区*******************
+        // 过滤参数列表
         FilterParameters: [
           {
-            value: '黄金糕',
-            label: '黄金糕'
+            value: 'StatusId',
+            label: '运维指标id'
           }, {
-            value: '双皮奶',
-            label: '双皮奶'
+            value: 'StatusName',
+            label: '运维指标名称'
           }, {
-            value: '蚵仔煎',
-            label: '蚵仔煎'
+            value: 'OpsignalId',
+            label: '运维指标id'
           }, {
-            value: '龙须面',
-            label: '龙须面'
+            value: 'Upthres',
+            label: '阈值上限'
           }, {
-            value: '北京烤鸭',
-            label: '北京烤鸭'
+            value: 'Downthres',
+            label: '阈值下限'
+          }, {
+            value: 'Level',
+            label: '状态类型'
+          }, {
+            value: 'Note',
+            label: '备注'
           }],
-        //过滤参数
+        //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
         CompleteValue:'',
@@ -369,10 +395,22 @@
             name:'指标名称4'
           },
         ],
+        levelList:[
+          {
+            label:"正常--1",
+            value: 1
+          },{
+            label:"隐患--2",
+            value: 2
+          },{
+            label:"危险--3",
+            value: 3
+          },
+        ],
         //弹窗数据
         form: {
           // 状态id
-          statusId: '1',
+          statusId: '8687',
           statusName: '',
           opsignalId: '',
           upthres: '',
@@ -488,40 +526,96 @@
         currentPage: 1,
         //当前行数
         nowRow: 1,
-        //总页数
+        // 每页最大数
+        size : 20,
+        //总条数
         totalNumber: 1200
       }
     },
     methods:{
       //************************分页************************
       //处理页面初始数据
-      dealData(){
+      clearDealData(){
+        // 将过滤的参数和数值都清空，直接查询列表
         this.FilterParameter_value = ''
         this.CompleteValue = ''
-        getObjectPageList(this.currentPage,this.size).then(request=>{
+        getStatusPageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
       },
+      // 使用查询的方法刷新列表
+      dealData(){
+        if(this.FilterParameter_value === 'StatusId'){
+          getStatusFindStatusId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'StatusName'){
+          getStatusFindStatusName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'OpsignalId'){
+          getStatusFindOpsignalId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Upthres'){
+          getStatusFindUpthres(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Downthres'){
+          getStatusFindDownthres(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Level'){
+          getStatusFindLevel(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Note'){
+          getStatusFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else{
+          this.clearDealData()
+        }
+      },
+      tableCellClassName({row,rowIndex}){
+        row.index=rowIndex;
+      },
       //鼠标放到某一行上就触发
       getNowRow(row){
-        // console.log(row);
+        this.nowRow = row.index+1+(this.currentPage-1)*this.size;
       },
       //每页最大条数
       handleSizeChange(val) {
-        // console.log(`每页 ${val} 条`)
+        this.size = val
+        this.dealData()
       },
-      //当前页数
+      //点击分页的某一页
       handleCurrentChange(val) {
-        // console.log(`当前页: ${val}`)
+        this.currentPage = val
+        this.find();
       },
       //************************新增与查找按钮************************
       //新增功能弹窗的取消和确认
       Cancel() {
         this.$message('取消成功')
       },
+      // 弹窗的新增
       Confirm(id) {
-        console.log(this.form)
         //非空验证
         if(id === ""){
           this.dialogVisible = true;
@@ -545,17 +639,88 @@
         }
       },
       //查找按钮的事件
-      Find(){
-        const msg = [this.FilterParameter_value , this.CompleteValue];
-        console.log(msg);
+      find(){
+        if(this.FilterParameter_value === 'StatusId'){
+          getStatusFindStatusId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'StatusName'){
+          getStatusFindStatusName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'OpsignalId'){
+          getStatusFindOpsignalId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Upthres'){
+          getStatusFindUpthres(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Downthres'){
+          getStatusFindDownthres(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Level'){
+          getStatusFindLevel(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Note'){
+          getStatusFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else{
+          this.clearDealData();
+        }
       },
       //************************修改、删除按钮************************
       //修改、删除后的表数据返回到以下两个函数
       GetRevise(msg){
-        console.log(msg);
+        getStatusUpdate(msg).then(request=>{
+          if(request.data.body){
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            });
+            this.find();
+          }else{
+            super.$message({
+              message: '修改',
+              type: 'warning'
+            });
+          }
+        });
       },
       GetDel(msg){
-        console.log(msg);
+        getStatusDelete(msg).then(request=>{
+          console.log(request.data.body)
+          if(request.data.body === true){
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            });
+            this.find();
+          }
+          else if(request.data.body === false){
+            this.$message({
+              message: '删除失败',
+              type: 'error'
+            });
+          }
+        });
       },
       getFocus(){
         this.controlShow = true
@@ -564,8 +729,6 @@
         this.form.opsignalId = "@" + row.id;
         // this.targetTable = row
         // event
-        // console.log(row.id)
-        // console.log("点击了某个东西")
       }
     },
     mounted(){
@@ -580,14 +743,12 @@
         immediate:true,
         handler(val){
           let Arr = val.split("@")
-          // console.log(Arr)
           if (Arr[0] === '')
             val = Arr[1]
           else
             val = Arr[0]
           if (val === undefined)
             val = ''
-          // console.log(val)
           this.targetTable = this.serverTargetTable.filter(p =>{
             return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
           })

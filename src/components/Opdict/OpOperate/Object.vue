@@ -193,25 +193,19 @@ export default {
         this.$message.error('监控的id不能为空');
       }
       else{
-        // alert("触发了id不为空")
-        // console.log(this.form)
-        getObjectUpdate(this.form).then(request=>{
-          // alert("触发了更新事件")
-          // console.log(request.data.body)
-          if(request.data.body){
-            // console.log(this)
-            // console.log(request.data.body)
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            });
-          }else{
-            super.$message({
-              message: '修改',
-              type: 'warning'
-            });
-          }
-        });
+        // getObjectUpdate(this.form).then(request=>{
+        //   if(request.data.body){
+        //     this.$message({
+        //       message: '修改成功',
+        //       type: 'success'
+        //     });
+        //   }else{
+        //     super.$message({
+        //       message: '修改',
+        //       type: 'warning'
+        //     });
+        //   }
+        // });
         this.$emit("Revise",this.form);
       }
     }
