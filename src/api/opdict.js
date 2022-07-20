@@ -441,3 +441,12 @@ export  function getStatusUpdate(data) {
     data
   })
 }
+
+
+// 指标列表
+export  function getSTable() {
+  return request({
+    url: '/api/OpDictSignal/All',
+    method: 'get',
+  })
+}
