@@ -125,20 +125,38 @@
       </div>
     </el-footer>
     <!--新增按钮的弹窗-->
-    <el-dialog title="新增" :visible.sync="dialogAddVisible" width="30%">
-      <el-form ref="addForm" :model="addForm" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+    <el-dialog top="1vh" title="新增服务器信息" :visible.sync="dialogAddVisible" width="30%">
+      <el-form ref="addForm" :model="addForm" label-width="100px">
+        <!--服务器id-->
+        <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
             v-model="addForm.serviceType" />
         </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
+        <!--服务器类型-->
+        <el-form-item label="服务器类型">
           <el-input v-model="addForm.serviceName" />
         </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="addForm.serviceTable" />
+        <!--服务器名称-->
+        <el-form-item label="服务器名称">
+          <el-input v-model="addForm.note"/>
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="服务器IP">
+          <el-input v-model="addForm.serviceName"/>
+        </el-form-item>
+        <!--运维端口-->
+        <el-form-item label="运维端口">
+          <el-input v-model="addForm.serviceName"/>
+        </el-form-item>
+        <!--是否监测-->
+        <el-form-item label="是否监测">
+          <el-radio v-model="addForm.isMonitored" label="1">否</el-radio>
+          <el-radio v-model="addForm.isMonitored" label="2">是</el-radio>
+        </el-form-item>
+        <!--是否远程控制-->
+        <el-form-item label="是否远程控制">
+          <el-radio v-model="addForm.isControled" label="1">否</el-radio>
+          <el-radio v-model="addForm.isControled" label="2">是</el-radio>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
@@ -150,22 +168,41 @@
         <el-button type="primary" @click="dialogAddVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+
     <!--修改按钮的弹窗-->
-    <el-dialog title="修改" :visible.sync="dialogReviseVisible" width="30%">
-      <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+    <el-dialog top="1vh" title="新增服务器信息" :visible.sync="dialogReviseVisible" width="30%">
+      <el-form ref="reviseForm" :model="reviseForm" label-width="100px">
+        <!--服务器id-->
+        <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
             :disabled="true"
             v-model="reviseForm.serviceType" />
         </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
+        <!--服务器类型-->
+        <el-form-item label="服务器类型">
           <el-input v-model="reviseForm.serviceName" />
         </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="reviseForm.serviceTable" />
+        <!--服务器名称-->
+        <el-form-item label="服务器名称">
+          <el-input v-model="reviseForm.note"/>
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="服务器IP">
+          <el-input v-model="reviseForm.serviceName"/>
+        </el-form-item>
+        <!--运维端口-->
+        <el-form-item label="运维端口">
+          <el-input v-model="reviseForm.serviceName"/>
+        </el-form-item>
+        <!--是否监测-->
+        <el-form-item label="是否监测">
+          <el-radio v-model="reviseForm.isMonitored" label="1">否</el-radio>
+          <el-radio v-model="reviseForm.isMonitored" label="2">是</el-radio>
+        </el-form-item>
+        <!--是否远程控制-->
+        <el-form-item label="是否远程控制">
+          <el-radio v-model="reviseForm.isControled" label="1">否</el-radio>
+          <el-radio v-model="reviseForm.isControled" label="2">是</el-radio>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
@@ -173,38 +210,63 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogReviseVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
-        </span>
+        <el-button @click="dialogReviseVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
+      </span>
+
     </el-dialog>
+
     <!--客户按钮的弹窗-->
     <el-dialog title="修改客户信息" :visible.sync="dialogCustomerVisible" width="30%">
-      <el-form ref="customerForm" :model="customerForm" label-width="90px">
+      <el-form ref="CustomerForm" :model="CustomerForm" label-width="90px">
         <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+        <el-form-item label="客户ID">
           <el-input
-            :disabled="true"
-            v-model="customerForm.serviceType" />
+            @focus="getCustomerId"
+            v-model="CustomerForm.customer_id" />
         </el-form-item>
         <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="customerForm.serviceName" />
+        <el-form-item label="启用日期">
+          <el-input v-model="CustomerForm.f_begin_time" />
         </el-form-item>
         <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="customerForm.serviceTable" />
+        <el-form-item label="停用日期">
+          <el-input v-model="CustomerForm.f_end_time" />
         </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="customerForm.note"  type="textarea"/>
-        </el-form-item>
+        <div v-show = tableCustomerVisible id="targetTable">
+          <el-table
+            :data="customerIdTable"
+            height="500"
+            border
+            style="width: 100%">
+            <el-table-column
+              active-class="targetTableGetFocus"
+              prop="customerlId"
+              label="客户ID"
+              width="105%">
+            </el-table-column>
+            <el-table-column
+              prop="customerName"
+              label="客户名称"
+              width="100%">
+            </el-table-column>
+            <el-table-column label="添加">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogCustomerVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogCustomerVisible = false">确 定</el-button>
-        </span>
+        <el-button @click="dialogCustomerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCustomerVisible = false">确 定</el-button>
+      </span>
     </el-dialog>
-    <!--服务器按钮的弹窗-->
+
+    <!--服务按钮的弹窗-->
     <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
       <el-form ref="serviceForm" :model="serviceForm" label-width="90px">
         <!--服务类型-->
@@ -231,33 +293,89 @@
           <el-button type="primary" @click="dialogServiceVisible = false">确 定</el-button>
         </span>
     </el-dialog>
+
     <!--登录按钮的弹窗-->
-    <el-dialog title="修改登录信息" :visible.sync="dialogLoginVisible" width="30%">
-      <el-form ref="loginForm" :model="loginForm" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
-          <el-input
-            :disabled="true"
-            v-model="loginForm.serviceType" />
+    <el-dialog title="修改登录信息" :visible.sync="dialogLoginVisible" width="60%">
+      <el-table
+        :data="loginTable"
+        height="350"
+        border
+        style="width: 100%">
+        <el-table-column
+          prop="f_server_name"
+          label="服务器ID">
+        </el-table-column>
+        <el-table-column
+          prop="f_begin_time"
+          label="服务器IP">
+        </el-table-column>
+        <el-table-column
+          prop="f_server_port"
+          label="服务器端口">
+        </el-table-column>
+        <el-table-column
+          prop="f_end_time"
+          label="登录工具">
+        </el-table-column>
+        <el-table-column
+          prop="f_login_name"
+          label="登录用户名">
+        </el-table-column>
+        <el-table-column
+          prop="f_login_pwd"
+          label="登录密码">
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="90">
+          <template slot-scope="scope">
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <el-button type="danger" @click="Del">删除</el-button>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogLoginVisible = true, dialogLoginAddVisible = true">新 增</el-button>
+        <el-button @click="dialogLoginVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogLoginVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="新增登录信息" :visible.sync="dialogLoginAddVisible" width="30%">
+      <el-form ref="loginAddForm" :model="customerAddForm" label-width="90px">
+        <!--服务器ID-->
+        <el-form-item label="服务器ID">
+          <el-input v-model="loginAddForm.f_server_id" />
         </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="loginForm.serviceName" />
+        <!--服务器IP-->
+        <el-form-item label="服务器IP">
+          <el-input v-model="loginAddForm.f_server_ip" />
         </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="loginForm.serviceTable" />
+        <!--服务器端口-->
+        <el-form-item label="服务器端口">
+          <el-input v-model="loginAddForm.f_server_port" />
         </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="loginForm.note"  type="textarea"/>
+        <!--使用工具-->
+        <el-form-item label="使用工具">
+          <el-input v-model="loginAddForm.f_login_soft" />
+        </el-form-item>
+        <!--登录用户名-->
+        <el-form-item label="登录用户名">
+          <el-input v-model="loginAddForm.f_login_name" />
+        </el-form-item>
+        <!--登录密码-->
+        <el-form-item label="登录密码">
+          <el-input v-model="loginAddForm.f_login_pwd" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogLoginVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogLoginVisible = false">确 定</el-button>
-        </span>
+        <el-button @click="dialogLoginAddVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogLoginAddVisible = false">确 定</el-button>
+      </span>
     </el-dialog>
+
   </el-container>
 </template>
 
@@ -308,13 +426,27 @@
         reviseForm:{},
         //客户的弹窗
         dialogCustomerVisible: false,
-        customerForm:{},
+        tableCustomerVisible: false,
+        CustomerForm:{},
+        customerIdTable:[{
+          customerlId:'101',
+          customerName:'张三'
+        },{
+          customerlId:'102',
+          customerName:'李四'
+        },{
+          customerlId:'201',
+          customerName:'王五'
+        },],
         //服务的弹窗
         dialogServiceVisible: false,
         serviceForm:{},
         //登录的弹窗
         dialogLoginVisible: false,
-        loginForm:{}
+        dialogLoginAddVisible:false,
+        loginTable:[{}],
+        loginAddForm:[],
+
       }
     },
     methods:{
@@ -358,6 +490,30 @@
           })
         })
       },
+      //显示客户id选择列表
+      getCustomerId(){
+        this.tableCustomerVisible = true;
+      }
+    },
+    watch:{
+      //当对应指标中输入东西的时候搜索
+      'CustomerForm.customer_id':{
+        immediate:true,
+
+        handler(val){
+          console.log("发生了改变")
+          let Arr = val.split('')
+          if (Arr[0] === '')
+            val = Arr[1];
+          else
+            val = Arr[0];
+          if (val === undefined)
+            val = '';
+          this.targetTable = this.serverTargetTable.filter(p =>{
+            return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
+          })
+        }
+      }
     },
     mounted(){
       this.myStyle = {
@@ -377,6 +533,14 @@
   #Control{
     margin-top: 0.8rem;
   }
+  .dialog-footer{
+    margin: 0 auto;
+  }
+  #targetTable{
+    position: absolute;
+    top: 1%;
+    left:103%;
+  }
   /*设置分页属性*/
   #now_line_number{
     font-size: 0.85rem;
@@ -392,6 +556,21 @@
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #myFooter{
+    position: absolute;
+    right: 4vh;
+    bottom: 2vh;
+  }
+  #controlPosition{
+    display: inline-block;
+    position: absolute;
+    right: 2rem;
+    top: 0;
+  }
+  #controlBigPosition{
+    position: absolute;
+    right: 7.2rem;
   }
 </style>
 
