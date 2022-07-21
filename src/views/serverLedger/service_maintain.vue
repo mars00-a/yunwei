@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button type="primary" id="Find">过滤</el-button>
           <el-button type="primary">恢复</el-button>
-          <el-button type="success" id="Add" @click="dialogAddVisible = true">新增</el-button>
+          <el-button type="success" id="Add" @click="visables.dialogAddVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -69,18 +69,17 @@
         >
         </el-table-column>
         <!--操作栏-->
-        <el-table-column
-          label="操作" width="255">
+        <el-table-column label="操作" width="255">
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="8">
-                <el-button type="primary" @click="dialogReviseVisible = true">修改</el-button>
+                <el-button type="primary" @click="visables.dialogReviseVisible = true">修改</el-button>
               </el-col>
               <el-col :span="8">
                 <el-button type="danger" @click="Del">删除</el-button>
               </el-col>
               <el-col :span="8">
-                <el-button type="warning" @click="dialogCustomerVisible = true">客户</el-button>
+                <el-button type="warning" @click="visables.dialogCustomerVisible = true">客户</el-button>
               </el-col>
             </el-row>
           </template>
@@ -106,7 +105,7 @@
       </div>
     </el-footer>
     <!--新增按钮的弹窗-->
-    <el-dialog title="新增" :visible.sync="dialogAddVisible" width="30%">
+    <el-dialog title="新增" :visible.sync="visables.dialogAddVisible" width="30%">
       <el-form ref="addForm" :model="addForm" label-width="110px">
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
@@ -127,12 +126,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogAddVisible = false">确 定</el-button>
+        <el-button @click="visables.dialogAddVisible = false">取 消</el-button>
+        <el-button type="primary" @click="visables.dialogAddVisible = false">确 定</el-button>
       </span>
     </el-dialog>
     <!--修改按钮的弹窗-->
-    <el-dialog title="修改" :visible.sync="dialogReviseVisible" width="30%">
+    <el-dialog title="修改" :visible.sync="visables.dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
@@ -154,36 +153,84 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogReviseVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
+          <el-button @click="visables.dialogReviseVisible = false">取 消</el-button>
+          <el-button type="primary" @click="visables.dialogReviseVisible = false">确 定</el-button>
         </span>
     </el-dialog>
     <!--客户按钮的弹窗-->
-    <el-dialog title="修改客户信息" :visible.sync="dialogCustomerVisible" width="30%">
-      <el-form ref="customerForm" :model="customerForm" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
-          <el-input
-            :disabled="true"
-            v-model="customerForm.serviceType" />
-        </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="customerForm.serviceName" />
-        </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="customerForm.serviceTable" />
-        </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="customerForm.note"  type="textarea"/>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogCustomerVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogCustomerVisible = false">确 定</el-button>
-        </span>
+    <el-dialog
+      width="70%"
+      top="5vh"
+      title="修改客户信息"
+      :visible.sync="visables.dialogCustomerVisible">
+      <el-table
+        :data="customerForm.customerInfos"
+        border
+      >
+<!--        序号-->
+        <el-table-column
+          type="index"
+          label="序号"
+        >
+        </el-table-column>
+<!--        客户id-->
+        <el-table-column
+          prop="customerId"
+          label="客户id"
+        >
+        </el-table-column>
+<!--        客户经理-->
+        <el-table-column
+          prop="customerManager"
+          label="客户经理"
+        >
+        </el-table-column>
+<!--        客户名称-->
+        <el-table-column
+          prop="customerName"
+          label="客户名称"
+        >
+        </el-table-column>
+<!--        联系电话-->
+        <el-table-column
+          prop="phoneNumber"
+          label="联系电话"
+        >
+        </el-table-column>
+<!--        回访时间-->
+        <el-table-column
+          prop="returnVisitDate"
+          label="回访时间"
+        >
+        </el-table-column>
+<!--        客户地址-->
+        <el-table-column
+          prop="customerAddress"
+          label="客户地址"
+        >
+        </el-table-column>
+<!--        备注-->
+        <el-table-column
+          prop="note"
+          label="备注"
+        >
+        </el-table-column>
+<!--        操作栏-->
+        <el-table-column label="操作" width="180">
+          <template slot-scope="scope">
+            <el-row :gutter="10">
+              <el-col :span="12">
+                <el-button type="primary" @click="visables.dialogReviseVisible = true">修改</el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button type="danger" @click="Del">删除</el-button>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+
+
+      </el-table>
     </el-dialog>
   </el-container>
 </template>
@@ -192,26 +239,26 @@
   export default {
     name: 'op_service',
     data() {
-      return{
+      return {
         //*******************控制区*******************
         //过滤参数下拉框
         FilterParameters: [],
         //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
-        CompleteValue:'',
+        CompleteValue: '',
         //*******************中间主体*******************
         //处理页面自适应
-        myStyle:{
-          height:"29rem"
+        myStyle: {
+          height: "29rem"
         },
         //表格数据
         tableData: [
           {
-            serviceType:'1231',
-            serviceName:'31231',
-            serviceTable:'3123',
-            note:'31231'
+            serviceType: '1231',
+            serviceName: '31231',
+            serviceTable: '3123',
+            note: '31231'
           }
         ],
         //*******************分页尾部*******************
@@ -224,16 +271,49 @@
         totalNumber: '',
         //当前页面显示最大数量
         size: 20,
-        //*******************弹窗*******************
-        //新增弹窗
-        dialogAddVisible: false,
+        //*******************控制弹窗显示*******************
+        visables: {
+          // 新增
+          dialogAddVisible : false,
+          //修改的弹窗
+          dialogReviseVisible: false,
+          //客户的弹窗
+          dialogCustomerVisible: false,
+        },
+        //新增弹窗的数据
         addForm:{},
-        //修改的弹窗
-        dialogReviseVisible: false,
+        // 修改弹窗的数据
         reviseForm:{},
-        //客户的弹窗
-        dialogCustomerVisible: false,
-        customerForm:{},
+        // 客户弹窗的数据
+        customerForm: {
+          customerInfos: [
+            {
+              customerId: "001",
+              customerManager: "黄奇峰",
+              customerName: "湖北邮政",
+              phoneNumber: "123456789",
+              returnVisitDate: "2022.7.1",
+              customerAddress: "湖北武汉",
+              note: "无"
+            },{
+              customerId: "002",
+              customerManager: "张三",
+              customerName: "武汉食品有限",
+              phoneNumber: "98711234",
+              returnVisitDate: "2002.1.1",
+              customerAddress: "武汉孝感",
+              note: "暂无"
+            },{
+              customerId: "003",
+              customerManager: "李四",
+              customerName: "广东深圳视频加工",
+              phoneNumber: "238261675",
+              returnVisitDate: "1999.12.12",
+              customerAddress: "广东深圳",
+              note: "视频处理厂"
+            },
+          ]
+        },
       }
     },
     methods:{
