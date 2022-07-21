@@ -163,7 +163,33 @@ export const constantRoutes = [
       }
     ]
   },
-
+  // 服务器台账
+  {
+    path: '/serverLedger',
+    component: Layout,
+    redirect: '/serverLedger/customer_maintain',
+    meta: { title: '服务器台账', icon: 'link' },
+    children: [
+      {
+        path: 'customer_maintain',
+        name: 'CustomerMaintainPage',
+        meta: { title: '客户信息维护', icon: 'link' },
+        component: () => import('@/views/serverLedger/customer_maintain')
+      },
+      {
+        path: 'server_maintain',
+        name: 'ServerMaintainPage',
+        meta: { title: '服务器信息维护', icon: 'link' },
+        component: () => import('@/views/serverLedger/server_maintain')
+      },
+      {
+        path: 'service_maintain',
+        name: 'ServiceMaintainPage',
+        meta: { title: '服务类型', icon: 'link' },
+        component: () => import('@/views/serverLedger/service_maintain')
+      }
+    ]
+  },
 ]
 
 /**
