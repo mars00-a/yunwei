@@ -69,6 +69,11 @@
           prop="para"
           label="运维指标计算公式"
         >
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="dark" :content="tableOpsignalIdGet(scope.row.paraType,scope.row.para)" placement="top-start">
+              <span>{{scope.row.para}}</span>
+            </el-tooltip>
+          </template>
         </el-table-column>
         <!--备注：note-->
         <el-table-column
@@ -92,20 +97,27 @@
     <el-footer id="Footer">
       <!--分页功能-->
       <!--当前行数与总数据条数-->
-      <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
-      <!--分页-->
-      <div id="paginate">
-        <el-pagination
-          background
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100, 200, 300]"
-          :page-size="size"
-          layout="sizes, prev, pager, next, jumper"
-          :total="totalNumber"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
+        </el-col>
+        <el-col :span="14">
+          <div>
+            <el-pagination
+              id="controlBigPosition"
+              background
+              :current-page="currentPage"
+              :page-sizes="[20, 50, 100, 200, 300]"
+              :page-size="size"
+              layout="sizes, prev, pager, next, jumper"
+              :total="totalNumber"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+            <el-button id="controlPosition" type="primary" round>跳转</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-footer>
 <!--    弹窗-->
     <el-dialog title="新增运维指标" :visible.sync="dialogVisible" width="35%">
@@ -142,12 +154,10 @@
           <el-input type="textarea" v-model="form.note"/>
         </el-form-item>
       </el-form>
-
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
         </span>
-
       <!--        弹窗的右侧表单-->
       <div v-show = controlShow id="targetTable">
         <el-table
@@ -157,12 +167,12 @@
           style="width: 100%">
           <el-table-column
             active-class="targetTableGetFocus"
-            prop="id"
+            prop="objectId"
             label="对象id"
             width="100%">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="objectName"
             label="对象名称"
             width="100%">
           </el-table-column>
@@ -182,8 +192,18 @@
 <script>
 import OpStatus from '../../components/Opdict/OpStatus'
 import Signal from '../../components/Opdict/OpOperate/Signal'
-import {getOpDictSignalPageList, getOpDictSignalFindopsignalId, getOpDictSignalFindopsignalName, getOpDictSignalFindparaType, getOpDictSignalFindpara,
-  getOpDictSignalFindnote, getOpDictSignalCreate, getOpDictSignalDelete, getOpDictSignalUpdate} from '@/api/opdict'
+import {
+  getOpDictSignalPageList,
+  getOpDictSignalFindopsignalId,
+  getOpDictSignalFindopsignalName,
+  getOpDictSignalFindparaType,
+  getOpDictSignalFindpara,
+  getOpDictSignalFindnote,
+  getOpDictSignalCreate,
+  getOpDictSignalDelete,
+  getOpDictSignalUpdate,
+  getOTable
+} from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -236,133 +256,9 @@ export default {
       },
       tip:'此处输入指标公式',
       //右侧的指标表格
-      targetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
-        },
-      ],
+      targetTable:[],
       //右侧的指标表格
-      serverTargetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
-        },
-      ],
+      serverTargetTable:[],
       //指标类型
       opsignalId_types:[
         {
@@ -448,7 +344,6 @@ export default {
         this.$message.error('指标类型为2时请输入对象的计算公式作为指标公式');
       }
       else{
-        console.log(this.form);
         getOpDictSignalCreate(this.form).then(request=>{
           if(request.data.body){
             this.Find();
@@ -469,7 +364,6 @@ export default {
     Find(){
       if(this.FilterParameter_value === 'opsignalId'){
         getOpDictSignalFindopsignalId(this.CompleteValue,this.currentPage,this.size).then(request=>{
-          console.log(request);
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         })
@@ -553,7 +447,64 @@ export default {
         }
       }
       val = myValArr[myValArr.length-1];
-      this.form.para = FrontStr+"@"+row.id;
+      this.form.para = FrontStr+"@"+row.objectId;
+    },
+    // 处理表格中的指标公式的解释
+    tableOpsignalIdGet(type, id){
+      if(type === 1){
+        let myIdArr = id.split("@")
+        id = myIdArr[1]
+        for(let i=0;i<this.serverTargetTable.length; i++){
+          if (id === this.serverTargetTable[i].objectId){
+            return this.serverTargetTable[i].objectName
+          }
+        }
+      }
+      else{
+        // 获取所有的id和操作数到myIDArr里
+        let myNumberArr = id.split(/[-,+,*,/,(,),^,@]/);
+        myNumberArr = myNumberArr.filter(function (s) {
+          return s && s.trim();
+        });
+        // 获取带有@的id以及不带@的操作数的数组
+        let myIdArr = id.split(/[-,+,*,/,(,),^]/);
+        myIdArr = myIdArr.filter(function (s) {
+          return s && s.trim();
+        });
+        // 获取所有的字符到myOperatorArr里
+        let myOperatorArr = id.split(/[0,1,2,3,4,5,6,7,8,9]/);
+        myOperatorArr = myOperatorArr.filter(function (s) {
+          return s && s.trim();
+        });
+        // 将对应的id变为名称，对于操作数保留
+        let myNameArr = Array
+        for(let i=0; i<myIdArr.length; i++){
+          let myOperatorAndIdArr = myIdArr[i].split("@")
+          if(myOperatorAndIdArr.length === 2){
+            for(let j=0; j<this.serverTargetTable.length; j++){
+              if(this.serverTargetTable[j].objectId === myOperatorAndIdArr[1]){
+                myNameArr[i] = this.serverTargetTable[j].objectName
+              }
+            }
+          }
+          else{
+            myNameArr[i] = myIdArr[i]
+          }
+
+        }
+        for(let i=0;i<myNameArr.length; i++){
+          if(myNameArr[i] === '' || myNameArr===undefined || myNameArr === null){
+            myNameArr.splice(i,1)
+          }
+        }
+        let myTip = ''
+        for(let i=0;i<myOperatorArr.length;i++){
+          myTip += myOperatorArr[i]
+          if (myNameArr[i])
+            myTip += myNameArr[i]
+        }
+        return myTip
+      }
     }
   },
   watch:{
@@ -562,69 +513,74 @@ export default {
       immediate:true,
       handler(val){
         //当输入框里值为空时，将提示标为指定内容
-        if(val === ''||val === undefined||val === null){
-          // console.log("发生了改变，值为：",val)
+        if(val === '' || val === undefined || val === null){
           this.tip = '请输入指标公式'
         }
-        //获取@符号后面的数据，用于搜索
-        let myValArr = val.split("@");
-        let mySearch = myValArr[myValArr.length-1];
-        //获取所有的id变成数组，用于查找指标名称
-        let myIdArr = val.split(/[-,+,*,/,(,),^,@]/);
-        myIdArr = myIdArr.filter(function (s) {
-          return s && s.trim();
-        });
-        this.form.objectIds = myIdArr;
-        // console.log("id数组为：",myIdArr)
-        //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
-        let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
-        myOperatorArr = myOperatorArr.filter(function (s) {
-          return s && s.trim();
-        });
-        // console.log("符号数组为：",myOperatorArr)
-        //以id为依据获取到对应的指标名称
-        let myNameArr = []
-        for(let i=0; i<myIdArr.length; i++){
-          for(let j=0; j<this.serverTargetTable.length; j++){
-            if(this.serverTargetTable[j].id === myIdArr[i]){
-              // console.log("发现了指定id的指标")
-              // console.log("对应的指标id和指标名称为：",this.serverTargetTable[j].id,this.serverTargetTable[j].name)
-              myNameArr[i] = this.serverTargetTable[j].name
+        else{
+          //获取@符号后面的数据，用于搜索
+          let myValArr = val.split("@");
+          let mySearch = myValArr[myValArr.length-1];
+          // 获取所有的id和操作数到myNumberArr里
+          let myNumberArr = val.split(/[-,+,*,/,(,),^,@]/);
+          myNumberArr = myNumberArr.filter(function (s) {
+            return s && s.trim();
+          });
+          // 获取带有@的id以及不带@的操作数的数组
+          let myIdArr = val.split(/[-,+,*,/,(,),^]/);
+          myIdArr = myIdArr.filter(function (s) {
+            return s && s.trim();
+          });
+          this.form.objectIds = myIdArr;
+          //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
+          let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
+          myOperatorArr = myOperatorArr.filter(function (s) {
+            return s && s.trim();
+          });
+          let myNameArr = []
+          for(let i=0; i<myIdArr.length; i++){
+            let myOperatorAndIdArr = myIdArr[i].split("@")
+            if(myOperatorAndIdArr.length === 2){
+              for(let j=0; j<this.serverTargetTable.length; j++){
+                if(this.serverTargetTable[j].objectId === myOperatorAndIdArr[1]){
+                  myNameArr[i] = this.serverTargetTable[j].objectName
+                }
+              }
             }
+            else{
+              myNameArr[i] = myIdArr[i]
+            }
+
           }
-        }
-        // console.log("指标名称数组为：",myNameArr)
-        //将指标名称和运算符组合成一句话传入到tip中
-        this.tip = ''
-        for(let i=0;i<myOperatorArr.length;i++){
-          this.tip += myOperatorArr[i]
-          if (myNameArr[i])
-            this.tip += myNameArr[i]
-        }
+          //将指标名称和运算符组合成一句话传入到tip中
+          this.tip = ''
+
+          for(let i=0;i<myOperatorArr.length;i++){
+            this.tip += myOperatorArr[i]
+            if (myNameArr[i])
+              this.tip += myNameArr[i]
+          }
 
 
-        this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(mySearch) !== -1 || p.id.indexOf(mySearch) !== -1
-        })
+          this.targetTable = this.serverTargetTable.filter(p =>{
+            return p.objectName.indexOf(mySearch) !== -1 || p.objectId.indexOf(mySearch) !== -1
+          })
+        }
+
       }
     },
-    'tip':{
-      handler(val){
-        if(val === ''){
-          this.tip = "请输入指标公式"
-        }
-      }
-    }
   },
   mounted(){
     this.dealData();
     this.myStyle = {
       height: document.body.clientHeight-50-30-64-70+"px"
     }
+    getOTable().then(request=>{
+      this.serverTargetTable = request.data.body.slice(0, request.data.body.length)
+      this.targetTable = request.data.body.slice(0, request.data.body.length)
+    })
   }
 }
 </script>
-
 <style scoped>
   #Header{
     background: #f1f3f4;
@@ -658,5 +614,15 @@ export default {
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #controlPosition{
+    display: inline-block;
+    position: absolute;
+    right: 2rem;
+    top: 0;
+  }
+  #controlBigPosition{
+    position: absolute;
+    right: 7.2rem;
   }
 </style>

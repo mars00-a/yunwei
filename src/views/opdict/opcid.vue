@@ -74,6 +74,12 @@
           prop="opsignalId"
           label="运维指标id"
         >
+          <template slot-scope="scope">
+
+            <el-tooltip class="item" effect="dark" :content="tableOpsignalIdGet(scope.row.opsignalId)" placement="top-start">
+              <span>{{scope.row.opsignalId}}</span>
+            </el-tooltip>
+          </template>
         </el-table-column>
         <!--事件类型：eventType-->
         <el-table-column
@@ -117,25 +123,31 @@
     <el-footer id="Footer">
       <!--分页功能-->
       <!--当前行数与总数据条数-->
-      <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
-      <!--分页-->
-      <div id="paginate">
-        <el-pagination
-          background
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100, 200, 300]"
-          :page-size="size"
-          layout="sizes, prev, pager, next, jumper"
-          :total="totalNumber"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
+        </el-col>
+        <el-col :span="14">
+          <div>
+            <el-pagination
+              id="controlBigPosition"
+              background
+              :current-page="currentPage"
+              :page-sizes="[20, 50, 100, 200, 300]"
+              :page-size="size"
+              layout="sizes, prev, pager, next, jumper"
+              :total="totalNumber"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+            <el-button id="controlPosition" type="primary" round>跳转</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-footer>
     <!--弹窗-->
     <el-dialog top="1vh" title="新增运维事件" :visible.sync="dialogVisible" width="30%">
       <!--            左侧表单栏-->
-
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="事件id" :rules="[{ required: true}]">
             <el-input
@@ -214,19 +226,18 @@
             <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
             <el-button type="primary" @click="dialogVisible=false,Confirm()">确 定</el-button>
         </span>
-
       <!--            右侧指标信息栏-->
       <div v-show = controlShow id="targetTable">
         <el-table
           :data="targetTable"
-          height="625"
+          height="660"
           border
           style="width: 100%">
           <el-table-column
             active-class="targetTableGetFocus"
             prop="opsignalId"
             label="指标id"
-            width="100%">
+            width="105%">
           </el-table-column>
           <el-table-column
             prop="opsignalName"
@@ -267,7 +278,8 @@ export default {
         width: "100%"
       },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: 'opcid',
         label: '运维事件id'
       },{
@@ -322,7 +334,8 @@ export default {
       //事件来源类型
       EventSourceTypes: [],
       //事件类型
-      EventTypes: [{
+      EventTypes: [
+        {
           value:1,
           label:'1-报警'
         },{
@@ -545,6 +558,14 @@ export default {
         }
       });
     },
+    // 处理表格中运维指标id的提示
+    tableOpsignalIdGet(id){
+      for(let i=0;i<this.serverTargetTable.length; i++){
+        if (id === this.serverTargetTable[i].opsignalId){
+          return this.serverTargetTable[i].opsignalName
+        }
+      }
+    }
   },
   watch:{
     //当对应指标中输入东西的时候搜索
@@ -560,7 +581,6 @@ export default {
           val = Arr[0]
         if (val === undefined)
           val = '';
-        // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
@@ -574,9 +594,8 @@ export default {
     };
     this.dropDownBox();
     getSTable().then(request=>{
-      // console.log(request)
-      this.serverTargetTable = request.data.body.slice(1, request.data.body.length)
-      this.targetTable = request.data.body.slice(1, request.data.body.length)
+      this.serverTargetTable = request.data.body.slice(0, request.data.body.length)
+      this.targetTable = request.data.body.slice(0, request.data.body.length)
       console.log(this.serverTargetTable)
     })
   }
@@ -621,5 +640,15 @@ export default {
     position: absolute;
     right: 4vh;
     bottom: 2vh;
+  }
+  #controlPosition{
+     display: inline-block;
+     position: absolute;
+     right: 2rem;
+     top: 0;
+   }
+  #controlBigPosition{
+    position: absolute;
+    right: 7.2rem;
   }
 </style>

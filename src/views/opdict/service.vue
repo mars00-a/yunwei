@@ -80,20 +80,27 @@
     <el-footer id="Footer">
       <!--分页功能-->
       <!--当前行数与总数据条数-->
-      <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
-      <!--分页-->
-      <div id="paginate">
-        <el-pagination
-          background
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100, 200, 300]"
-          :page-size="size"
-          layout="sizes, prev, pager, next, jumper"
-          :total="totalNumber"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
+        </el-col>
+        <el-col :span="14">
+          <div>
+            <el-pagination
+              id="controlBigPosition"
+              background
+              :current-page="currentPage"
+              :page-sizes="[20, 50, 100, 200, 300]"
+              :page-size="size"
+              layout="sizes, prev, pager, next, jumper"
+              :total="totalNumber"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+            <el-button id="controlPosition" type="primary" round>跳转</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-footer>
     <!--新增按钮的弹窗-->
     <el-dialog title="新增服务类型" :visible.sync="dialogVisible" width="30%">
@@ -338,5 +345,15 @@ export default {
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #controlPosition{
+    display: inline-block;
+    position: absolute;
+    right: 2rem;
+    top: 0;
+  }
+  #controlBigPosition{
+    position: absolute;
+    right: 7.2rem;
   }
 </style>

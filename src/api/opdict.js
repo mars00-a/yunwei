@@ -450,3 +450,11 @@ export  function getSTable() {
     method: 'get',
   })
 }
+
+// 公式中的对象列标
+export  function getOTable() {
+  return request({
+    url: '/api/MonitorObject/All',
+    method: 'get',
+  })
+}

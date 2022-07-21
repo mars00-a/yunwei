@@ -67,12 +67,12 @@
             style="width: 100%">
             <el-table-column
               active-class="targetTableGetFocus"
-              prop="id"
+              prop="opsignalId"
               label="指标id"
-              width="100%">
+              width="105%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="opsignalName"
               label="指标名称"
               width="100%">
             </el-table-column>
@@ -186,7 +186,7 @@ import {getStatusDelete,getStatusUpdate} from "@/api/opdict";
         this.controlShow = true
       },
       targetTableGetFocus(index,row){
-        this.form.opsignalId = "@" + row.id;
+        this.form.opsignalId = row.opsignalId;
         // this.targetTable = row
         // event
       }
@@ -196,7 +196,7 @@ import {getStatusDelete,getStatusUpdate} from "@/api/opdict";
       'form.opsignalId':{
         immediate:true,
         handler(val){
-          let Arr = val.split("@")
+          let Arr = val.split("S")
           if (Arr[0] === '')
             val = Arr[1]
           else
@@ -204,7 +204,7 @@ import {getStatusDelete,getStatusUpdate} from "@/api/opdict";
           if (val === undefined)
             val = ''
           this.targetTable = this.serverTargetTable.filter(p =>{
-            return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+            return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
           })
         }
       }

@@ -87,17 +87,17 @@
         <div v-show = controlShow id="targetTable">
           <el-table
             :data="targetTable"
-            height="625"
+            height="660"
             border
             style="width: 100%">
             <el-table-column
               active-class="targetTableGetFocus"
-              prop="id"
+              prop="opsignalId"
               label="指标id"
-              width="100%">
+              width="105%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="opsignalName"
               label="指标名称"
               width="100%">
             </el-table-column>
@@ -220,7 +220,7 @@ export default {
     },
     // 点击选择按钮后将输入框的值设置为选中的
     targetTableGetFocus(index,row){
-      this.form.target = row.opsignalId;
+      this.form.opsignalId = row.opsignalId;
     }
   },
   watch:{
@@ -229,14 +229,12 @@ export default {
       immediate:true,
       handler(val){
         let Arr = val.split("S")
-        // console.log(Arr)
         if (Arr[0] === '')
           val = Arr[1]
         else
           val = Arr[0]
         if (val === undefined)
           val = ''
-        // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })

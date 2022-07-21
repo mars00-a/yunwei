@@ -56,12 +56,12 @@
             style="width: 100%">
             <el-table-column
               active-class="targetTableGetFocus"
-              prop="id"
+              prop="objectId"
               label="对象id"
               width="100%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="objectName"
               label="对象名称"
               width="100%">
             </el-table-column>
@@ -185,11 +185,8 @@ export default {
           FrontStr += "@"+FrontArr[i]
         }
       }
-      // console.log("maVal:",myVal)
-      // console.log("FrontArr",FrontArr)
-      // console.log("FrontStr",FrontStr)
       val = myValArr[myValArr.length-1];
-      this.form.para = FrontStr+"@"+row.id;
+      this.form.para = FrontStr+"@"+row.objectId;
     }
   },
   watch:{
@@ -198,60 +195,53 @@ export default {
       immediate:true,
       handler(val){
         //当输入框里值为空时，将提示标为指定内容
-        if(val === ''||val === undefined||val === null){
-          // console.log("发生了改变，值为：",val)
+        if(val === '' || val === undefined || val === null){
           this.tip = '请输入指标公式'
         }
-        //获取@符号后面的数据，用于搜索
-        let myValArr = val.split("@");
-        let mySearch = myValArr[myValArr.length-1];
-        //获取所有的id变成数组，用于查找指标名称
-        let myIdArr = val.split(/[-,+,*,/,(,),^,@]/);
-        myIdArr = myIdArr.filter(function (s) {
-          return s && s.trim();
-        });
-        this.form.objectIds = myIdArr;
-        // console.log("id数组为：",myIdArr)
-        //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
-        let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
-        myOperatorArr = myOperatorArr.filter(function (s) {
-          return s && s.trim();
-        });
-        // console.log("符号数组为：",myOperatorArr)
-        //以id为依据获取到对应的指标名称
-        let myNameArr = []
-        for(let i=0; i<myIdArr.length; i++){
-          for(let j=0; j<this.serverTargetTable.length; j++){
-            if(this.serverTargetTable[j].id === myIdArr[i]){
-              // console.log("发现了指定id的指标")
-              // console.log("对应的指标id和指标名称为：",this.serverTargetTable[j].id,this.serverTargetTable[j].name)
-              myNameArr[i] = this.serverTargetTable[j].name
+        else{
+          //获取@符号后面的数据，用于搜索
+          let myValArr = val.split("@");
+          let mySearch = myValArr[myValArr.length-1];
+          //获取所有的id变成数组，用于查找指标名称
+          let myIdArr = val.split(/[-,+,*,/,(,),^,@]/);
+          myIdArr = myIdArr.filter(function (s) {
+            return s && s.trim();
+          });
+          this.form.objectIds = myIdArr;
+          // console.log("id数组为：",myIdArr)
+          //获取所有的符号，用于添加在注释的指标名称之间解释指标名称作用
+          let myOperatorArr = val.split(/[0,1,2,3,4,5,6,7,8,9]/);
+          myOperatorArr = myOperatorArr.filter(function (s) {
+            return s && s.trim();
+          });
+          // console.log("符号数组为：",myOperatorArr)
+          //以id为依据获取到对应的指标名称
+          let myNameArr = []
+          for(let i=0; i<myIdArr.length; i++){
+            for(let j=0; j<this.serverTargetTable.length; j++){
+              if(this.serverTargetTable[j].objectId === myIdArr[i]){
+                // console.log("发现了指定id的指标")
+                // console.log("对应的指标id和指标名称为：",this.serverTargetTable[j].id,this.serverTargetTable[j].name)
+                myNameArr[i] = this.serverTargetTable[j].objectName
+              }
             }
           }
-        }
-        // console.log("指标名称数组为：",myNameArr)
-        //将指标名称和运算符组合成一句话传入到tip中
-        this.tip = ''
-        for(let i=0;i<myOperatorArr.length;i++){
-          this.tip += myOperatorArr[i]
-          if (myNameArr[i])
-            this.tip += myNameArr[i]
+          // console.log("指标名称数组为：",myNameArr)
+          //将指标名称和运算符组合成一句话传入到tip中
+          this.tip = ''
+          for(let i=0;i<myOperatorArr.length;i++){
+            this.tip += myOperatorArr[i]
+            if (myNameArr[i])
+              this.tip += myNameArr[i]
+          }
+
+          this.targetTable = this.serverTargetTable.filter(p =>{
+            return p.objectName.indexOf(mySearch) !== -1 || p.objectId.indexOf(mySearch) !== -1
+          })
         }
 
-
-        this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(mySearch) !== -1 || p.id.indexOf(mySearch) !== -1
-        })
       }
     },
-    // 当提示为空时要有默认提示
-    'tip':{
-      handler(val){
-        if(val === ''){
-          this.tip = "请输入指标公式"
-        }
-      }
-    }
   },
   //接入来自../../../views/opdict/object的数据
   props:{

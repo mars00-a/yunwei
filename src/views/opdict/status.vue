@@ -62,6 +62,12 @@
           prop="opsignalId"
           label="运维指标id"
         >
+          <template slot-scope="scope">
+
+            <el-tooltip class="item" effect="dark" :content="tableOpsignalIdGet(scope.row.opsignalId)" placement="top-start">
+              <span>{{scope.row.opsignalId}}</span>
+            </el-tooltip>
+          </template>
         </el-table-column>
         <!--阈值默认上限：upthres-->
         <el-table-column
@@ -106,20 +112,27 @@
     <el-footer id="Footer">
       <!--分页功能-->
       <!--当前行数与总数据条数-->
-      <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
-      <!--分页-->
-      <div id="paginate">
-        <el-pagination
-          background
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100, 200, 300]"
-          :page-size="size"
-          layout="sizes, prev, pager, next, jumper"
-          :total="totalNumber"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <div id="now_line_number">第{{nowRow}}条/共{{totalNumber}}条数据</div>
+        </el-col>
+        <el-col :span="14">
+          <div>
+            <el-pagination
+              id="controlBigPosition"
+              background
+              :current-page="currentPage"
+              :page-sizes="[20, 50, 100, 200, 300]"
+              :page-size="size"
+              layout="sizes, prev, pager, next, jumper"
+              :total="totalNumber"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+            <el-button id="controlPosition" type="primary" round>跳转</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-footer>
     <!--    弹窗-->
     <div>
@@ -183,12 +196,12 @@
             style="width: 100%">
             <el-table-column
               active-class="targetTableGetFocus"
-              prop="id"
+              prop="opsignalId"
               label="指标id"
-              width="100%">
+              width="105%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="opsignalName"
               label="指标名称"
               width="100%">
             </el-table-column>
@@ -217,7 +230,8 @@
     getStatusFindUpthres,
     getStatusFindDownthres,
     getStatusFindLevel,
-    getStatusFindNote
+    getStatusFindNote,
+    getSTable
   }from '@/api/opdict'
   import {getObjectDelete, getObjectUpdate} from "@/api/opdict";
 
@@ -270,132 +284,8 @@
         //用于显示弹窗
         dialogVisible: false,
         //弹窗表格内容
-        targetTable:[
-          {
-            id:'001',
-            name:'指标名称1'
-          },{
-            id:'002',
-            name:'指标名称2'
-          },{
-            id:'003',
-            name:'指标名称3'
-          },{
-            id:'004',
-            name:'指标名称4'
-          },{
-            id:'005',
-            name:'指标名称1'
-          },{
-            id:'006',
-            name:'指标名称2'
-          },{
-            id:'007',
-            name:'指标名称3'
-          },{
-            id:'008',
-            name:'指标名称4'
-          },{
-            id:'009',
-            name:'指标名称1'
-          },{
-            id:'010',
-            name:'指标名称2'
-          },{
-            id:'011',
-            name:'指标名称3'
-          },{
-            id:'012',
-            name:'指标名称4'
-          },{
-            id:'013',
-            name:'指标名称1'
-          },{
-            id:'014',
-            name:'指标名称2'
-          },{
-            id:'015',
-            name:'指标名称3'
-          },{
-            id:'016',
-            name:'指标名称4'
-          },{
-            id:'017',
-            name:'指标名称1'
-          },{
-            id:'018',
-            name:'指标名称2'
-          },{
-            id:'019',
-            name:'指标名称3'
-          },{
-            id:'020',
-            name:'指标名称4'
-          },
-        ],
-        serverTargetTable:[
-          {
-            id:'001',
-            name:'指标名称1'
-          },{
-            id:'002',
-            name:'指标名称2'
-          },{
-            id:'003',
-            name:'指标名称3'
-          },{
-            id:'004',
-            name:'指标名称4'
-          },{
-            id:'005',
-            name:'指标名称1'
-          },{
-            id:'006',
-            name:'指标名称2'
-          },{
-            id:'007',
-            name:'指标名称3'
-          },{
-            id:'008',
-            name:'指标名称4'
-          },{
-            id:'009',
-            name:'指标名称1'
-          },{
-            id:'010',
-            name:'指标名称2'
-          },{
-            id:'011',
-            name:'指标名称3'
-          },{
-            id:'012',
-            name:'指标名称4'
-          },{
-            id:'013',
-            name:'指标名称1'
-          },{
-            id:'014',
-            name:'指标名称2'
-          },{
-            id:'015',
-            name:'指标名称3'
-          },{
-            id:'016',
-            name:'指标名称4'
-          },{
-            id:'017',
-            name:'指标名称1'
-          },{
-            id:'018',
-            name:'指标名称2'
-          },{
-            id:'019',
-            name:'指标名称3'
-          },{
-            id:'020',
-            name:'指标名称4'
-          },
-        ],
+        targetTable:[],
+        serverTargetTable:[],
         levelList:[
           {
             label:"正常--1",
@@ -421,105 +311,7 @@
         },
         //*******************中间主体*******************
         //表格数据
-        tableData: [
-          {
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },{
-            statusId: 'A000100001',
-            statusName: '服务器存活',
-            opsignalId: 'S000100001',
-            upthres: '1',
-            downthres: '1',
-            level: '1',
-            note: ''
-          },
-        ],
+        tableData: [],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -764,7 +556,7 @@
         this.controlShow = true
       },
       targetTableGetFocus(index,row){
-        this.form.opsignalId = "S" + row.id;
+        this.form.opsignalId = row.opsignalId;
         // this.targetTable = row
         // event
       },
@@ -778,6 +570,13 @@
           this.form.note = '';
           this.controlShow = false
           done();
+      },
+      tableOpsignalIdGet(id){
+        for(let i=0;i<this.serverTargetTable.length; i++){
+          if (id === this.serverTargetTable[i].opsignalId){
+            return this.serverTargetTable[i].opsignalName
+          }
+        }
       }
     },
     mounted(){
@@ -785,6 +584,11 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
+      getSTable().then(request=>{
+        this.serverTargetTable = request.data.body.slice(0, request.data.body.length)
+        this.targetTable = request.data.body.slice(0, request.data.body.length)
+        console.log(this.serverTargetTable)
+      })
     },
     watch:{
       //当对应指标中输入东西的时候搜索
@@ -799,7 +603,7 @@
           if (val === undefined)
             val = ''
           this.targetTable = this.serverTargetTable.filter(p =>{
-            return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+            return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
           })
         }
       }
@@ -842,6 +646,16 @@
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #controlPosition{
+    display: inline-block;
+    position: absolute;
+    right: 2rem;
+    top: 0;
+  }
+  #controlBigPosition{
+    position: absolute;
+    right: 7.2rem;
   }
 
 </style>
