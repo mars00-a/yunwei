@@ -107,7 +107,7 @@
     </el-footer>
     <!--新增按钮的弹窗-->
     <el-dialog title="新增" :visible.sync="dialogAddVisible" width="30%">
-      <el-form ref="addForm" :model="addForm" label-width="90px">
+      <el-form ref="addForm" :model="addForm" label-width="110px">
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
           <el-input
@@ -118,11 +118,11 @@
           <el-input v-model="addForm.serviceName" />
         </el-form-item>
         <!--服务数据表-->
-        <el-form-item label="服务数据表">
+        <el-form-item label="安装的服务器id">
           <el-input v-model="addForm.serviceTable" />
         </el-form-item>
         <!--备注-->
-        <el-form-item label="备注">
+        <el-form-item label="服务类型">
           <el-input v-model="addForm.note"  type="textarea"/>
         </el-form-item>
       </el-form>
@@ -145,11 +145,11 @@
           <el-input v-model="reviseForm.serviceName" />
         </el-form-item>
         <!--服务数据表-->
-        <el-form-item label="服务数据表">
+        <el-form-item label="安装的服务器id">
           <el-input v-model="reviseForm.serviceTable" />
         </el-form-item>
         <!--备注-->
-        <el-form-item label="备注">
+        <el-form-item label="服务类型">
           <el-input v-model="reviseForm.note"  type="textarea"/>
         </el-form-item>
       </el-form>
@@ -191,8 +191,6 @@
 <script>
   export default {
     name: 'op_service',
-    components: {
-    },
     data() {
       return{
         //*******************控制区*******************

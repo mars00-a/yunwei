@@ -444,13 +444,11 @@
           this.$message.error('阈值下限或阈值上限需在0-100之内');
         }
         else if(this.form.level !== 1 && this.form.level !== 2 && this.form.level !== 3){
-          console.log(this.form.level)
           this.dialogVisible = true;
           this.$message.error('请正确的选择状态类型');
         }
         else{
           getStatusCreate(this.form).then(request=>{
-            console.log(request.data)
             if(request.data.body){
               this.dealData();
               this.$message({
