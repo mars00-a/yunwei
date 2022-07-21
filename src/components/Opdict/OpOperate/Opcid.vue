@@ -220,19 +220,15 @@ export default {
     },
     // 点击选择按钮后将输入框的值设置为选中的
     targetTableGetFocus(index,row){
-      this.form.target = "@"+row.id;
-      // this.targetTable = row
-      // event
-      // console.log(row.id)
-      // console.log("点击了某个东西")
+      this.form.target = row.opsignalId;
     }
   },
   watch:{
     // 当对应指标中输入东西的时候搜索
-    'form.target':{
+    'form.opsignalId':{
       immediate:true,
       handler(val){
-        let Arr = val.split("@")
+        let Arr = val.split("S")
         // console.log(Arr)
         if (Arr[0] === '')
           val = Arr[1]
@@ -242,7 +238,7 @@ export default {
           val = ''
         // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+          return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
       }
     }

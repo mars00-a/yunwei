@@ -224,12 +224,12 @@
           style="width: 100%">
           <el-table-column
             active-class="targetTableGetFocus"
-            prop="id"
+            prop="opsignalId"
             label="指标id"
             width="100%">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="opsignalName"
             label="指标名称"
             width="100%">
           </el-table-column>
@@ -251,7 +251,7 @@ import OpStatus from '../../components/Opdict/OpStatus'
 import OpOperateOpcid from '../../components/Opdict/OpOperate/Opcid'
 import {getOpcidPageList, getOpcidCreate, getOpcidTypeList, getOpcidDelete, getOpcidUpdate, getOpcidFindOpcid, getOpcidFindOpcidName,
   getOpcidFindSystemId, getOpcidFindType, getOpcidFindOpsignalId, getOpcidFindEventType, getOpcidFindThreshold, getOpcidFindLevel,
-  getOpcidFindNote} from '@/api/opdict'
+  getOpcidFindNote, getSTable} from '@/api/opdict'
 export default {
   name: 'MonitorObjectPage',
   components: {
@@ -314,133 +314,9 @@ export default {
         note: '',//备注
       },
       //右侧的指标表格
-      targetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
-        },
-      ],
+      targetTable:[],
       //右侧的指标表格
-      serverTargetTable:[
-        {
-          id:'001',
-          name:'指标名称1'
-        },{
-          id:'002',
-          name:'指标名称2'
-        },{
-          id:'003',
-          name:'指标名称3'
-        },{
-          id:'004',
-          name:'指标名称4'
-        },{
-          id:'005',
-          name:'指标名称1'
-        },{
-          id:'006',
-          name:'指标名称2'
-        },{
-          id:'007',
-          name:'指标名称3'
-        },{
-          id:'008',
-          name:'指标名称4'
-        },{
-          id:'009',
-          name:'指标名称1'
-        },{
-          id:'010',
-          name:'指标名称2'
-        },{
-          id:'011',
-          name:'指标名称3'
-        },{
-          id:'012',
-          name:'指标名称4'
-        },{
-          id:'013',
-          name:'指标名称1'
-        },{
-          id:'014',
-          name:'指标名称2'
-        },{
-          id:'015',
-          name:'指标名称3'
-        },{
-          id:'016',
-          name:'指标名称4'
-        },{
-          id:'017',
-          name:'指标名称1'
-        },{
-          id:'018',
-          name:'指标名称2'
-        },{
-          id:'019',
-          name:'指标名称3'
-        },{
-          id:'020',
-          name:'指标名称4'
-        },
-      ],
+      serverTargetTable:[],
       // 所属系统
       BelongingSystems: [],
       //事件来源类型
@@ -529,7 +405,7 @@ export default {
       this.controlShow = true
     },
     targetTableGetFocus(index,row){
-      this.form.opsignalId = "@"+row.id;
+      this.form.opsignalId = row.opsignalId;
     },
     //************************新增与查找按钮************************
     //新增功能弹窗的取消和确认
@@ -674,9 +550,10 @@ export default {
     //当对应指标中输入东西的时候搜索
     'form.opsignalId':{
       immediate:true,
+
       handler(val){
-        let Arr = val.split("@")
-        // console.log(Arr)
+        console.log("发生了改变")
+        let Arr = val.split("S")
         if (Arr[0] === '')
           val = Arr[1]
         else
@@ -685,7 +562,7 @@ export default {
           val = '';
         // console.log(val)
         this.targetTable = this.serverTargetTable.filter(p =>{
-          return p.name.indexOf(val) !== -1 || p.id.indexOf(val) !== -1
+          return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
       }
     }
@@ -696,6 +573,12 @@ export default {
       height: document.body.clientHeight-50-30-64-70+"px"
     };
     this.dropDownBox();
+    getSTable().then(request=>{
+      // console.log(request)
+      this.serverTargetTable = request.data.body.slice(1, request.data.body.length)
+      this.targetTable = request.data.body.slice(1, request.data.body.length)
+      console.log(this.serverTargetTable)
+    })
   }
 }
 </script>
