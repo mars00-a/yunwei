@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-//****************************************Object****************************************
+//****************************************Customer****************************************
 //Customer分页
 export  function getOpCustomerPageList(index,size) {
   return request({
@@ -103,3 +103,97 @@ export  function getOpCustomerDelete(customerId) {
     params:{customerId}
   })
 }
+
+
+//****************************************客户服务器相关接口****************************************
+export  function getOpCustomerServerByCustomer(customerId) {
+  return request({
+    url: '/api/OpCustomerServer/ByCustomer',
+    method: 'get',
+    params:{customerId}
+  })
+}
+export  function getOpCustomerServerDelete(customerId,serverId) {
+  return request({
+    url: '/api/OpCustomerServer/Delete',
+    method: 'post',
+    params:{customerId,serverId}
+  })
+}
+
+
+
+
+
+
+
+//****************************************Server****************************************
+//Server分页
+export  function getOpServerPageList(index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}
+//Server过滤
+export  function getOpServerFindServerId(ServerId,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {ServerId,index,size}
+  })
+}
+export  function getOpServerFindServerName(ServerName,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {ServerName,index,size}
+  })
+}
+export  function getOpServerFindServerIp(ServerIp,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {ServerIp,index,size}
+  })
+}
+export  function getOpServerFindServerPort(ServerPort,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {ServerPort,index,size}
+  })
+}
+export  function getOpServerFindMonitored(Monitored,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {Monitored,index,size}
+  })
+}
+export  function getOpServerFindControlled(Controlled,index,size) {
+  return request({
+    url: '/api/OpServer/PageList',
+    method: 'get',
+    params: {Controlled,index,size}
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

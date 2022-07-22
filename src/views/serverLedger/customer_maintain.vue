@@ -50,14 +50,15 @@
           label="客户id"
         >
         </el-table-column>
-        <!--区域负责人：areaManager-->
+        <!--客户经理：areaManager-->
         <el-table-column
           prop="areaManager"
-          label="区域负责人"
+          label="客户经理"
         >
         </el-table-column>
         <!--使用公司：company-->
         <el-table-column
+          :show-overflow-tooltip="true"
           prop="company"
           label="公司名称"
         >
@@ -70,6 +71,7 @@
         </el-table-column>
         <!--联系电话：contactPhone-->
         <el-table-column
+          width="120"
           prop="contactPhone"
           label="联系电话"
         >
@@ -82,6 +84,7 @@
         </el-table-column>
         <!--地址：address-->
         <el-table-column
+          :show-overflow-tooltip="true"
           prop="address"
           label="地址"
         >
@@ -90,6 +93,7 @@
         <el-table-column
           prop="note"
           label="备注"
+          :show-overflow-tooltip="true"
         >
         </el-table-column>
         <!--区域经理ID：areaManagerId-->
@@ -110,7 +114,7 @@
                 <el-button type="danger" @click="Del(scope.row)">删除</el-button>
               </el-col>
               <el-col :span="7.4">
-                <el-button type="warning" @click="dialogServerVisible = true">服务器</el-button>
+                <el-button type="warning" @click="dialogServerVisible = true, getServer(scope.row)">服务器</el-button>
               </el-col>
               <el-col :span="5.4">
                 <el-button type="info" @click="dialogServiceVisible = true">服务</el-button>
@@ -203,6 +207,7 @@
         <el-button type="primary" @click="dialogAddVisible = false, addConfirm()">确 定</el-button>
       </span>
     </el-dialog>
+
     <!--修改按钮的弹窗-->
     <el-dialog top="1vh" title="修改" :visible.sync="dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
@@ -269,6 +274,7 @@
         <el-button type="primary" @click="dialogReviseVisible = false, ReviseConfirm()">确 定</el-button>
       </span>
     </el-dialog>
+
     <!--服务器按钮的弹窗-->
     <el-dialog title="修改服务器信息" :visible.sync="dialogServerVisible" width="50%">
       <el-table
@@ -277,16 +283,20 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="f_server_name"
+          prop="server.serverId"
+          label="服务器ID">
+        </el-table-column>
+        <el-table-column
+          prop="server.serverName"
           label="服务器名称">
         </el-table-column>
         <el-table-column
-          prop="f_begin_time"
+          prop="beginTime"
           label="启用"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="f_end_time"
+          prop="endTime"
           label="停用"
           width="180">
         </el-table-column>
@@ -296,18 +306,97 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="24">
-                <el-button type="danger" @click="Del">删除</el-button>
+                <el-button type="danger" @click="ServerDel(scope.row)">删除</el-button>
               </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogServerVisible = true, add_twoTableDelete()">新 增</el-button>
+        <el-button @click="dialogServerVisible = true, dialogAddServerVisible = true">新 增</el-button>
         <el-button @click="dialogServerVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogServerVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="新增服务器信息" :visible.sync="dialogAddServerVisible" width="30%">
+      <el-form ref="addServerForm" :model="customerAddForm" label-width="90px">
+        <!--服务器ID-->
+        <el-form-item label="服务器ID">
+          <el-input v-model="addServerForm.serverId" :disabled="true"/>
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="服务器名称">
+          <el-input v-model="addServerForm.serverName" @focus="dialogServerIdTableVisible = true"/>
+        </el-form-item>
+        <!--服务器端口-->
+        <el-form-item label="启用">
+          <el-input v-model="addServerForm.beginTime" />
+        </el-form-item>
+        <!--使用工具-->
+        <el-form-item label="停用">
+          <el-input v-model="addServerForm.endTime" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogAddServerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogAddServerVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="获取服务器ID/名称" :visible.sync="dialogServerIdTableVisible" width="50%">
+      <el-row :gutter="10">
+        <!--过滤参数选择-->
+        <el-col :span="10">
+          <span>过滤参数：</span>
+          <el-select v-model="ServerIdTableFilterParameters_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
+            <el-option
+              v-for="item in ServerIdTableFilterParameters"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <!--查找输入框-->
+        <el-col :span="2">
+          <span id="ServerIdTableValue">值：</span>
+        </el-col>
+        <el-col :span="4">
+          <el-input v-model="ServerIdTableCompleteValue" placeholder="请输入内容"/>
+        </el-col>
+        <!--查找、新增功能按钮-->
+        <el-col :span="8">
+          <el-button type="primary">过滤</el-button>
+          <el-button type="primary">恢复</el-button>
+        </el-col>
+      </el-row>
+      <el-table
+        :data="serverIdTable"
+        height="350"
+        border
+        style="width: 100%"
+        id="ServerIdTable">
+        <el-table-column
+          prop="serverId"
+          label="服务器ID">
+        </el-table-column>
+        <el-table-column
+          prop="serverName"
+          label="服务器名称">
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="90">
+          <template slot-scope="scope">
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <el-button type="danger" @click="dialogServerIdTableVisible = false">添加</el-button>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+
     <!--服务器按钮的弹窗-->
     <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
       <el-form ref="serviceForm" :model="serviceForm" label-width="90px">
@@ -342,7 +431,7 @@
   import {getOpCustomerPageList, getOpCustomerFindCustomerId, getOpCustomerFindAreaManager, getOpCustomerFindCompany,
     getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
     getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
-    getOpCustomerDelete, } from '@/api/serverLedger'
+    getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList,} from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
@@ -420,10 +509,24 @@
         reviseForm: {},
         //********服务器的弹窗********
         //弹窗是否可见
+        dialogAddServerVisible:false,
         dialogServerVisible: false,
+        dialogServerIdTableVisible:false,
         //服务器的表格
-        serverTable: [
-          {}
+        serverTable: [],
+        nowCustomerId:'',
+        addServerForm:[],
+        serverIdTable:[],
+        ServerIdTableFilterParameters_value:'',
+        ServerIdTableCompleteValue:'',
+        ServerIdTableFilterParameters:[
+          {
+            value: 'CustomerId',
+            label: '服务器ID'
+          },{
+            value: 'AreaManager',
+            label: '服务器名称'
+          }
         ],
         //********服务的弹窗********
         //弹窗是否可见
@@ -438,7 +541,6 @@
         getOpCustomerPageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
-          console.log(request);
         });
         this.FilterParameter_value = '';
         this.CompleteValue='';
@@ -509,6 +611,13 @@
             this.accountManagers[i] = request.data.body[i].managerName;
           }
         });
+      },
+      dealServerIdTable(){
+        getOpServerPageList(1,10000).then(request=>{
+          this.serverIdTable = request.data.body.data;
+        });
+        this.ServerIdTableFilterParameters_value = '';
+        this.ServerIdTableCompleteValue='';
       },
       //************************分页************************
       //鼠标放到某一行上就触发
@@ -608,12 +717,47 @@
           })
         })
       },
-      //新增表格
-      add_twoTableDelete() {
-        this.serverTable.push({})
+      getServer(row){
+        getOpCustomerServerByCustomer(row.customerId).then(request=>{
+          this.serverTable = request.data.body;
+          this.nowCustomerId = row.customerId;
+        })
+      },
+      ServerDel(row){
+        this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log(this.nowCustomerId);
+          console.log(row.server.serverId);
+          getOpCustomerServerDelete(this.nowCustomerId,row.server.serverId).then(request=>{
+            getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
+              this.serverTable = request.data.body;
+            });
+            if (request.data.body) {
+              this.Find();
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       }
     },
     mounted(){
+      this.dealServerIdTable();
       this.dealData();
       this.dropDownBox();
       this.myStyle = {
@@ -675,5 +819,12 @@
   #Value{
     line-height: 2.2rem;
     padding-left: 1.2rem;
+  }
+  #ServerIdTableValue{
+    line-height: 2.2rem;
+    padding-left: 1.2rem;
+  }
+  #ServerIdTable{
+    margin-top: 0.2rem;
   }
 </style>

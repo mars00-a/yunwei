@@ -23,8 +23,8 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogAddVisible = true">新增</el-button>
         </el-col>
       </el-row>
@@ -44,40 +44,40 @@
           label="序号"
         >
         </el-table-column>
-        <!--服务器id：f_server_id-->
+        <!--服务器id：serverId-->
         <el-table-column
-          prop="f_server_id"
-          label="服务器id"
+          prop="serverId"
+          label="服务器ID"
         >
         </el-table-column>
-        <!--服务器名称：f_server_name-->
+        <!--服务器名称：serverName-->
         <el-table-column
-          prop="f_server_name"
+          prop="serverName"
           label="服务器名称"
         >
         </el-table-column>
-        <!--服务器ip：f_server_ip-->
+        <!--服务器ip：serverIp-->
         <el-table-column
-          prop="f_server_ip"
-          label="服务器ip"
+          prop="serverIp"
+          label="服务器IP"
         >
         </el-table-column>
-        <!--服务器运维管理端口：f_server_port-->
+        <!--服务器运维管理端口：serverPort-->
         <el-table-column
-          prop="f_server_port"
+          prop="serverPort"
           width="150"
           label="服务器运维管理端口"
         >
         </el-table-column>
-        <!--是否监测该服务器：f_ismonitored-->
+        <!--是否监测该服务器：monitored-->
         <el-table-column
-          prop="f_ismonitored"
+          prop="monitored"
           label="是否监测该服务器"
         >
         </el-table-column>
-        <!--是否控制该服务器：f_iscontroled-->
+        <!--是否控制该服务器：controlled-->
         <el-table-column
-          prop="f_iscontroled"
+          prop="controlled"
           label="是否控制该服务器"
         >
         </el-table-column>
@@ -96,7 +96,7 @@
                 <el-button type="warning" @click="dialogCustomerVisible = true">客户</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="info" @click="dialogServiceVisible = true">服务</el-button>
+                <el-button type="info" @click="dialogServiceVisible = true, gotoService()">服务</el-button>
               </el-col>
               <el-col :span="4.8">
                 <el-button type="success" @click="dialogLoginVisible = true">登录</el-button>
@@ -389,7 +389,8 @@
 </template>
 
 <script>
-
+  import {getOpServerPageList, getOpServerFindServerId, getOpServerFindServerName, getOpServerFindServerIp,getOpServerFindServerPort,
+    getOpServerFindMonitored, getOpServerFindControlled, } from '@/api/serverLedger'
   export default {
     name: 'op_server',
     components: {
@@ -398,7 +399,25 @@
       return{
         //*******************控制区*******************
         //过滤参数下拉框
-        FilterParameters: [],
+        FilterParameters: [{
+          value:'ServerId',
+          label:'服务器ID'
+        },{
+          value:'ServerName',
+          label:'服务器名称'
+        },{
+          value:'ServerIp',
+          label:'服务器IP'
+        },{
+          value:'ServerPort',
+          label:'服务器运维管理端口'
+        },{
+          value:'Monitored',
+          label:'是否监测该服务器'
+        },{
+          value:'Controlled',
+          label:'是否控制该服务器'
+        },],
         //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
@@ -409,7 +428,7 @@
           height:"29rem"
         },
         //表格数据
-        tableData: [],
+        tableData: [{}],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -466,6 +485,55 @@
     },
     methods:{
       //**********************数据更新**********************
+      dealData(){
+        getOpServerPageList(this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        });
+        this.FilterParameter_value = '';
+        this.CompleteValue='';
+      },
+      Find() {
+        if (this.FilterParameter_value === 'ServerId') {
+          getOpServerFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if (this.FilterParameter_value === 'ServerName') {
+          getOpServerFindServerName(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if (this.FilterParameter_value === 'ServerIp') {
+          getOpServerFindServerIp(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if (this.FilterParameter_value === 'ServerPort') {
+          getOpServerFindServerPort(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if (this.FilterParameter_value === 'Monitored') {
+          getOpServerFindMonitored(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if (this.FilterParameter_value === 'Controlled') {
+          getOpServerFindControlled(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else {
+          this.dealData();
+        }
+      },
       //************************分页************************
       //鼠标放到某一行上就触发
       tableCellClassName({row,rowIndex}){
@@ -486,6 +554,10 @@
         this.Find();
       },
       //**********************表格主体**********************
+      //服务按钮实现页面跳转
+      gotoService(){
+        this.$router.push('service_maintain');
+      },
       //************************弹窗************************
       //删除功能的事件
       Del() {
@@ -537,7 +609,7 @@
       }
     },
     mounted(){
-
+      this.dealData();
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
