@@ -219,23 +219,32 @@
     <!--客户按钮的弹窗-->
     <el-dialog title="修改客户信息" :visible.sync="dialogCustomerVisible" width="30%">
       <el-form ref="CustomerForm" :model="CustomerForm" label-width="90px">
-        <!--服务类型-->
+        <!--客户ID-->
         <el-form-item label="客户ID">
           <el-input
             @focus="getCustomerId"
-            v-model="CustomerForm.customer_id" />
+            v-model="CustomerForm.CustomerId" />
         </el-form-item>
-        <!--服务名称-->
+        <!--选择日期-->
         <el-form-item label="启用日期">
-          <el-input v-model="CustomerForm.f_begin_time" />
+          <el-date-picker
+            v-model="CustomerForm.f_begin_time"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
-        <!--服务数据表-->
+        <!--停用日期-->
         <el-form-item label="停用日期">
-          <el-input v-model="CustomerForm.f_end_time" />
+          <el-date-picker
+            v-model="CustomerForm.f_end_time"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
+        <!--客户id选择列表-->
         <div v-show = tableCustomerVisible id="targetTable">
           <el-table
-            :data="customerIdTable"
+            :data="targetCustomerIdTable"
             height="500"
             border
             style="width: 100%">
@@ -380,6 +389,7 @@
 </template>
 
 <script>
+
   export default {
     name: 'op_server',
     components: {
@@ -399,14 +409,7 @@
           height:"29rem"
         },
         //表格数据
-        tableData: [
-          {
-            serviceType:'1231',
-            serviceName:'31231',
-            serviceTable:'3123',
-            note:'31231'
-          }
-        ],
+        tableData: [],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -427,7 +430,19 @@
         //客户的弹窗
         dialogCustomerVisible: false,
         tableCustomerVisible: false,
-        CustomerForm:{},
+        CustomerForm:{
+          CustomerId:'',
+        },
+        targetCustomerIdTable:[{
+          customerlId:'101',
+          customerName:'张三'
+        },{
+          customerlId:'102',
+          customerName:'李四'
+        },{
+          customerlId:'201',
+          customerName:'王五'
+        }],
         customerIdTable:[{
           customerlId:'101',
           customerName:'张三'
@@ -437,7 +452,7 @@
         },{
           customerlId:'201',
           customerName:'王五'
-        },],
+        }],
         //服务的弹窗
         dialogServiceVisible: false,
         serviceForm:{},
@@ -493,7 +508,14 @@
       //显示客户id选择列表
       getCustomerId(){
         this.tableCustomerVisible = true;
-      }
+      },
+      //添加客户id
+      targetTableGetFocus(index,row){
+        console.log(row.customerlId);
+        console.log(this.CustomerForm.CustomerId);
+        this.CustomerForm.CustomerId = row.customerlId;
+        console.log(this.CustomerForm.CustomerId);
+      },
     },
     watch:{
       //当对应指标中输入东西的时候搜索
@@ -501,21 +523,21 @@
         immediate:true,
 
         handler(val){
-          console.log("发生了改变")
-          let Arr = val.split('')
-          if (Arr[0] === '')
-            val = Arr[1];
-          else
-            val = Arr[0];
-          if (val === undefined)
-            val = '';
-          this.targetTable = this.serverTargetTable.filter(p =>{
-            return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
-          })
+          if(val !== undefined){
+            console.log(val);
+            this.targetCustomerIdTable = this.customerIdTable.filter(p =>{
+              return p.customerName.indexOf(val) !== -1 || p.customerlId.indexOf(val) !== -1
+            });
+            console.log(this.targetCustomerIdTable);
+          }
+          else {
+            this.targetCustomerIdTable = this.customerIdTable;
+          }
         }
       }
     },
     mounted(){
+
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
