@@ -23,7 +23,7 @@
         </el-col>
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
-          <el-button type="primary" @click="dealData">恢复</el-button>
+          <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
         <el-col :span="6"><div class="grid-content bg-purple">

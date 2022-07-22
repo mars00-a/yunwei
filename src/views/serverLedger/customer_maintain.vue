@@ -23,13 +23,13 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
+          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogAddVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
-    <el-main :style="myStyle" id="Main" >
+    <el-main :style="myStyle" id="Main"  >
       <el-table
         :data="tableData"
         height="100%"
@@ -44,57 +44,57 @@
           label="序号"
         >
         </el-table-column>
-        <!--客户id：f_customer_id-->
+        <!--客户id：customerId-->
         <el-table-column
-          prop="f_customer_id"
+          prop="customerId"
           label="客户id"
         >
         </el-table-column>
-        <!--区域负责人：f_area_manager-->
+        <!--区域负责人：areaManager-->
         <el-table-column
-          prop="f_area_manager"
+          prop="areaManager"
           label="区域负责人"
         >
         </el-table-column>
-        <!--使用公司：f_company-->
+        <!--使用公司：company-->
         <el-table-column
-          prop="f_company"
-          label="使用公司"
+          prop="company"
+          label="公司名称"
         >
         </el-table-column>
-        <!--联系人：f_contact-->
+        <!--联系人：contact-->
         <el-table-column
-          prop="f_contact"
+          prop="contact"
           label="联系人"
         >
         </el-table-column>
-        <!--联系电话：f_contact_phone-->
+        <!--联系电话：contactPhone-->
         <el-table-column
-          prop="f_contact_phone"
+          prop="contactPhone"
           label="联系电话"
         >
         </el-table-column>
-        <!--回访时间：f_revisit_time-->
+        <!--回访时间：revisitTime-->
         <el-table-column
-          prop="f_revisit_time"
+          prop="revisitTime"
           label="回访时间"
         >
         </el-table-column>
-        <!--地址：f_address-->
+        <!--地址：address-->
         <el-table-column
-          prop="f_address"
+          prop="address"
           label="地址"
         >
         </el-table-column>
-        <!--备注：f_note-->
+        <!--备注：note-->
         <el-table-column
-          prop="f_note"
+          prop="note"
           label="备注"
         >
         </el-table-column>
-        <!--区域经理ID：f_area_manager_id-->
+        <!--区域经理ID：areaManagerId-->
         <el-table-column
-          prop="f_area_manager_id	"
+          prop="areaManagerId"
           label="区域经理ID"
         >
         </el-table-column>
@@ -104,10 +104,10 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="5.4">
-                <el-button type="primary" @click="dialogReviseVisible = true">修改</el-button>
+                <el-button type="primary" @click="dialogReviseVisible = true, getRow(scope.row)">修改</el-button>
               </el-col>
               <el-col :span="5.4">
-                <el-button type="danger" @click="Del">删除</el-button>
+                <el-button type="danger" @click="Del(scope.row)">删除</el-button>
               </el-col>
               <el-col :span="7.4">
                 <el-button type="warning" @click="dialogServerVisible = true">服务器</el-button>
@@ -144,13 +144,13 @@
         <!--客户id-->
         <el-form-item label="客户id" :rules="[{ required: true}]">
           <el-input
-            v-model="addForm.serviceType" />
+            v-model="addForm.customerId" />
         </el-form-item>
         <!--客户经理-->
         <el-form-item label="客户经理">
           <el-select
             :style="controlWidth"
-            v-model="addForm.systemId"
+            v-model="addForm.areaManager"
             filterable
             allow-create
             default-first-option
@@ -158,32 +158,40 @@
           >
             <el-option
               v-for="item in accountManagers"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key=item
+              :label=item
+              :value=item
             />
           </el-select>
         </el-form-item>
+        <!--公司名称-->
+        <el-form-item label="公司名称">
+          <el-input v-model="addForm.company" />
+        </el-form-item>
         <!--客户名称-->
-        <el-form-item label="客户名称">
-          <el-input v-model="addForm.serviceTable" />
+        <el-form-item label="联系人">
+          <el-input v-model="addForm.contact" />
         </el-form-item>
         <!--联系电话-->
         <el-form-item label="联系电话">
-          <el-input v-model="addForm.note"/>
+          <el-input v-model="addForm.contactPhone"/>
         </el-form-item>
         <!--回访时间-->
         <el-form-item label="回访时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="addForm.date"
+            v-model="addForm.revisitTime"
             type="date"
             placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
+        <!--区域经理ID-->
+        <el-form-item label="区域经理ID">
+          <el-input v-model="addForm.areaManagerId"/>
+        </el-form-item>
         <!--客户地址-->
         <el-form-item label="客户地址">
-          <el-input v-model="addForm.note"  type="textarea"/>
+          <el-input v-model="addForm.address"  type="textarea"/>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
@@ -192,7 +200,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogAddVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogAddVisible = false, addConfirm()">确 定</el-button>
       </span>
     </el-dialog>
     <!--修改按钮的弹窗-->
@@ -202,13 +210,13 @@
         <el-form-item label="客户id" :rules="[{ required: true}]">
           <el-input
             :disabled="true"
-            v-model="reviseForm.serviceType" />
+            v-model="reviseForm.customerId" />
         </el-form-item>
         <!--客户经理-->
         <el-form-item label="客户经理">
           <el-select
             :style="controlWidth"
-            v-model="reviseForm.serviceType"
+            v-model="reviseForm.areaManager"
             filterable
             allow-create
             default-first-option
@@ -216,32 +224,40 @@
           >
             <el-option
               v-for="item in accountManagers"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key=item
+              :label=item
+              :value=item
             />
           </el-select>
         </el-form-item>
-        <!--客户名称-->
-        <el-form-item label="客户名称">
-          <el-input v-model="reviseForm.serviceTable" />
+        <!--公司名称-->
+        <el-form-item label="公司名称">
+          <el-input v-model="reviseForm.company" />
+        </el-form-item>
+        <!--联系人-->
+        <el-form-item label="联系人">
+          <el-input v-model="reviseForm.contact" />
         </el-form-item>
         <!--联系电话-->
         <el-form-item label="联系电话">
-          <el-input v-model="reviseForm.note"/>
+          <el-input v-model="reviseForm.contactPhone"/>
         </el-form-item>
         <!--回访时间-->
         <el-form-item label="回访时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="reviseForm.date"
+            v-model="reviseForm.revisitTime"
             type="date"
             placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
+        <!--区域经理ID-->
+        <el-form-item label="区域经理ID">
+          <el-input v-model="reviseForm.areaManagerId"/>
+        </el-form-item>
         <!--客户地址-->
         <el-form-item label="客户地址">
-          <el-input v-model="reviseForm.note"  type="textarea"/>
+          <el-input v-model="reviseForm.address"  type="textarea"/>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
@@ -250,7 +266,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogReviseVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogReviseVisible = false, ReviseConfirm()">确 定</el-button>
       </span>
     </el-dialog>
     <!--服务器按钮的弹窗-->
@@ -323,6 +339,10 @@
 </template>
 
 <script>
+  import {getOpCustomerPageList, getOpCustomerFindCustomerId, getOpCustomerFindAreaManager, getOpCustomerFindCompany,
+    getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
+    getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
+    getOpCustomerDelete, } from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
@@ -330,7 +350,34 @@
       return {
         //*******************控制区*******************
         //过滤参数下拉框
-        FilterParameters: [],
+        FilterParameters: [{
+          value: 'CustomerId',
+          label: '客户ID'
+        },{
+          value: 'AreaManager',
+          label: '区域负责人'
+        },{
+          value: 'Company',
+          label: '使用公司'
+        },{
+          value: 'Contact',
+          label: '联系人'
+        },{
+          value: 'ContactPhone',
+          label: '联系电话'
+        },{
+          value: 'RevisitTime',
+          label: '回访时间'
+        },{
+          value: 'Address',
+          label: '地址'
+        },{
+          value: 'Note',
+          label: '备注'
+        },{
+          value: 'AreaManagerId',
+          label: '区域经理ID'
+        },],
         //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
@@ -386,7 +433,83 @@
       }
     },
     methods: {
-      //**********************数据更新**********************
+      //********************数据更新处理********************
+      dealData(){
+        getOpCustomerPageList(this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+          console.log(request);
+        });
+        this.FilterParameter_value = '';
+        this.CompleteValue='';
+      },
+      Find(){
+        if(this.FilterParameter_value === 'CustomerId'){
+          getOpCustomerFindCustomerId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'AreaManager') {
+          getOpCustomerFindAreaManager(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Company') {
+          getOpCustomerFindCompany(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Contact') {
+          getOpCustomerFindContact(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'ContactPhone') {
+          getOpCustomerFindContactPhone(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'RevisitTime') {
+          getOpCustomerFindRevisitTime(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Address') {
+          getOpCustomerFindAddress(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'Note') {
+          getOpCustomerFindNote(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'AreaManagerId') {
+          getOpCustomerFindAreaManagerId(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else{
+          this.dealData();
+        }
+      },
+      //下拉框数据
+      dropDownBox(){
+        getOpCustomerAreaManagerList().then(request=>{
+          for(let i=0;i<request.data.body.length;i++){
+            this.accountManagers[i] = request.data.body[i].managerName;
+          }
+        });
+      },
       //************************分页************************
       //鼠标放到某一行上就触发
       tableCellClassName({row, rowIndex}) {
@@ -408,17 +531,76 @@
       },
       //**********************表格主体**********************
       //************************弹窗************************
+      //新增功能的事件
+      addConfirm(){
+        if(this.addForm.customerId === ""){
+          this.dialogAddVisible = true;
+          this.$message.error('客户ID不能为空');
+        }
+        else{
+          getOpCustomerCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              this.Find();
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              });
+            }else {
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+      },
+      //修改功能的事件
+      getRow(row){
+        this.reviseForm = row;
+      },
+      ReviseConfirm(){
+        if(this.reviseForm.customerId === ""){
+          this.dialogReviseVisible = true;
+          this.$message.error('客户ID不能为空');
+        }
+        else {
+          getOpCustomerUpdate(this.reviseForm).then(request => {
+            if (request.data.body) {
+              this.Find();
+              this.$message({
+                message: '编辑成功',
+                type: 'success'
+              });
+            } else {
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+      },
       //删除功能的事件
-      Del() {
+      Del(row) {
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
+          getOpCustomerDelete(row.customerId).then(request=>{
+            if (request.data.body) {
+              this.Find();
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -432,8 +614,37 @@
       }
     },
     mounted(){
+      this.dealData();
+      this.dropDownBox();
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
+      }
+
+    },
+    watch:{
+      'reviseForm.managerName':{
+        immediate:true,
+        handler(val){
+          let i = 1;
+          this.accountManagers.forEach(a=>{
+            if(val === a){
+              this.reviseForm.customerId = i
+            }
+            i++;
+          });
+        }
+      },
+      'addForm.managerName':{
+        immediate:true,
+        handler(val){
+          let i = 1;
+          this.accountManagers.forEach(a=>{
+            if(val === a){
+              this.addForm.customerId = i
+            }
+            i++;
+          });
+        }
       }
     }
   }
