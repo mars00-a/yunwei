@@ -148,7 +148,8 @@ export default {
         height:"29rem"
       },
       //*******************控制区*******************
-      FilterParameters: [{
+      FilterParameters: [
+        {
         value: 'serviceType',
         label: '服务类型的id'
       },{
