@@ -61,11 +61,17 @@
           prop="serverId"
           label="安装的服务器id"
         >
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="dark" :content="tableServerNameGet(scope.row.serverId)" placement="top-start">
+              <span>{{scope.row.serverId}}</span>
+            </el-tooltip>
+          </template>
         </el-table-column>
         <!--服务类型：f_service_type-->
         <el-table-column
           prop="serviceType"
           label="服务类型"
+          :formatter="dealServiceType"
         >
         </el-table-column>
         <!--操作栏-->
@@ -277,45 +283,45 @@
     <el-dialog
       top="15vh"
       title="请选择新增服务的类型"
-      width="500px"
+      width="480px"
       :visible.sync="visables.dialogChooseServiceType">
       <!--      搜索那一行-->
       <el-row>
-        <el-col :span="8">
+        <el-col :span="8" style="margin-left: 15px">
           <el-button type="primary" @click="openOneDialog(1)">安防(3000)</el-button>
         </el-col>
         <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(2)">智慧用电</el-button>
+          <el-button type="primary" @click="openOneDialog(2)">智 慧 用 电</el-button>
         </el-col>
-        <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(3)">巡更巡检</el-button>
-        </el-col>
-      </el-row>
-      <el-row style="margin-top: 20px">
-        <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(4)">微信服务</el-button>
-        </el-col>
-        <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(5)">APP服务</el-button>
-        </el-col>
-        <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(6)">短信网关</el-button>
+        <el-col :span="7">
+          <el-button type="primary" @click="openOneDialog(3)">巡 更 巡 检</el-button>
         </el-col>
       </el-row>
       <el-row style="margin-top: 20px">
+        <el-col :span="8"  style="margin-left: 15px">
+          <el-button type="primary" @click="openOneDialog(4)">微 信 服 务</el-button>
+        </el-col>
         <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(5)">APP&nbsp;&nbsp;&nbsp;服 务</el-button>
+        </el-col>
+        <el-col :span="7">
+          <el-button type="primary" @click="openOneDialog(6)">短 信 网 关</el-button>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top: 20px">
+        <el-col :span="8"  style="margin-left: 15px">
           <el-button type="primary" @click="openOneDialog(7)">第三方短信</el-button>
         </el-col>
         <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(8)">语音服务</el-button>
+          <el-button type="primary" @click="openOneDialog(8)">语 音 服 务</el-button>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-button type="primary" @click="openOneDialog(9)">第三方语音</el-button>
         </el-col>
       </el-row>
       <!--      最下方操作-->
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="visables.dialogChooseServiceType = false">取 消</el-button>
+        <el-button type="danger" @click="visables.dialogChooseServiceType = false">取 消</el-button>
       </span>
     </el-dialog>
 
@@ -838,7 +844,7 @@ import {
   getServicePageList, getServiceFindServiceId, getServiceFindServiceType, getServiceFindServiceName,
   getServiceFindServerId, getServiceDelete, getAllCustomer
 } from '@/api/wang'
-import {getOpCustomerDelete} from "@/api/serverLedger";
+import {getOpServerPageList} from "@/api/serverLedger";
   export default {
     name: 'op_service',
     data() {
@@ -1116,6 +1122,29 @@ import {getOpCustomerDelete} from "@/api/serverLedger";
         this.Find();
       },
       //**********************表格主体**********************
+      // 处理服务类型的展示
+      dealServiceType(row){
+        switch (row.serviceType){
+          case 1:
+            return "1-安防服务（3000）";
+          case 2:
+            return "2-智慧用电服务";
+          case 3:
+            return "3-巡更巡检服务";
+          case 4:
+            return "4-微信服务";
+          case 5:
+            return "5-APP服务";
+          case 6:
+            return "6-短信网关服务";
+          case 7:
+            return "7-第三方短信服务";
+          case 8:
+            return "8-2030N语音服务";
+          case 9:
+            return "9-第三方语音服务";
+        }
+      },
       //************************弹窗************************
       // 检测打开九种弹窗的哪一个
       openOneDialog(type){
@@ -1220,8 +1249,15 @@ import {getOpCustomerDelete} from "@/api/serverLedger";
         console.log("确认添加了客户，客户的id为："+this.customerForm.searchCustomerKeyword)
         this.confirmSuccessMessage()
         this.visables.dialogAddCustomerVisible = false
+      },
+      // 鼠标悬浮提示
+      tableServerNameGet(id){
+        for(let i=0;i<this.allServerInfos.length; i++){
+          if(id === this.allServerInfos[i].serverId){
+            return this.allServerInfos[i].serverName
+          }
+        }
       }
-
     },
     watch:{
       // 检测新增用户弹窗页面的输入框内容
@@ -1245,7 +1281,10 @@ import {getOpCustomerDelete} from "@/api/serverLedger";
         this.customerForm.allCustomerInfos = request.data.body;
       });
       // 获取所有服务器信息表
-
+      getOpServerPageList(1,1000).then(request=>{
+        this.allServerInfos = request.data.body.data;
+        console.log(this.allServerInfos)
+      });
     }
   }
 </script>

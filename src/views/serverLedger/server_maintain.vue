@@ -90,7 +90,7 @@
                 <el-button type="primary" @click="dialogReviseVisible = true">修改</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="danger" @click="Del">删除</el-button>
+                <el-button type="danger" @click="Del(scope.row.serverId)">删除</el-button>
               </el-col>
               <el-col :span="4.8">
                 <el-button type="warning" @click="dialogCustomerVisible = true">客户</el-button>
@@ -218,12 +218,12 @@
 
     <!--客户按钮的弹窗-->
     <el-dialog title="修改客户信息" :visible.sync="dialogCustomerVisible" width="30%">
-      <el-form ref="CustomerForm" :model="CustomerForm" label-width="90px">
+      <el-form ref="CustomerForm" :model="customerForm" label-width="90px">
         <!--客户ID-->
         <el-form-item label="客户ID">
           <el-input
             @focus="getCustomerId"
-            v-model="CustomerForm.CustomerId" />
+            v-model="CustomerForm.customerId" />
         </el-form-item>
         <!--选择日期-->
         <el-form-item label="启用日期">
@@ -250,12 +250,12 @@
             style="width: 100%">
             <el-table-column
               active-class="targetTableGetFocus"
-              prop="customerlId"
+              prop="customerId"
               label="客户ID"
               width="105%">
             </el-table-column>
             <el-table-column
-              prop="customerName"
+              prop="company"
               label="客户名称"
               width="100%">
             </el-table-column>
@@ -389,8 +389,17 @@
 </template>
 
 <script>
-  import {getOpServerPageList, getOpServerFindServerId, getOpServerFindServerName, getOpServerFindServerIp,getOpServerFindServerPort,
-    getOpServerFindMonitored, getOpServerFindControlled, } from '@/api/serverLedger'
+import {
+  getOpServerPageList,
+  getOpServerFindServerId,
+  getOpServerFindServerName,
+  getOpServerFindServerIp,
+  getOpServerFindServerPort,
+  getOpServerFindMonitored,
+  getOpServerFindControlled,
+  getOpCustomerDelete,
+} from '@/api/serverLedger'
+import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang'
   export default {
     name: 'op_server',
     components: {
@@ -399,7 +408,8 @@
       return{
         //*******************控制区*******************
         //过滤参数下拉框
-        FilterParameters: [{
+        FilterParameters: [
+          {
           value:'ServerId',
           label:'服务器ID'
         },{
@@ -450,27 +460,29 @@
         dialogCustomerVisible: false,
         tableCustomerVisible: false,
         CustomerForm:{
-          CustomerId:'',
+          customerId:'',
         },
-        targetCustomerIdTable:[{
-          customerlId:'101',
-          customerName:'张三'
+        targetCustomerIdTable:[
+          {
+          customerId:'101',
+          company:'张三'
         },{
-          customerlId:'102',
-          customerName:'李四'
+          customerId:'102',
+          company:'李四'
         },{
-          customerlId:'201',
-          customerName:'王五'
+          customerId:'201',
+          company:'王五'
         }],
-        customerIdTable:[{
-          customerlId:'101',
-          customerName:'张三'
+        customerIdTable:[
+          {
+          customerId:'101',
+          company:'张三'
         },{
-          customerlId:'102',
-          customerName:'李四'
+          customerId:'102',
+          company:'李四'
         },{
-          customerlId:'201',
-          customerName:'王五'
+          customerId:'201',
+          company:'王五'
         }],
         //服务的弹窗
         dialogServiceVisible: false,
@@ -560,16 +572,26 @@
       },
       //************************弹窗************************
       //删除功能的事件
-      Del() {
+      Del(id) {
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
+          getOpServerDelete(id).then(request=>{
+            if (request.data.body) {
+              this.Find();
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -583,24 +605,18 @@
       },
       //添加客户id
       targetTableGetFocus(index,row){
-        console.log(row.customerlId);
-        console.log(this.CustomerForm.CustomerId);
-        this.CustomerForm.CustomerId = row.customerlId;
-        console.log(this.CustomerForm.CustomerId);
+        this.CustomerForm.customerId = row.customerId;
       },
     },
     watch:{
       //当对应指标中输入东西的时候搜索
-      'CustomerForm.customer_id':{
+      'CustomerForm.customerId':{
         immediate:true,
-
         handler(val){
           if(val !== undefined){
-            console.log(val);
             this.targetCustomerIdTable = this.customerIdTable.filter(p =>{
-              return p.customerName.indexOf(val) !== -1 || p.customerlId.indexOf(val) !== -1
+              return p.company.indexOf(val) !== -1 || p.customerId.indexOf(val) !== -1
             });
-            console.log(this.targetCustomerIdTable);
           }
           else {
             this.targetCustomerIdTable = this.customerIdTable;
@@ -613,6 +629,10 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
+      getAllCustomer().then(request=>{
+        this.targetCustomerIdTable = request.data.body;
+        this.customerIdTable = request.data.body;
+      });
     }
   }
 </script>
