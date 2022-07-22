@@ -23,9 +23,9 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
-          <el-button type="success" id="Add" @click="visables.dialogAddVisible = true">新增</el-button>
+          <el-button @click="Find" type="primary" id="Find">过滤</el-button>
+          <el-button @click="dealData" type="primary">恢复</el-button>
+          <el-button type="success" id="Add" @click="visables.dialogChooseServiceType = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -73,7 +73,7 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="8">
-                <el-button type="primary" @click="visables.dialogReviseVisible = true">修改</el-button>
+                <el-button type="primary" @click="openOneDialog(scope.row.serviceType)">修改</el-button>
               </el-col>
               <el-col :span="8">
                 <el-button type="danger" @click="serviceDel(scope.row.serviceId)">删除</el-button>
@@ -104,7 +104,7 @@
         />
       </div>
     </el-footer>
-    <!--新增按钮的弹窗-->
+    <!----------------新增按钮的弹窗-->
     <el-dialog title="新增" :visible.sync="visables.dialogAddVisible" width="30%">
       <el-form ref="addForm" :model="addForm" label-width="110px">
         <!--服务类型-->
@@ -130,11 +130,11 @@
         <el-button type="primary" @click="visables.dialogAddVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <!--主页面中修改按钮的弹窗-->
+    <!----------------主页面中修改按钮的弹窗-->
     <el-dialog title="修改" :visible.sync="visables.dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
         <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+        <el-form-item label="服务实例id" :rules="[{ required: true}]">
           <el-input
             :disabled="true"
             v-model="reviseForm.serviceType" />
@@ -157,7 +157,7 @@
           <el-button type="primary" @click="visables.dialogReviseVisible = false">确 定</el-button>
         </span>
     </el-dialog>
-    <!--客户按钮的弹窗-->
+<!--------------------客户按钮的弹窗------------->
     <el-dialog
       width="70%"
       top="5vh"
@@ -181,31 +181,31 @@
         </el-table-column>
 <!--        客户经理-->
         <el-table-column
-          prop="customerManager"
+          prop="areaManager"
           label="客户经理"
         >
         </el-table-column>
 <!--        客户名称-->
         <el-table-column
-          prop="customerName"
+          prop="company"
           label="客户名称"
         >
         </el-table-column>
 <!--        联系电话-->
         <el-table-column
-          prop="phoneNumber"
+          prop="contactPhone"
           label="联系电话"
         >
         </el-table-column>
 <!--        回访时间-->
         <el-table-column
-          prop="returnVisitDate"
+          prop="revisitTime"
           label="回访时间"
         >
         </el-table-column>
 <!--        客户地址-->
         <el-table-column
-          prop="customerAddress"
+          prop="address"
           label="客户地址"
         >
         </el-table-column>
@@ -221,25 +221,136 @@
             <el-button type="danger" @click="CustomerDel(scope.row.customerId)">删除</el-button>
           </template>
         </el-table-column>
-<!--        客户信息修改的-->
-
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="visables.dialogCustomerVisible = false,myConfirm()">确 定</el-button>
+        <el-button type="primary" @click="visables.dialogAddCustomerVisible = true">新 增</el-button>
+        <el-button type="primary" @click="myConfirm()">确 定</el-button>
       </span>
     </el-dialog>
+<!--------------------新增用户的弹窗------------>
+    <el-dialog
+    top="5vh"
+    title="新增用户"
 
+    :visible.sync="visables.dialogAddCustomerVisible">
+<!--      搜索那一行-->
+      <el-row>
+        <el-col :span="5">
+          <span style="line-height: 40px;margin-left: 20px">输入搜索关键字：</span>
+        </el-col>
+        <el-col :span="19">
+          <el-input v-model="customerForm.searchCustomerKeyword" placeholder="输入客户id或者名称直接搜索"></el-input>
+        </el-col>
+      </el-row>
+<!--      所有用户列标-->
+      <el-table
+        :data="customerForm.searchAllCustomerInfos"
+        border
+        height="26rem"
+      >
+        <!--        客户id-->
+        <el-table-column
+          prop="customerId"
+          label="客户id"
+        >
+        </el-table-column>
+        <!--        客户名称-->
+        <el-table-column
+          prop="company"
+          label="客户名称"
+        >
+        </el-table-column>
+<!--        操作列-->
+        <el-table-column label="操作" >
+          <template slot-scope="scope">
+            <el-button type="danger" @click="addCustomerToInput(scope.row.customerId)">添加</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+<!--      最下方操作-->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="visables.dialogAddCustomerVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmAddCustomer()">确 定</el-button>
+      </span>
+    </el-dialog>
+<!--------------------选择进入哪个系统新增弹窗-->
+    <el-dialog
+      top="15vh"
+      title="请选择新增服务的类型"
+      width="500px"
+      :visible.sync="visables.dialogChooseServiceType">
+      <!--      搜索那一行-->
+      <el-row>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(1)">安防(3000)</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(2)">智慧用电</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(3)">巡更巡检</el-button>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top: 20px">
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(4)">微信服务</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(5)">APP服务</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(6)">短信网关</el-button>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top: 20px">
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(7)">第三方短信</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(8)">语音服务</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" @click="openOneDialog(9)">第三方语音</el-button>
+        </el-col>
+      </el-row>
+      <!--      最下方操作-->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="visables.dialogChooseServiceType = false">取消</el-button>
+      </span>
+    </el-dialog>
   </el-container>
 </template>
 
 <script>
+import {
+  getServicePageList, getServiceFindServiceId, getServiceFindServiceType, getServiceFindServiceName,
+  getServiceFindServerId, getServiceDelete, getAllCustomer
+} from '@/api/wang'
+import {getOpCustomerDelete} from "@/api/serverLedger";
   export default {
     name: 'op_service',
     data() {
       return {
         //*******************控制区*******************
         //过滤参数下拉框
-        FilterParameters: [],
+        FilterParameters: [
+          {
+            value:'ServiceId',
+            label:'服务实例id'
+          },
+          {
+            value:'ServiceName',
+            label:'服务名称'
+          },
+          {
+            value:'ServerId',
+            label:'安装的id'
+          },
+          {
+            value:'ServiceType',
+            label:'服务类型'
+          },
+        ],
         //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
@@ -256,7 +367,8 @@
             serviceName: '31231',
             serverId: '3123',
             serviceType: '31231'
-          }
+          },
+
         ],
         //*******************分页尾部*******************
         // 分页
@@ -276,37 +388,116 @@
           dialogReviseVisible: false,
           //客户的弹窗
           dialogCustomerVisible: false,
+          // 新增用户的弹窗
+          dialogAddCustomerVisible: false,
+          // 选择进入哪个系统新增页面的弹窗
+          dialogChooseServiceType: false,
+          // 3000系统弹窗
+          dialogSecurity: false,
+          // 智慧用电
+          dialogSmartHome: false,
+          // 巡更巡检服务
+          dialogPatrol: false,
+          // 微信服务
+          dialogWeixin: false,
+          // APP服务
+          dialogAPP: false,
+          // 短信网关服务
+          dialogSMS: false,
+          // 第三方短信服务
+          dialogOtherSMS: false,
+          // 2030N语音服务
+          dialogNVS: false,
+          // 第三方语音服务
+          dialogOtherNVS: false,
         },
         //新增弹窗的数据
         addForm:{},
         // 修改弹窗的数据
         reviseForm:{},
-        // 客户弹窗的数据
+        // 客户弹窗的数据和修改客户弹窗的数据
         customerForm: {
           customerInfos: [
             {
               customerId: "001",
-              customerManager: "黄奇峰",
-              customerName: "湖北邮政",
-              phoneNumber: "123456789",
-              returnVisitDate: "2022.7.1",
-              customerAddress: "湖北武汉",
+              areaManager: "黄奇峰",
+              company: "湖北邮政",
+              contactPhone: "123456789",
+              revisitTime: "2022.7.1",
+              address: "湖北武汉",
               note: "无"
             },{
               customerId: "002",
-              customerManager: "张三",
-              customerName: "武汉食品有限",
-              phoneNumber: "98711234",
-              returnVisitDate: "2002.1.1",
-              customerAddress: "武汉孝感",
+              areaManager: "张三",
+              company: "武汉食品有限",
+              contactPhone: "98711234",
+              revisitTime: "2002.1.1",
+              address: "武汉孝感",
               note: "暂无"
             },{
               customerId: "003",
-              customerManager: "李四",
-              customerName: "广东深圳视频加工",
-              phoneNumber: "238261675",
-              returnVisitDate: "1999.12.12",
-              customerAddress: "广东深圳",
+              areaManager: "李四",
+              company: "广东深圳视频加工",
+              contactPhone: "238261675",
+              revisitTime: "1999.12.12",
+              address: "广东深圳",
+              note: "视频处理厂"
+            },
+          ],
+          searchCustomerKeyword:'',
+          // 所有的用户信息
+          allCustomerInfos:[
+            {
+              customerId: "001",
+              areaManager: "黄奇峰",
+              company: "湖北邮政",
+              contactPhone: "123456789",
+              revisitTime: "2022.7.1",
+              address: "湖北武汉",
+              note: "无"
+            },{
+              customerId: "002",
+              areaManager: "张三",
+              company: "武汉食品有限",
+              contactPhone: "98711234",
+              revisitTime: "2002.1.1",
+              address: "武汉孝感",
+              note: "暂无"
+            },{
+              customerId: "003",
+              areaManager: "李四",
+              company: "广东深圳视频加工",
+              contactPhone: "238261675",
+              revisitTime: "1999.12.12",
+              address: "广东深圳",
+              note: "视频处理厂"
+            },
+          ],
+          // 经过搜索的用户信息
+          searchAllCustomerInfos:[
+            {
+              customerId: "001",
+              areaManager: "黄奇峰",
+              company: "湖北邮政",
+              contactPhone: "123456789",
+              revisitTime: "2022.7.1",
+              address: "湖北武汉",
+              note: "无"
+            },{
+              customerId: "002",
+              areaManager: "张三",
+              company: "武汉食品有限",
+              contactPhone: "98711234",
+              revisitTime: "2002.1.1",
+              address: "武汉孝感",
+              note: "暂无"
+            },{
+              customerId: "003",
+              areaManager: "李四",
+              company: "广东深圳视频加工",
+              contactPhone: "238261675",
+              revisitTime: "1999.12.12",
+              address: "广东深圳",
               note: "视频处理厂"
             },
           ]
@@ -315,6 +506,46 @@
     },
     methods:{
       //**********************数据更新**********************
+      Find(){
+        if(this.FilterParameter_value === 'ServiceId'){
+          getServiceFindServiceId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'ServiceName') {
+          getServiceFindServiceName(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'ServiceType') {
+          getServiceFindServiceType(this.CompleteValue, this.currentPage, this.size).then(request => {
+            console.log("触发了查询分页的服务类型查询")
+            console.log("返回的内容为：")
+            console.log(request)
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else if(this.FilterParameter_value === 'ServerId') {
+          getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
+            this.totalNumber = request.data.body.total;
+            this.tableData = request.data.body.data;
+          })
+        }
+        else {
+          this.dealData();
+        }
+      },
+      dealData(){
+        getServicePageList(this.currentPage,this.size).then(request=>{
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        });
+        this.FilterParameter_value = '';
+        this.CompleteValue='';
+      },
       //************************分页************************
       //鼠标放到某一行上就触发
       tableCellClassName({row,rowIndex}){
@@ -336,6 +567,37 @@
       },
       //**********************表格主体**********************
       //************************弹窗************************
+      // 检测打开九种弹窗的哪一个
+      openOneDialog(type){
+        if (type === 1){
+          console.log("打开了3000系统弹窗")
+          this.visables.dialogSecurity = true
+        }
+        else if (type === 2){
+          this.visables.dialogSmartHome = true
+        }
+        else if (type === 3){
+          this.visables.dialogPatrol = true
+        }
+        else if (type === 4){
+          this.visables.dialogWeixin = true
+        }
+        else if (type === 5){
+          this.visables.dialogAPP = true
+        }
+        else if (type === 6){
+          this.visables.dialogSMS = true
+        }
+        else if (type === 7){
+          this.visables.dialogOtherSMS = true
+        }
+        else if (type === 8){
+          this.visables.dialogNVS = true
+        }
+        else if (type === 9){
+          this.visables.dialogOtherNVS = true
+        }
+      },
       //删除客户
       CustomerDel(id) {
         console.log("进行了删除客户操作，被删除的客户的id为："+id)
@@ -354,27 +616,82 @@
       },
       //删除主页面上的服务
       serviceDel(id){
-        console.log("删除了一个服务，对应的服务id为："+id)
-        this.delSuccessMessage()
+        this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getServiceDelete(id).then(request=>{
+            if (request.data.body) {
+              this.Find();
+              console.log("删除了一个服务，对应的服务id为："+id)
+              this.delSuccessMessage()
+            } else {
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       },
       // 并给出确认信息
       myConfirm(){
+        this.visables.dialogCustomerVisible = false
+        this.confirmSuccessMessage()
+      },
+      // 修改成功提示
+      confirmSuccessMessage(){
         this.$message({
           message: '修改成功',
           type: 'success'
         })
       },
+      // 删除成功提示
       delSuccessMessage(){
         this.$message({
           message: '删除成功',
           type: 'success'
         })
+      },
+      // 在新增用户的弹窗里点击添加用户到输入框
+      addCustomerToInput(id){
+        console.log("点击了添加用户到输入框，用户的id为："+id)
+        this.customerForm.searchCustomerKeyword = id
+      },
+      // 确认添加用户
+      confirmAddCustomer(){
+        console.log("确认添加了客户，客户的id为："+this.customerForm.searchCustomerKeyword)
+        this.confirmSuccessMessage()
+        this.visables.dialogAddCustomerVisible = false
+      }
+
+    },
+    watch:{
+      // 检测新增用户弹窗页面的输入框内容
+      'customerForm.searchCustomerKeyword':{
+        immediate:true,
+        handler(val){
+          this.customerForm.searchAllCustomerInfos = this.customerForm.allCustomerInfos.filter(p =>{
+            return p.company.indexOf(val) !== -1 || p.customerId.indexOf(val) !== -1
+          })
+        }
       }
     },
     mounted(){
+      this.dealData()
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
+      getAllCustomer().then(request=>{
+        this.customerForm.searchAllCustomerInfos = request.data.body;
+        this.customerForm.allCustomerInfos = request.data.body;
+      });
     }
   }
 </script>
