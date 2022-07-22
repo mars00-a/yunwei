@@ -120,17 +120,31 @@ export  function getOpCustomerServerDelete(customerId,serverId) {
     params:{customerId,serverId}
   })
 }
-export  function getOpCustomerServerCreate(body) {
+export  function getOpCustomerServerCreate(data) {
   return request({
     url: '/api/OpCustomerServer/Create',
     method: 'post',
-    body
+    data
   })
 }
 
 
 
-
+//****************************************客户服务相关接口****************************************
+export  function getOpCustomerServicesByCustomer(customerId) {
+  return request({
+    url: '/api/OpCustomerServices/ByCustomer',
+    method: 'get',
+    params:{customerId}
+  })
+}
+export  function OpCustomerServicesCreate(data) {
+  return request({
+    url: '/api/OpCustomerServices/Create',
+    method: 'get',
+    data
+  })
+}
 
 
 

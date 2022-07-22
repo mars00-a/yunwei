@@ -117,7 +117,7 @@
                 <el-button type="warning" @click="dialogServerVisible = true, getServer(scope.row)">服务器</el-button>
               </el-col>
               <el-col :span="5.4">
-                <el-button type="info" @click="dialogServiceVisible = true">服务</el-button>
+                <el-button type="info" @click="dialogServiceVisible = true, getService(scope.row)">服务</el-button>
               </el-col>
             </el-row>
           </template>
@@ -276,7 +276,7 @@
     </el-dialog>
 
     <!--服务器按钮的弹窗-->
-    <el-dialog title="修改服务器信息" :visible.sync="dialogServerVisible" width="50%">
+    <el-dialog title="查看相关服务器信息" :visible.sync="dialogServerVisible" width="50%">
       <el-table
         :data="serverTable"
         height="350"
@@ -334,7 +334,6 @@
             :style="controlWidth"
             v-model="addServerForm.beginTime"
             type="date"
-            format="yyyy 年 MM 月 dd 日"
             placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
@@ -386,31 +385,88 @@
     </el-dialog>
 
     <!--服务器按钮的弹窗-->
-    <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
-      <el-form ref="serviceForm" :model="serviceForm" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
-          <el-input
-            :disabled="true"
-            v-model="serviceForm.serviceType" />
+    <el-dialog title="查看相关服务信息" :visible.sync="dialogServiceVisible" width="50%">
+      <el-table
+        :data="serviceTable"
+        height="350"
+        border
+        style="width: 100%">
+        <el-table-column
+          prop="service.serviceName"
+          label="服务名称">
+        </el-table-column>
+        <el-table-column
+          prop="service.serviceType"
+          label="服务类型">
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="90">
+          <template slot-scope="scope">
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <el-button type="danger" @click="ServerDel(scope.row)">删除</el-button>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogServiceVisible = true, dialogAddServiceVisible = true">新 增</el-button>
+        <el-button @click="dialogServiceVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogServiceVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="新增相关服务信息" :visible.sync="dialogAddServiceVisible" width="30%">
+      <el-form ref="addServiceForm" :model="addServiceForm" label-width="90px">
+        <!--服务器ID-->
+        <el-form-item label="服务ID">
+          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true"/>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="服务名称">
-          <el-input v-model="serviceForm.serviceName" />
+          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true"/>
         </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="serviceForm.serviceTable" />
-        </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="serviceForm.note"  type="textarea"/>
+        <!--服务类型-->
+        <el-form-item label="服务类型">
+          <el-input v-model="addServiceForm.serviceName"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogServiceVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogServiceVisible = false">确 定</el-button>
-        </span>
+        <el-button @click="dialogAddServiceVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogAddServiceVisible = false, ServiceAddConfirm()">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="获取服务ID/名称" :visible.sync="dialogServiceIdTableVisible" width="50%">
+      <span>
+        <el-input v-model="ServiceIdTableCompleteValue" placeholder="请输入内容"/>
+      </span>
+      <el-table
+        :data="serviceIdTable"
+        height="350"
+        border
+        style="width: 100%"
+        id="ServiceIdTable">
+        <el-table-column
+          prop="serviceId"
+          label="服务ID">
+        </el-table-column>
+        <el-table-column
+          prop="serviceName"
+          label="服务名称">
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="90">
+          <template slot-scope="scope">
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <el-button type="danger" @click="dialogServiceIdTableVisible = false, AddServiceId(scope.row)">添加</el-button>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
   </el-container>
 </template>
@@ -420,7 +476,7 @@
     getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
     getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
     getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList, getOpCustomerServerCreate,
-  } from '@/api/serverLedger'
+    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, } from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
@@ -504,23 +560,20 @@
         //服务器的表格
         serverTable: [],
         nowCustomerId:'',
-        addServerForm:
-          {beginTime:''},
+        addServerForm:{},
+        pushAddServerForm:{},
         serverIdTable:[],
         backupServerIdTable:[],
         ServerIdTableCompleteValue:'',
-        ServerIdTableFilterParameters:[{
-          value: 'serverId',
-          label: '服务器ID'
-        },{
-          value: 'serverName',
-          label: '服务器名称'
-        }],
         //********服务的弹窗********
         //弹窗是否可见
         dialogServiceVisible: false,
+        dialogAddServiceVisible:false,
+        dialogServiceIdTableVisible:false,
         //服务的表单
-        serviceForm: {}
+        serviceTable: [],
+        addServiceForm:{},
+        pushAddServiceForm:{}
       }
     },
     methods: {
@@ -746,12 +799,12 @@
         this.addServerForm.serverName = row.serverName;
       },
       ServerAddConfirm(){
-        this.addServerForm.beginTime = this.addServerForm.beginTime.toISOString();
-        this.addServerForm.endTime = this.addServerForm.endTime.toISOString();
-        console.log(this.addServerForm.beginTime);
-        console.log(this.addServerForm.endTime);
-        console.log(this.addServerForm);
-        getOpCustomerServerCreate(this.addServerForm).then(request=>{
+        this.pushAddServerForm.beginTime= this.addServerForm.beginTime;
+        this.pushAddServerForm.endTime= this.addServerForm.endTime;
+        this.pushAddServerForm.customerId= this.nowCustomerId;
+        this.pushAddServerForm.serverId= this.addServerForm.serverId;
+        console.log(this.pushAddServerForm);
+        getOpCustomerServerCreate(this.pushAddServerForm).then(request=>{
           getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
             this.serverTable = request.data.body;
           });
@@ -766,6 +819,20 @@
               type: 'warning'
             });
           }
+        })
+      },
+      //服务按钮的相关事件
+      getService(row){
+        getOpCustomerServicesByCustomer(row.customerId).then(request=>{
+          console.log(request);
+          this.nowCustomerId = row.customerId;
+          this.serviceTable = request.data.body;
+        })
+      },
+      ServiceAddConfirm(){
+        this.addServiceForm.
+        OpCustomerServicesCreate().then(request=>{
+
         })
       }
     },
@@ -842,10 +909,10 @@
     line-height: 2.2rem;
     padding-left: 1.2rem;
   }
-  #ServerIdTableValue{
-    line-height: 2.2rem;
-  }
   #ServerIdTable{
+    margin-top: 0.2rem;
+  }
+  #ServiceIdTable{
     margin-top: 0.2rem;
   }
 </style>
