@@ -195,7 +195,6 @@
         <el-button type="primary" @click="dialogAddVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-
     <!--修改按钮的弹窗-->
     <el-dialog top="1vh" title="修改" :visible.sync="dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
@@ -254,7 +253,6 @@
         <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-
     <!--服务器按钮的弹窗-->
     <el-dialog title="修改服务器信息" :visible.sync="dialogServerVisible" width="50%">
       <el-table
@@ -289,90 +287,37 @@
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogServerVisible = true, dialogServerAddVisible = true">新 增</el-button>
+        <el-button @click="dialogServerVisible = true, add_twoTableDelete()">新 增</el-button>
         <el-button @click="dialogServerVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogServerVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="新增服务器信息" :visible.sync="dialogServerAddVisible" width="30%">
-      <el-form ref="serverAddForm" :model="serverAddForm" label-width="90px">
-        <!--客户id-->
+    <!--服务器按钮的弹窗-->
+    <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
+      <el-form ref="serviceForm" :model="serviceForm" label-width="90px">
+        <!--服务类型-->
+        <el-form-item label="服务类型id" :rules="[{ required: true}]">
+          <el-input
+            :disabled="true"
+            v-model="serviceForm.serviceType" />
+        </el-form-item>
+        <!--服务名称-->
         <el-form-item label="服务名称">
-          <el-input v-model="serverAddForm.serverName" />
+          <el-input v-model="serviceForm.serviceName" />
         </el-form-item>
-        <!--客户id-->
-        <el-form-item label="启用日期">
-          <el-date-picker
-            :style="controlWidth"
-            v-model="serverAddForm.beginDate"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
+        <!--服务数据表-->
+        <el-form-item label="服务数据表">
+          <el-input v-model="serviceForm.serviceTable" />
         </el-form-item>
-        <!--客户id-->
-        <el-form-item label="停用日期">
-          <el-date-picker
-            :style="controlWidth"
-            v-model="serverAddForm.endDate"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
+        <!--备注-->
+        <el-form-item label="备注">
+          <el-input v-model="serviceForm.note"  type="textarea"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogServerAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogServerAddVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!--服务器按钮的弹窗-->
-    <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
-      <el-table
-        :data="serverTable"
-        height="350"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="f_service_name"
-          label="服务名称">
-        </el-table-column>
-        <el-table-column
-          prop="f_service_type"
-          label="服务类型">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="90">
-          <template slot-scope="scope">
-            <el-row :gutter="10">
-              <el-col :span="24">
-                <el-button type="danger" @click="Del">删除</el-button>
-              </el-col>
-            </el-row>
-          </template>
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogServiceVisible = true, dialogServiceAddVisible = true">新 增</el-button>
           <el-button @click="dialogServiceVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogServiceVisible = false">确 定</el-button>
         </span>
-    </el-dialog>
-    <el-dialog title="新增服务信息" :visible.sync="dialogServiceAddVisible" width="30%">
-      <el-form ref="serviceAddForm" :model="serviceAddForm" label-width="90px">
-        <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="serviceAddForm.serviceName" />
-        </el-form-item>
-        <!--服务类型-->
-        <el-form-item label="服务类型">
-          <el-input v-model="serviceAddForm.serviceType" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogServiceAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogServiceAddVisible = false">确 定</el-button>
-      </span>
     </el-dialog>
   </el-container>
 </template>
@@ -430,16 +375,14 @@
         //弹窗是否可见
         dialogServerVisible: false,
         //服务器的表格
-        serverTable: [{}],
-        dialogServerAddVisible:false,
-        serverAddForm:{},
+        serverTable: [
+          {}
+        ],
         //********服务的弹窗********
         //弹窗是否可见
         dialogServiceVisible: false,
         //服务的表单
-        serviceForm: [{}],
-        dialogServiceAddVisible:false,
-        serviceAddForm:{},
+        serviceForm: {}
       }
     },
     methods: {
@@ -482,6 +425,10 @@
             message: '已取消删除'
           })
         })
+      },
+      //新增表格
+      add_twoTableDelete() {
+        this.serverTable.push({})
       }
     },
     mounted(){

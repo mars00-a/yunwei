@@ -46,25 +46,25 @@
         </el-table-column>
         <!--服务实例id：f_service_id-->
         <el-table-column
-          prop="f_service_id"
+          prop="serviceId"
           label="服务实例id"
         >
         </el-table-column>
         <!--服务名称：f_service_name-->
         <el-table-column
-          prop="f_service_name"
+          prop="serviceName"
           label="服务名称"
         >
         </el-table-column>
         <!--安装的服务器id：f_server_id-->
         <el-table-column
-          prop="f_server_id"
+          prop="serverId"
           label="安装的服务器id"
         >
         </el-table-column>
         <!--服务类型：f_service_type-->
         <el-table-column
-          prop="f_service_type"
+          prop="serviceType"
           label="服务类型"
         >
         </el-table-column>
@@ -76,7 +76,7 @@
                 <el-button type="primary" @click="visables.dialogReviseVisible = true">修改</el-button>
               </el-col>
               <el-col :span="8">
-                <el-button type="danger" @click="Del">删除</el-button>
+                <el-button type="danger" @click="serviceDel(scope.row.serviceId)">删除</el-button>
               </el-col>
               <el-col :span="8">
                 <el-button type="warning" @click="visables.dialogCustomerVisible = true">客户</el-button>
@@ -130,7 +130,7 @@
         <el-button type="primary" @click="visables.dialogAddVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <!--修改按钮的弹窗-->
+    <!--主页面中修改按钮的弹窗-->
     <el-dialog title="修改" :visible.sync="visables.dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="90px">
         <!--服务类型-->
@@ -216,22 +216,19 @@
         >
         </el-table-column>
 <!--        操作栏-->
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" >
           <template slot-scope="scope">
-            <el-row :gutter="10">
-              <el-col :span="12">
-                <el-button type="primary" @click="visables.dialogReviseVisible = true">修改</el-button>
-              </el-col>
-              <el-col :span="12">
-                <el-button type="danger" @click="Del">删除</el-button>
-              </el-col>
-            </el-row>
+            <el-button type="danger" @click="CustomerDel(scope.row.customerId)">删除</el-button>
           </template>
         </el-table-column>
-
+<!--        客户信息修改的-->
 
       </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="visables.dialogCustomerVisible = false,myConfirm()">确 定</el-button>
+      </span>
     </el-dialog>
+
   </el-container>
 </template>
 
@@ -255,10 +252,10 @@
         //表格数据
         tableData: [
           {
-            serviceType: '1231',
+            serviceId: '1231',
             serviceName: '31231',
-            serviceTable: '3123',
-            note: '31231'
+            serverId: '3123',
+            serviceType: '31231'
           }
         ],
         //*******************分页尾部*******************
@@ -339,17 +336,15 @@
       },
       //**********************表格主体**********************
       //************************弹窗************************
-      //删除功能的事件
-      Del() {
+      //删除客户
+      CustomerDel(id) {
+        console.log("进行了删除客户操作，被删除的客户的id为："+id)
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
+          this.delSuccessMessage()
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -357,6 +352,24 @@
           })
         })
       },
+      //删除主页面上的服务
+      serviceDel(id){
+        console.log("删除了一个服务，对应的服务id为："+id)
+        this.delSuccessMessage()
+      },
+      // 并给出确认信息
+      myConfirm(){
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+      },
+      delSuccessMessage(){
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+      }
     },
     mounted(){
       this.myStyle = {
