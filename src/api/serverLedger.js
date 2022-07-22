@@ -120,6 +120,13 @@ export  function getOpCustomerServerDelete(customerId,serverId) {
     params:{customerId,serverId}
   })
 }
+export  function getOpCustomerServerCreate(body) {
+  return request({
+    url: '/api/OpCustomerServer/Create',
+    method: 'post',
+    body
+  })
+}
 
 
 

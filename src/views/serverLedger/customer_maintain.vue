@@ -324,51 +324,39 @@
         <el-form-item label="服务器ID">
           <el-input v-model="addServerForm.serverId" :disabled="true"/>
         </el-form-item>
-        <!--服务器IP-->
+        <!--服务器名称-->
         <el-form-item label="服务器名称">
           <el-input v-model="addServerForm.serverName" @focus="dialogServerIdTableVisible = true"/>
         </el-form-item>
-        <!--服务器端口-->
-        <el-form-item label="启用">
-          <el-input v-model="addServerForm.beginTime" />
+        <!--启用日期-->
+        <el-form-item label="启用日期">
+          <el-date-picker
+            :style="controlWidth"
+            v-model="addServerForm.beginTime"
+            type="date"
+            format="yyyy 年 MM 月 dd 日"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
-        <!--使用工具-->
-        <el-form-item label="停用">
-          <el-input v-model="addServerForm.endTime" />
+        <!--停用日期-->
+        <el-form-item label="停用日期">
+          <el-date-picker
+            :style="controlWidth"
+            v-model="addServerForm.endTime"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogAddServerVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogAddServerVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogAddServerVisible = false, ServerAddConfirm()">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="获取服务器ID/名称" :visible.sync="dialogServerIdTableVisible" width="50%">
-      <el-row :gutter="10">
-        <!--过滤参数选择-->
-        <el-col :span="10">
-          <span>过滤参数：</span>
-          <el-select v-model="ServerIdTableFilterParameters_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
-            <el-option
-              v-for="item in ServerIdTableFilterParameters"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-        <!--查找输入框-->
-        <el-col :span="2">
-          <span id="ServerIdTableValue">值：</span>
-        </el-col>
-        <el-col :span="4">
-          <el-input v-model="ServerIdTableCompleteValue" placeholder="请输入内容"/>
-        </el-col>
-        <!--查找、新增功能按钮-->
-        <el-col :span="8">
-          <el-button type="primary">过滤</el-button>
-          <el-button type="primary">恢复</el-button>
-        </el-col>
-      </el-row>
+      <span>
+        <el-input v-model="ServerIdTableCompleteValue" placeholder="请输入内容"/>
+      </span>
       <el-table
         :data="serverIdTable"
         height="350"
@@ -389,7 +377,7 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="24">
-                <el-button type="danger" @click="dialogServerIdTableVisible = false">添加</el-button>
+                <el-button type="danger" @click="dialogServerIdTableVisible = false, AddServerId(scope.row)">添加</el-button>
               </el-col>
             </el-row>
           </template>
@@ -431,7 +419,8 @@
   import {getOpCustomerPageList, getOpCustomerFindCustomerId, getOpCustomerFindAreaManager, getOpCustomerFindCompany,
     getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
     getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
-    getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList,} from '@/api/serverLedger'
+    getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList, getOpCustomerServerCreate,
+  } from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
@@ -515,19 +504,18 @@
         //服务器的表格
         serverTable: [],
         nowCustomerId:'',
-        addServerForm:[],
+        addServerForm:
+          {beginTime:''},
         serverIdTable:[],
-        ServerIdTableFilterParameters_value:'',
+        backupServerIdTable:[],
         ServerIdTableCompleteValue:'',
-        ServerIdTableFilterParameters:[
-          {
-            value: 'CustomerId',
-            label: '服务器ID'
-          },{
-            value: 'AreaManager',
-            label: '服务器名称'
-          }
-        ],
+        ServerIdTableFilterParameters:[{
+          value: 'serverId',
+          label: '服务器ID'
+        },{
+          value: 'serverName',
+          label: '服务器名称'
+        }],
         //********服务的弹窗********
         //弹窗是否可见
         dialogServiceVisible: false,
@@ -613,11 +601,10 @@
         });
       },
       dealServerIdTable(){
-        getOpServerPageList(1,10000).then(request=>{
+        getOpServerPageList(1,1000).then(request=>{
           this.serverIdTable = request.data.body.data;
+          this.backupServerIdTable = request.data.body.data;
         });
-        this.ServerIdTableFilterParameters_value = '';
-        this.ServerIdTableCompleteValue='';
       },
       //************************分页************************
       //鼠标放到某一行上就触发
@@ -717,6 +704,7 @@
           })
         })
       },
+      //服务器按钮的弹窗事件
       getServer(row){
         getOpCustomerServerByCustomer(row.customerId).then(request=>{
           this.serverTable = request.data.body;
@@ -729,8 +717,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log(this.nowCustomerId);
-          console.log(row.server.serverId);
           getOpCustomerServerDelete(this.nowCustomerId,row.server.serverId).then(request=>{
             getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
               this.serverTable = request.data.body;
@@ -754,6 +740,33 @@
             message: '已取消删除'
           })
         })
+      },
+      AddServerId(row){
+        this.addServerForm.serverId = row.serverId;
+        this.addServerForm.serverName = row.serverName;
+      },
+      ServerAddConfirm(){
+        this.addServerForm.beginTime = this.addServerForm.beginTime.toISOString();
+        this.addServerForm.endTime = this.addServerForm.endTime.toISOString();
+        console.log(this.addServerForm.beginTime);
+        console.log(this.addServerForm.endTime);
+        console.log(this.addServerForm);
+        getOpCustomerServerCreate(this.addServerForm).then(request=>{
+          getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
+            this.serverTable = request.data.body;
+          });
+          if (request.data.body) {
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          } else {
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
       }
     },
     mounted(){
@@ -763,7 +776,6 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
-
     },
     watch:{
       'reviseForm.managerName':{
@@ -787,6 +799,16 @@
               this.addForm.customerId = i
             }
             i++;
+          });
+        }
+      },
+      'ServerIdTableCompleteValue':{
+        immediate:true,
+        handler(val){
+          this.serverIdTable = this.backupServerIdTable.filter((myval,index,arr) =>{
+            if(myval.serverName !== null && myval.serverId !== null){
+              return (myval.serverId.indexOf(val) !== -1 || myval.serverName.indexOf(val) !== -1)
+            }
           });
         }
       }
@@ -822,7 +844,6 @@
   }
   #ServerIdTableValue{
     line-height: 2.2rem;
-    padding-left: 1.2rem;
   }
   #ServerIdTable{
     margin-top: 0.2rem;
