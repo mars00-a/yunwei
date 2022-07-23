@@ -17,6 +17,6 @@ export  function getOpServerDelete(objectId) {
 export  function getAllCustomerInfos() {
   return request({
     url: '/api/OpCustomer/All',
-    method: 'post',
+    method: 'get',
   })
 }

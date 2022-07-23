@@ -72,13 +72,15 @@
         <!--是否监测该服务器：monitored-->
         <el-table-column
           prop="monitored"
-          label="是否监测该服务器"
+          :formatter="dealWhetherMonitorServer"
+          label="是否监测服务器"
         >
         </el-table-column>
         <!--是否控制该服务器：controlled-->
         <el-table-column
           prop="controlled"
-          label="是否控制该服务器"
+          :formatter="dealWhetherControlServer"
+          label="是否控制服务器"
         >
         </el-table-column>
         <!--操作栏-->
@@ -570,6 +572,22 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
       gotoService(){
         this.$router.push('service_maintain');
       },
+      dealWhetherMonitorServer(row){
+        switch (row.monitored) {
+          case 0:
+            return "否"
+          case 1:
+            return "是"
+        }
+      },
+      dealWhetherControlServer(row){
+        switch (row.controlled){
+          case 0:
+            return "否"
+          case 1:
+            return "是"
+        }
+      },
       //************************弹窗************************
       //删除功能的事件
       Del(id) {
@@ -629,7 +647,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
-      getAllCustomer().then(request=>{
+      getAllCustomerInfos().then(request=>{
         this.targetCustomerIdTable = request.data.body;
         this.customerIdTable = request.data.body;
       });
