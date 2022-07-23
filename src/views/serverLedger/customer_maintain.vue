@@ -421,11 +421,11 @@
       <el-form ref="addServiceForm" :model="addServiceForm" label-width="90px">
         <!--服务器ID-->
         <el-form-item label="服务ID">
-          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true"/>
+          <el-input v-model="addServiceForm.serviceId" :disabled="true"/>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="服务名称">
-          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true"/>
+          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true, getService()"/>
         </el-form-item>
         <!--服务类型-->
         <el-form-item label="服务类型">
@@ -476,7 +476,7 @@
     getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
     getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
     getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList, getOpCustomerServerCreate,
-    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, } from '@/api/serverLedger'
+    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, getServicePageList,} from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
@@ -573,7 +573,9 @@
         //服务的表单
         serviceTable: [],
         addServiceForm:{},
-        pushAddServiceForm:{}
+        pushAddServiceForm:{},
+        serviceIdTable:[],
+        ServiceIdTableCompleteValue: ''
       }
     },
     methods: {
@@ -832,6 +834,10 @@
       ServiceAddConfirm(){
         this.addServiceForm.
         OpCustomerServicesCreate().then(request=>{
+        })
+      },
+      getService(){
+        getServicePageList(1,1000).then(request=>{
 
         })
       }

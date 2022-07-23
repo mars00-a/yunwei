@@ -843,7 +843,7 @@
 import {
   getServicePageList, getServiceFindServiceId, getServiceFindServiceType, getServiceFindServiceName,
   getServiceFindServerId, getServiceDelete, getAllCustomer
-} from '@/api/wang'
+} from '@/api/serverLedger'
 import {getOpServerPageList} from "@/api/serverLedger";
   export default {
     name: 'op_service',
