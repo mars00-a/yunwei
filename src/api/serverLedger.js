@@ -141,7 +141,7 @@ export  function getOpCustomerServicesByCustomer(customerId) {
 export  function OpCustomerServicesCreate(data) {
   return request({
     url: '/api/OpCustomerServices/Create',
-    method: 'get',
+    method: 'post',
     data
   })
 }
