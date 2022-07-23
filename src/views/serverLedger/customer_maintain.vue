@@ -392,6 +392,10 @@
         border
         style="width: 100%">
         <el-table-column
+          prop="serviceId"
+          label="服务Id">
+        </el-table-column>
+        <el-table-column
           prop="service.serviceName"
           label="服务名称">
         </el-table-column>
@@ -425,11 +429,7 @@
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="服务名称">
-          <el-input v-model="addServiceForm.serviceId" @focus="dialogServiceIdTableVisible = true, getService()"/>
-        </el-form-item>
-        <!--服务类型-->
-        <el-form-item label="服务类型">
-          <el-input v-model="addServiceForm.serviceName"/>
+          <el-input v-model="addServiceForm.serviceName" @focus="dialogServiceIdTableVisible = true, getServiceId()"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -826,18 +826,25 @@
       //服务按钮的相关事件
       getService(row){
         getOpCustomerServicesByCustomer(row.customerId).then(request=>{
-          console.log(request);
           this.nowCustomerId = row.customerId;
           this.serviceTable = request.data.body;
         })
       },
-      ServiceAddConfirm(){
-        this.addServiceForm.
-        OpCustomerServicesCreate().then(request=>{
+      getServiceId(){
+        getServicePageList(1,1000).then(request=>{
+          console.log("41244412");
+          console.log(request);
+          this.serviceIdTable = request.data.body.data;
         })
       },
-      getService(){
-        getServicePageList(1,1000).then(request=>{
+      AddServiceId(row){
+        this.addServiceForm.serviceId = row.serviceId;
+        this.addServiceForm.serviceName = row.serviceName;
+      },
+      ServiceAddConfirm(){
+        this.addServiceForm.customerId = this.nowCustomerId;
+        console.log(this.addServiceForm);
+        OpCustomerServicesCreate(this.addServiceForm).then(request=>{
 
         })
       }
