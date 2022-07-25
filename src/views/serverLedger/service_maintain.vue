@@ -1083,16 +1083,18 @@ import {getOpServerPageList} from "@/api/serverLedger";
           })
         }
         else if(this.FilterParameter_value === 'ServiceType') {
+          console.log("触发了查询分页的服务类型查询")
           getServiceFindServiceType(this.CompleteValue, this.currentPage, this.size).then(request => {
-            console.log("触发了查询分页的服务类型查询")
-            console.log("返回的内容为：")
-            console.log(request)
+            console.log("返回的内容为：",request)
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
         }
         else if(this.FilterParameter_value === 'ServerId') {
+          console.log("触发了服务器id查询")
           getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
+            console.log("返回的结果为：", request)
+            console.log("返回的总数为：", request.data.body.total)
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
@@ -1290,7 +1292,6 @@ import {getOpServerPageList} from "@/api/serverLedger";
       // 获取所有服务器信息表
       getOpServerPageList(1,1000).then(request=>{
         this.allServerInfos = request.data.body.data;
-        console.log(this.allServerInfos)
       });
     }
   }
