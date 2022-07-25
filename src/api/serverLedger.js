@@ -145,7 +145,13 @@ export  function OpCustomerServicesCreate(data) {
     data
   })
 }
-
+export  function getOpCustomerServicesDelete(customerId,serviceId) {
+  return request({
+    url: '/api/OpCustomerServices/Delete',
+    method: 'post',
+    params:{customerId,serviceId}
+  })
+}
 
 
 //****************************************Server****************************************
