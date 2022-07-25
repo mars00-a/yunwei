@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="find">过滤</el-button>
+          <el-button type="primary" id="Find" @click="currentPage = 1,find()">过滤</el-button>
           <el-button @click="clearDealData" type="primary">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
           <!--新增按钮的弹窗-->
@@ -254,7 +254,7 @@
         FilterParameters: [
           {
             value: 'StatusId',
-            label: '运维指标id'
+            label: '运维状态id'
           }, {
             value: 'StatusName',
             label: '运维指标名称'
@@ -418,7 +418,6 @@
       },
       // 弹窗的新增
       Confirm(id) {
-        // console.log(this.form)
         if(id === ""){
           this.dialogVisible = true;
           this.$message.error('状态的id不能为空');
@@ -467,6 +466,7 @@
       },
       //查找按钮的事件
       find(){
+        this.currentPage = 1
         if(this.FilterParameter_value === 'StatusId'){
           getStatusFindStatusId(this.CompleteValue,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
@@ -516,7 +516,6 @@
       //************************修改、删除按钮************************
       //修改、删除后的表数据返回到以下两个函数
       GetRevise(msg){
-        console.log(msg)
         getStatusUpdate(msg).then(request=>{
           if(request.data.body){
             this.$message({
@@ -534,7 +533,6 @@
       },
       GetDel(msg){
         getStatusDelete(msg).then(request=>{
-          console.log(request.data.body)
           if(request.data.body === true){
             this.$message({
               message: '删除成功',
@@ -585,7 +583,6 @@
       getSTable().then(request=>{
         this.serverTargetTable = request.data.body.slice(0, request.data.body.length)
         this.targetTable = request.data.body.slice(0, request.data.body.length)
-        console.log(this.serverTargetTable)
       })
     },
     watch:{
@@ -603,6 +600,20 @@
           this.targetTable = this.serverTargetTable.filter(p =>{
             return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
           })
+
+          if(val.length === 9){
+            let mySearchKeyword = "A" + val.substr(0,7)
+            console.log("对应指标填写完成，用于查找运维状态id的字符串为：", mySearchKeyword)
+            let checkLengthArr = []
+            getStatusFindStatusId(mySearchKeyword,1,20).then(request=>{
+              checkLengthArr = request.data.body.data
+              console.log("在函数里，获取到的数组长度为：",checkLengthArr.length)
+              let checkLength = checkLengthArr.length+1
+            })
+            console.log("获取到的数组长度为：",checkLengthArr.length)
+            let checkLength = checkLengthArr.length+1
+            this.form.statusId = 'A' + val.substr(0,7) + '0'
+          }
         }
       }
     },

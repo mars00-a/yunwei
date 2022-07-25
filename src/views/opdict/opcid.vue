@@ -22,7 +22,7 @@
           <el-input v-model="CompleteValue" placeholder="请输入内容"/>
         </el-col>
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
@@ -151,6 +151,7 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="事件id" :rules="[{ required: true}]">
             <el-input
+              disabled="true"
               v-model="form.opcid" />
           </el-form-item>
           <el-form-item label="事件名称">
@@ -465,6 +466,7 @@ export default {
     },
     //查找按钮的事件
     Find(){
+      this.currentPage = 1
       if(this.FilterParameter_value === 'opcid'){
         getOpcidFindOpcid(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
@@ -542,7 +544,6 @@ export default {
       });
     },
     GetDel(msg) {
-      console.log(msg)
       getOpcidDelete(msg).then(request=>{
         if(request.data.body){
           this.$message({
@@ -571,9 +572,7 @@ export default {
     //当对应指标中输入东西的时候搜索
     'form.opsignalId':{
       immediate:true,
-
       handler(val){
-        console.log("发生了改变")
         let Arr = val.split("S")
         if (Arr[0] === '')
           val = Arr[1]
@@ -584,8 +583,22 @@ export default {
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
+
+
+        if(this.form.eventType !== '' && val.length === 10){
+          this.form.opcid = 'E' + val.substr(1,7) + '0' + this.form.eventType
+        }
+      }
+    },
+    'form.eventType':{
+      immediate:true,
+      handler(val) {
+        if(this.form.opsignalId.length === 10 && val !== ''){
+          this.form.opcid = 'E' + this.form.opsignalId.substr(1,7) + '0' + this.form.eventType
+        }
       }
     }
+
   },
   mounted(){
     this.dealData();
@@ -596,7 +609,6 @@ export default {
     getSTable().then(request=>{
       this.serverTargetTable = request.data.body.slice(0, request.data.body.length)
       this.targetTable = request.data.body.slice(0, request.data.body.length)
-      console.log(this.serverTargetTable)
     })
   }
 }

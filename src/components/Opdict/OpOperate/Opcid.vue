@@ -7,6 +7,7 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="事件id" :rules="[{ required: true}]">
             <el-input
+              disabled="true"
               v-model="form.opcid" />
           </el-form-item>
           <el-form-item label="事件名称">
@@ -238,7 +239,9 @@ export default {
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
-      }
+
+      },
+
     }
   },
   props:{
@@ -246,7 +249,7 @@ export default {
     // 未经过搜索的指标列表
     serverTable:Array,
     SourceTypes:Array
-  }
+  },
 }
 
 </script>
