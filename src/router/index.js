@@ -183,7 +183,7 @@ export const constantRoutes = [
         component: () => import('@/views/serverLedger/server_maintain')
       },
       {
-        path: 'service_maintain/:ServerId',
+        path: 'service_maintain',
         name: 'ServiceMaintainPage',
         meta: { title: '服务类型', icon: 'link' },
         component: () => import('@/views/serverLedger/service_maintain')
