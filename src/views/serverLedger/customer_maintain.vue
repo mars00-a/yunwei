@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
-          <el-button type="success" id="Add" @click="dialogAddVisible = true">新增</el-button>
+          <el-button type="success" id="Add" @click="dialogAddVisible = true, dealAddForm()">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -323,8 +323,8 @@
         <el-button type="primary" @click="dialogServerVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="新增服务器信息" :visible.sync="dialogAddServerVisible" width="30%">
-      <el-form ref="addServerForm" :model="customerAddForm" label-width="90px">
+    <el-dialog title="新增所属服务器信息" :visible.sync="dialogAddServerVisible" width="30%">
+      <el-form ref="addServerForm" :model="addServerForm" label-width="90px">
         <!--服务器ID-->
         <el-form-item label="服务器ID">
           <el-input v-model="addServerForm.serverId" :disabled="true"/>
@@ -364,7 +364,7 @@
             <el-input v-model="ServerIdTableCompleteValue" placeholder="请输入内容"/>
           </el-tooltip>
         </el-col>
-        <el-col :span="5"> <el-button type="primary" @click="">新增服务器</el-button></el-col>
+        <el-col :span="5"> <el-button type="primary" @click="dialogCreateServerVisible = true">新增服务器</el-button></el-col>
       </el-row>
       <el-table
         :data="serverIdTable"
@@ -392,6 +392,49 @@
           </template>
         </el-table-column>
       </el-table>
+    </el-dialog>
+    <el-dialog top="1vh" title="新增服务器信息" :visible.sync="dialogCreateServerVisible" width="30%">
+      <el-form ref="newServerForm" :model="newServerForm" label-width="100px">
+        <!--服务器id-->
+        <el-form-item label="服务器ID" :rules="[{ required: true}]">
+          <el-input
+            v-model="newServerForm.serverId" />
+        </el-form-item>
+        <!--服务器类型-->
+        <el-form-item label="服务器类型">
+          <el-input v-model="newServerForm.serverType" />
+        </el-form-item>
+        <!--服务器名称-->
+        <el-form-item label="服务器名称">
+          <el-input v-model="newServerForm.serverName"/>
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="服务器IP">
+          <el-input v-model="newServerForm.serverIp"/>
+        </el-form-item>
+        <!--运维端口-->
+        <el-form-item label="运维端口">
+          <el-input v-model="newServerForm.serverPort"/>
+        </el-form-item>
+        <!--是否监测-->
+        <el-form-item label="是否监测">
+          <el-radio v-model="newServerForm.monitored" label="0">否</el-radio>
+          <el-radio v-model="newServerForm.monitored" label="1">是</el-radio>
+        </el-form-item>
+        <!--是否远程控制-->
+        <el-form-item label="是否远程控制">
+          <el-radio v-model="newServerForm.controlled" label="0">否</el-radio>
+          <el-radio v-model="newServerForm.controlled" label="1">是</el-radio>
+        </el-form-item>
+        <!--备注-->
+        <el-form-item label="备注">
+          <el-input v-model="newServerForm.node"  type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreateServerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreateServerVisible = false, addNewServer()">确 定</el-button>
+      </span>
     </el-dialog>
 
     <!--服务按钮的弹窗-->
@@ -1046,7 +1089,8 @@
     getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
     getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
     getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList, getOpCustomerServerCreate,
-    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, getServicePageList, getServiceFindServiceId, getOpCustomerServicesDelete
+    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, getServicePageList, getServiceFindServiceId, getOpCustomerServicesDelete,
+    getOpServerCreate, getOpServerUnBindList, getOpCustomerAll,
   } from '@/api/serverLedger'
   export default {
     name: 'op_customer',
@@ -1093,9 +1137,9 @@
           height: "29rem"
         },
         //表格数据
-        tableData: [
-          {}
-        ],
+        tableData: [],
+        //所有客户数据
+        totalTableData:[],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -1128,6 +1172,7 @@
         dialogAddServerVisible:false,
         dialogServerVisible: false,
         dialogServerIdTableVisible:false,
+        dialogCreateServerVisible:false,
         //服务器的表格
         serverTable: [],
         nowCustomerId:'',
@@ -1136,6 +1181,7 @@
         serverIdTable:[],
         backupServerIdTable:[],
         ServerIdTableCompleteValue:'',
+        newServerForm:{},
         //********服务的弹窗********
         //弹窗是否可见
         dialogServiceVisible: false,
@@ -1261,12 +1307,6 @@
           }
         });
       },
-      dealServerIdTable(){
-        getOpServerPageList(1,1000).then(request=>{
-          this.serverIdTable = request.data.body.data;
-          this.backupServerIdTable = request.data.body.data;
-        });
-      },
       //************************分页************************
       //鼠标放到某一行上就触发
       tableCellClassName({row, rowIndex}) {
@@ -1287,7 +1327,6 @@
         this.Find();
       },
       //**********************表格主体**********************
-      //************************弹窗************************
       //新增功能的事件
       addConfirm(){
         if(this.addForm.customerId === ""){
@@ -1303,7 +1342,7 @@
                 type: 'success'
               });
             }else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -1311,9 +1350,18 @@
           });
         }
       },
+      //处理新增功能的ID自动生成数据
+      dealAddForm(){
+        getOpCustomerAll().then(request=>{
+          this.totalTableData = request.data.body;
+        });
+      },
       //修改功能的事件
       getRow(row){
-        this.reviseForm = row;
+        getOpCustomerAll().then(request=>{
+          this.totalTableData = request.data.body;
+        });
+        this.reviseForm = {...row};
       },
       ReviseConfirm(){
         if(this.reviseForm.customerId === ""){
@@ -1329,7 +1377,7 @@
                 type: 'success'
               });
             } else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -1352,7 +1400,7 @@
                 message: '删除成功'
               })
             } else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -1365,13 +1413,16 @@
           })
         })
       },
+      //************************弹窗************************
       //服务器按钮的弹窗事件
+      //获取用户-服务器表单信息
       getServer(row){
         getOpCustomerServerByCustomer(row.customerId).then(request=>{
           this.serverTable = request.data.body;
           this.nowCustomerId = row.customerId;
         })
       },
+      //用户-服务器表单信息的删除
       ServerDel(row){
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -1379,17 +1430,17 @@
           type: 'warning'
         }).then(() => {
           getOpCustomerServerDelete(this.nowCustomerId,row.server.serverId).then(request=>{
-            getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
-              this.serverTable = request.data.body;
-            });
             if (request.data.body) {
-              this.Find();
+              getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
+                this.serverTable = request.data.body;
+              });
+              this.dealServerIdTable();
               this.$message({
                 type: 'success',
                 message: '删除成功'
               })
             } else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -1402,10 +1453,12 @@
           })
         })
       },
+      //选择添加服务器ID
       AddServerId(row){
         this.addServerForm.serverId = row.serverId;
         this.addServerForm.serverName = row.serverName;
       },
+      //确认新增用户-服务器信息
       ServerAddConfirm(){
         this.pushAddServerForm.beginTime= this.addServerForm.beginTime;
         this.pushAddServerForm.endTime= this.addServerForm.endTime;
@@ -1416,13 +1469,39 @@
           getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
             this.serverTable = request.data.body;
           });
+          this.dealServerIdTable();
+          this.addServerForm = {};
           if (request.data.body) {
             this.$message({
               type: 'success',
               message: '添加成功'
             })
           } else {
-            super.$message({
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      //获取服务器id与名称列表
+      dealServerIdTable(){
+        getOpServerUnBindList().then(request=>{
+          this.serverIdTable = request.data.body;
+          this.backupServerIdTable = request.data.body;
+        });
+      },
+      //新增服务器
+      addNewServer(){
+        getOpServerCreate(this.newServerForm).then(request=>{
+          if (request.data.body) {
+            this.dealServerIdTable();
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          } else {
+            this.$message({
               message: request.data.msg,
               type: 'warning'
             });
@@ -1453,12 +1532,13 @@
             getOpCustomerServicesByCustomer(this.nowCustomerId).then(request=>{
               this.serviceTable = request.data.body;
             });
+            this.addServiceForm = {};
             this.$message({
               type: 'success',
               message: '添加成功'
             })
           } else {
-            super.$message({
+            this.$message({
               message: request.data.msg,
               type: 'warning'
             });
@@ -1481,7 +1561,7 @@
                 message: '删除成功'
               })
             }else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -1501,31 +1581,47 @@
       this.dropDownBox();
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
-      }
+      };
     },
     watch:{
-      'reviseForm.managerName':{
+      'reviseForm.areaManager':{
         immediate:true,
         handler(val){
-          let i = 1;
-          this.accountManagers.forEach(a=>{
-            if(val === a){
-              this.reviseForm.customerId = i
+          let backupTableData;
+          backupTableData = this.totalTableData.filter((myval,index,arr) =>{
+            if(myval.areaManager !== null){
+              return (myval.areaManager.indexOf(val) !== -1)
             }
-            i++;
           });
+          let MaxId = [];
+          console.log("backupTableData"+backupTableData);
+          for(let i=0;i<backupTableData.length;i++){
+            MaxId[i] = backupTableData[i].customerId;
+          }
+          let max = MaxId.reduce((total,value)=>total>value?total:value);
+          let number = max.replace(/[^0-9]/ig,"");
+          let String = max.replace(/[^a-z]+/ig,"");
+          this.reviseForm.customerId = String + (Array(4).join('0') + (parseInt(number)+1)).slice(-4);
         }
       },
-      'addForm.managerName':{
+      'addForm.areaManager':{
         immediate:true,
         handler(val){
-          let i = 1;
-          this.accountManagers.forEach(a=>{
-            if(val === a){
-              this.addForm.customerId = i
+          let backupTableData;
+          backupTableData = this.totalTableData.filter((myval,index,arr) =>{
+            if(myval.areaManager !== null){
+              return (myval.areaManager.indexOf(val) !== -1)
             }
-            i++;
           });
+          let MaxId = [];
+          console.log("backupTableData"+backupTableData);
+          for(let i=0;i<backupTableData.length;i++){
+            MaxId[i] = backupTableData[i].customerId;
+          }
+          let max = MaxId.reduce((total,value)=>total>value?total:value);
+          let number = max.replace(/[^0-9]/ig,"");
+          let String = max.replace(/[^a-z]+/ig,"");
+          this.addForm.customerId = String + (Array(4).join('0') + (parseInt(number)+1)).slice(-4);
         }
       },
       'ServerIdTableCompleteValue':{

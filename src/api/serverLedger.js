@@ -103,14 +103,33 @@ export  function getOpCustomerDelete(customerId) {
     params:{customerId}
   })
 }
+//获取所有客户信息
+export  function getOpCustomerAll() {
+  return request({
+    url: '/api/OpCustomer/All',
+    method: 'get',
+  })
+}
+
+
+
 
 
 //****************************************客户服务器相关接口****************************************
+//通过客户ID查找客户拥有的服务器
 export  function getOpCustomerServerByCustomer(customerId) {
   return request({
     url: '/api/OpCustomerServer/ByCustomer',
     method: 'get',
     params:{customerId}
+  })
+}
+//通过服务器ID寻找服务器所属的用户
+export  function getOpCustomerServerByServer(serverId) {
+  return request({
+    url: '/api/OpCustomerServer/ByServer',
+    method: 'get',
+    params:{serverId}
   })
 }
 export  function getOpCustomerServerDelete(customerId,serverId) {
@@ -127,6 +146,15 @@ export  function getOpCustomerServerCreate(data) {
     data
   })
 }
+//获取未绑定服务器列表
+export  function getOpServerUnBindList() {
+  return request({
+    url: '/api/OpServer/UnBindList',
+    method: 'get',
+  })
+}
+
+
 
 
 
@@ -204,6 +232,44 @@ export  function getOpServerFindControlled(Controlled,index,size) {
     url: '/api/OpServer/PageList',
     method: 'get',
     params: {Controlled,index,size}
+  })
+}
+export  function getOpServerCreate(data) {
+  return request({
+    url: '/api/OpServer/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpServerUpdate(data) {
+  return request({
+    url: '/api/OpServer/Update',
+    method: 'post',
+    data
+  })
+}
+//获取服务器登录列表
+export function getOpServerLoginByServerId(serverId) {
+  return request({
+    url:'/api/OpServerLogin/ByServerId',
+    method:'get',
+    params:{serverId}
+  })
+}
+//新增服务器登录信息
+export function getOpServerLoginCreate(data) {
+  return request({
+    url:'/api/OpServerLogin/Create',
+    method:'post',
+    data
+  })
+}
+//删除务器登录信息
+export function getOpServerLoginDelete(serverId,loginSoft) {
+  return request({
+    url:'/api/OpServerLogin/Delete',
+    method:'post',
+    params:{serverId,loginSoft}
   })
 }
 

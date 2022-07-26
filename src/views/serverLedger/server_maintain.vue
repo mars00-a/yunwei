@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
-          <el-button type="success" id="Add" @click="dialogAddVisible = true">新增</el-button>
+          <el-button type="success" id="Add" @click="dialogAddVisible = true, getAllServerId()">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -89,19 +89,19 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="4.8">
-                <el-button type="primary" @click="dialogReviseVisible = true">修改</el-button>
+                <el-button type="primary" @click="dialogReviseVisible = true, ReviseServer(scope.row)">修改</el-button>
               </el-col>
               <el-col :span="4.8">
                 <el-button type="danger" @click="Del(scope.row.serverId)">删除</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="warning" @click="dialogCustomerVisible = true">客户</el-button>
+                <el-button type="warning" @click="dialogCustomerVisible = true, getCustomer(scope.row)">客户</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="info" @click="dialogServiceVisible = true, gotoService()">服务</el-button>
+                <el-button type="info" @click="dialogServiceVisible = true, gotoService(scope.row)">服务</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="success" @click="dialogLoginVisible = true">登录</el-button>
+                <el-button type="success" @click="dialogLoginVisible = true, getLogin(scope.row)">登录</el-button>
               </el-col>
             </el-row>
           </template>
@@ -137,42 +137,75 @@
         <!--服务器id-->
         <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
-            v-model="addForm.serviceType" />
+            v-model="addForm.serverId" />
+        </el-form-item>
+        <!--客户Id-->
+        <el-form-item label="客户Id">
+          <el-input
+            @focus="tableCustomerIdVisible = true"
+            v-model="addForm.customerId" />
         </el-form-item>
         <!--服务器类型-->
         <el-form-item label="服务器类型">
-          <el-input v-model="addForm.serviceName" />
+          <el-input v-model="addForm.serverType" />
         </el-form-item>
         <!--服务器名称-->
         <el-form-item label="服务器名称">
-          <el-input v-model="addForm.note"/>
+          <el-input v-model="addForm.serverName"/>
         </el-form-item>
         <!--服务器IP-->
         <el-form-item label="服务器IP">
-          <el-input v-model="addForm.serviceName"/>
+          <el-input v-model="addForm.serverIp"/>
         </el-form-item>
         <!--运维端口-->
         <el-form-item label="运维端口">
-          <el-input v-model="addForm.serviceName"/>
+          <el-input v-model="addForm.serverPort"/>
         </el-form-item>
         <!--是否监测-->
         <el-form-item label="是否监测">
-          <el-radio v-model="addForm.isMonitored" label="1">否</el-radio>
-          <el-radio v-model="addForm.isMonitored" label="2">是</el-radio>
+          <el-radio v-model="addForm.monitored" label="0">否</el-radio>
+          <el-radio v-model="addForm.monitored" label="1">是</el-radio>
         </el-form-item>
         <!--是否远程控制-->
         <el-form-item label="是否远程控制">
-          <el-radio v-model="addForm.isControled" label="1">否</el-radio>
-          <el-radio v-model="addForm.isControled" label="2">是</el-radio>
+          <el-radio v-model="addForm.controlled" label="0">否</el-radio>
+          <el-radio v-model="addForm.controlled" label="1">是</el-radio>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
-          <el-input v-model="addForm.note"  type="textarea"/>
+          <el-input v-model="addForm.node"  type="textarea"/>
         </el-form-item>
+        <!--客户id选择列表-->
+        <div v-show = tableCustomerIdVisible id="targetIdTable">
+          <el-table
+            :data="CustomerIdTable"
+            height="700"
+            border
+            style="width: 100%">
+            <el-table-column
+              active-class="targetTableGetFocus"
+              prop="customerId"
+              label="客户ID"
+              width="105%">
+            </el-table-column>
+            <el-table-column
+              prop="company"
+              label="客户名称"
+              width="100%">
+            </el-table-column>
+            <el-table-column label="添加">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="targetTableIdGetFocus(scope.row)">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogAddVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogAddVisible = false, addServer()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -183,42 +216,42 @@
         <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
             :disabled="true"
-            v-model="reviseForm.serviceType" />
+            v-model="reviseForm.serverId" />
         </el-form-item>
         <!--服务器类型-->
         <el-form-item label="服务器类型">
-          <el-input v-model="reviseForm.serviceName" />
+          <el-input v-model="reviseForm.serverType" />
         </el-form-item>
         <!--服务器名称-->
         <el-form-item label="服务器名称">
-          <el-input v-model="reviseForm.note"/>
+          <el-input v-model="reviseForm.serverName"/>
         </el-form-item>
         <!--服务器IP-->
         <el-form-item label="服务器IP">
-          <el-input v-model="reviseForm.serviceName"/>
+          <el-input v-model="reviseForm.serverIp"/>
         </el-form-item>
         <!--运维端口-->
         <el-form-item label="运维端口">
-          <el-input v-model="reviseForm.serviceName"/>
+          <el-input v-model="reviseForm.serverPort"/>
         </el-form-item>
         <!--是否监测-->
         <el-form-item label="是否监测">
-          <el-radio v-model="reviseForm.isMonitored" label="1">否</el-radio>
-          <el-radio v-model="reviseForm.isMonitored" label="2">是</el-radio>
+          <el-radio v-model="reviseForm.monitored" label=0>否</el-radio>
+          <el-radio v-model="reviseForm.monitored" label=1>是</el-radio>
         </el-form-item>
         <!--是否远程控制-->
         <el-form-item label="是否远程控制">
-          <el-radio v-model="reviseForm.isControled" label="1">否</el-radio>
-          <el-radio v-model="reviseForm.isControled" label="2">是</el-radio>
+          <el-radio v-model="reviseForm.controlled" label=0>否</el-radio>
+          <el-radio v-model="reviseForm.controlled" label=1>是</el-radio>
         </el-form-item>
         <!--备注-->
         <el-form-item label="备注">
-          <el-input v-model="reviseForm.note"  type="textarea"/>
+          <el-input v-model="reviseForm.node"  type="textarea"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogReviseVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogReviseVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogReviseVisible = false, ReviseServerConfirm()">确 定</el-button>
       </span>
 
     </el-dialog>
@@ -235,7 +268,7 @@
         <!--选择日期-->
         <el-form-item label="启用日期">
           <el-date-picker
-            v-model="CustomerForm.f_begin_time"
+            v-model="CustomerForm.beginTime"
             type="date"
             placeholder="选择日期">
           </el-date-picker>
@@ -243,7 +276,7 @@
         <!--停用日期-->
         <el-form-item label="停用日期">
           <el-date-picker
-            v-model="CustomerForm.f_end_time"
+            v-model="CustomerForm.endTime"
             type="date"
             placeholder="选择日期">
           </el-date-picker>
@@ -278,7 +311,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCustomerVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCustomerVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogCustomerVisible = false, ReviseCustomer()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -318,28 +351,34 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="f_server_name"
+          prop="serverId"
           label="服务器ID">
         </el-table-column>
         <el-table-column
-          prop="f_begin_time"
+          width="128"
+          prop="serverIp"
           label="服务器IP">
         </el-table-column>
         <el-table-column
-          prop="f_server_port"
+          prop="serverPort"
           label="服务器端口">
         </el-table-column>
         <el-table-column
-          prop="f_end_time"
+          prop="loginSoft"
           label="登录工具">
         </el-table-column>
         <el-table-column
-          prop="f_login_name"
+          prop="loginName"
           label="登录用户名">
         </el-table-column>
         <el-table-column
-          prop="f_login_pwd"
+          prop="loginPwd"
           label="登录密码">
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="note"
+          label="备注">
         </el-table-column>
         <el-table-column
           label="操作"
@@ -347,7 +386,7 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="24">
-                <el-button type="danger" @click="Del">删除</el-button>
+                <el-button type="danger" @click="LoginDel(scope.row)">删除</el-button>
               </el-col>
             </el-row>
           </template>
@@ -359,39 +398,52 @@
         <el-button type="primary" @click="dialogLoginVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="新增登录信息" :visible.sync="dialogLoginAddVisible" width="30%">
+    <el-dialog top="9vh" title="新增登录信息" :visible.sync="dialogLoginAddVisible" width="30%">
       <el-form ref="loginAddForm" :model="customerAddForm" label-width="90px">
         <!--服务器ID-->
         <el-form-item label="服务器ID">
-          <el-input v-model="loginAddForm.f_server_id" />
+          <el-input :disabled="true" v-model="loginAddForm.serverId" />
         </el-form-item>
         <!--服务器IP-->
         <el-form-item label="服务器IP">
-          <el-input v-model="loginAddForm.f_server_ip" />
+          <el-input v-model="loginAddForm.serverIp" />
         </el-form-item>
         <!--服务器端口-->
         <el-form-item label="服务器端口">
-          <el-input v-model="loginAddForm.f_server_port" />
+          <el-input v-model="loginAddForm.serverPort" />
         </el-form-item>
         <!--使用工具-->
         <el-form-item label="使用工具">
-          <el-input v-model="loginAddForm.f_login_soft" />
+          <el-select
+            v-model="loginAddForm.loginSoft"
+            :style="controlWidth"
+            placeholder="请选择">
+            <el-option
+              v-for="item in Tools"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <!--登录用户名-->
         <el-form-item label="登录用户名">
-          <el-input v-model="loginAddForm.f_login_name" />
+          <el-input v-model="loginAddForm.loginName" />
         </el-form-item>
         <!--登录密码-->
         <el-form-item label="登录密码">
-          <el-input v-model="loginAddForm.f_login_pwd" />
+          <el-input v-model="loginAddForm.loginPwd" />
+        </el-form-item>
+        <!--备注-->
+        <el-form-item label="备注">
+          <el-input v-model="loginAddForm.note" type="textarea"/>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogLoginAddVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogLoginAddVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogLoginAddVisible = false, CreateLogin()">确 定</el-button>
       </span>
     </el-dialog>
-
   </el-container>
 </template>
 
@@ -405,6 +457,14 @@ import {
   getOpServerFindMonitored,
   getOpServerFindControlled,
   getOpCustomerDelete,
+  getOpServerCreate,
+  getOpServerUpdate,
+  getOpCustomerServerByServer,
+  getOpCustomerServerDelete,
+  getOpCustomerServerCreate,
+  getOpServerLoginByServerId,
+  getOpServerLoginCreate,
+  getOpServerLoginDelete
 } from '@/api/serverLedger'
 import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang'
   export default {
@@ -440,12 +500,16 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
         //查找输入框
         CompleteValue:'',
         //*******************中间主体*******************
+        controlWidth: {
+          width: "100%"
+        },
         //处理页面自适应
         myStyle:{
           height:"29rem"
         },
         //表格数据
         tableData: [{}],
+        allTableData:[],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -458,48 +522,39 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
         size: 20,
         //*******************弹窗*******************
         //新增弹窗
+        tableCustomerIdVisible: false,
         dialogAddVisible: false,
-        addForm:{},
+        addForm:{customerId:''},
+        CustomerIdTable:[],
+        BackupCustomerIdTable:[],
         //修改的弹窗
         dialogReviseVisible: false,
-        reviseForm:{},
+        reviseForm:{serverId:''},
         //客户的弹窗
         dialogCustomerVisible: false,
         tableCustomerVisible: false,
-        CustomerForm:{
-          customerId:'',
-        },
-        targetCustomerIdTable:[
-          {
-          customerId:'101',
-          company:'张三'
-        },{
-          customerId:'102',
-          company:'李四'
-        },{
-          customerId:'201',
-          company:'王五'
-        }],
-        customerIdTable:[
-          {
-          customerId:'101',
-          company:'张三'
-        },{
-          customerId:'102',
-          company:'李四'
-        },{
-          customerId:'201',
-          company:'王五'
-        }],
+        CustomerForm:{},
+        BackupCustomerForm:{},
+        nowServerId:'',
+        targetCustomerIdTable:[],
         //服务的弹窗
         dialogServiceVisible: false,
         serviceForm:{},
         //登录的弹窗
         dialogLoginVisible: false,
         dialogLoginAddVisible:false,
-        loginTable:[{}],
-        loginAddForm:[],
-
+        loginTable:[],
+        loginAddForm:{},
+        Tools:[{
+          value:'桌面远程控制',
+          label:'桌面远程控制'
+        },{
+          value:'向日葵',
+          label:'向日葵'
+        },{
+          value:'VNC',
+          label:'VNC'
+        }],
       }
     },
     methods:{
@@ -573,24 +628,95 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
         this.Find();
       },
       //**********************表格主体**********************
+      //为修改表单获取当前行的值
+      ReviseServer(row){
+        const target = {};
+        Object.assign(target,row);
+        this.reviseForm = target;
+        this.reviseForm.monitored = this.reviseForm.monitored.toString();
+        this.reviseForm.controlled = this.reviseForm.controlled.toString();
+      },
+      //确认修改
+      ReviseServerConfirm(){
+        getOpServerUpdate(this.reviseForm).then(request=>{
+          if (request.data.body) {
+            this.Find();
+            this.$message({
+              type: 'success',
+              message: '更新成功'
+            })
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      //客户按钮弹窗
+      getCustomer(row){
+        this.nowServerId = row.serverId;
+        getOpCustomerServerByServer(row.serverId).then(request=>{
+          if (request.data.body) {
+            if(request.data.body[0] !== undefined){
+              this.CustomerForm = request.data.body[0];
+              this.BackupCustomerForm = {...request.data.body[0]};
+            }
+            else{
+              this.CustomerForm = {};
+              this.BackupCustomerForm = {};
+            }
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      ReviseCustomer(){
+        getOpCustomerServerDelete(this.BackupCustomerForm.customerId,this.nowServerId).then(request=>{
+          if(request.data.body){
+          }else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+        this.CustomerForm.serverId = this.nowServerId;
+        getOpCustomerServerCreate(this.CustomerForm).then(request=>{
+          if(request.data.body){
+            this.$message({
+              type: 'success',
+              message: '编辑成功'
+            })
+          }else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
       //服务按钮实现页面跳转
-      gotoService(){
-        this.$router.push('service_maintain');
+      gotoService(row){
+        this.$router.push({name:'ServiceMaintainPage',params:{ServerId:row.serverId}});
       },
       dealWhetherMonitorServer(row){
-        switch (row.monitored) {
-          case 0:
-            return "否"
-          case 1:
-            return "是"
+        if(row.monitored === 0){
+          return "否";
+        }
+        if(row.monitored === 1){
+          return "是";
         }
       },
       dealWhetherControlServer(row){
-        switch (row.controlled){
-          case 0:
-            return "否"
-          case 1:
-            return "是"
+        if(row.controlled === 0){
+          return "否";
+        }
+        if(row.controlled === 1){
+          return "是";
         }
       },
       //************************弹窗************************
@@ -609,7 +735,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
                 message: '删除成功'
               })
             } else {
-              super.$message({
+              this.$message({
                 message: request.data.msg,
                 type: 'warning'
               });
@@ -622,14 +748,97 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
           })
         })
       },
+      //新增按钮的事件
+      getAllServerId(){
+        getOpServerPageList(1,1000).then(request=>{
+          this.allTableData = request.data.body.data;
+        });
+      },
+      addServer(){
+        getOpServerCreate(this.addForm).then(request=>{
+          if (request.data.body) {
+            this.Find();
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
       //显示客户id选择列表
       getCustomerId(){
         this.tableCustomerVisible = true;
+      },
+      targetTableIdGetFocus(row){
+        this.addForm.customerId = row.customerId;
+        console.log(this.addForm);
       },
       //添加客户id
       targetTableGetFocus(index,row){
         this.CustomerForm.customerId = row.customerId;
       },
+      //获取登录信息
+      getLogin(row){
+        this.nowServerId = row.serverId;
+        this.loginAddForm.serverId = this.nowServerId;
+        getOpServerLoginByServerId(row.serverId).then(request=>{
+          this.loginTable = request.data.body;
+        })
+      },
+      //新增登录信息
+      CreateLogin(){
+        getOpServerLoginCreate(this.loginAddForm).then(request=>{
+          if (request.data.body) {
+            getOpServerLoginByServerId(this.nowServerId).then(request=>{
+              this.loginTable = request.data.body;
+            });
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      //删除登录信息
+      LoginDel(row){
+        this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getOpServerLoginDelete(row.serverId,row.loginSoft).then(request=>{
+            if (request.data.body) {
+              getOpServerLoginByServerId(this.nowServerId).then(request=>{
+                this.loginTable = request.data.body;
+              });
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+            } else {
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
     },
     watch:{
       //当对应指标中输入东西的时候搜索
@@ -645,16 +854,58 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
             this.targetCustomerIdTable = this.customerIdTable;
           }
         }
+      },
+      'addForm.customerId':{
+        immediate:true,
+        handler(val){
+          if(val !== ''){
+            this.CustomerIdTable = this.BackupCustomerIdTable.filter(p =>{
+              return p.company.indexOf(val) !== -1 || p.customerId.indexOf(val) !== -1
+            });
+          }
+          else {
+            this.CustomerIdTable = this.BackupCustomerIdTable;
+          }
+          if(val !== ''){
+            let FirstData=[];
+            let LastData=[];
+            FirstData = this.allTableData.filter(p =>{
+              if(p.serverId !== null){
+                return p.serverId.indexOf(val) !== -1
+              }
+            });
+            if(FirstData.length === 0){
+              this.addForm.serverId = val+'S01';
+            } else{
+              console.log(FirstData);
+              for(let i=0;i<FirstData.length;i++){
+                LastData[i] = FirstData[i].serverId;
+              }
+              console.log(LastData);
+              let max = LastData.reduce((total,value)=>total>value?total:value);
+              max = max.slice(-2);
+              if(max >= '09'){
+                this.addForm.serverId = val+'S'+(parseInt(max)+1);
+              }else{
+                this.addForm.serverId = val+'S0'+(parseInt(max)+1);
+              }
+            }
+          }else {
+            this.addForm.serverId = '';
+          }
+        }
       }
     },
     mounted(){
       this.dealData();
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
-      }
+      };
       getAllCustomerInfos().then(request=>{
         this.targetCustomerIdTable = request.data.body;
         this.customerIdTable = request.data.body;
+        this.BackupCustomerIdTable = request.data.body;
+        this.CustomerIdTable = request.data.body;
       });
     }
   }
@@ -674,6 +925,11 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang
     margin: 0 auto;
   }
   #targetTable{
+    position: absolute;
+    top: 1%;
+    left:103%;
+  }
+  #targetIdTable{
     position: absolute;
     top: 1%;
     left:103%;
