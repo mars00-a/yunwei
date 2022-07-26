@@ -124,6 +124,7 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="指标id" :rules="[{ required: true}]">
           <el-input
+            disabled="true"
             v-model="form.opsignalId" />
         </el-form-item>
         <el-form-item label="指标名称">
@@ -352,7 +353,7 @@ export default {
               type: 'success'
             });
           }else{
-            super.$message({
+            this.$message({
               message: request.data.msg,
               type: 'warning'
             });
@@ -536,6 +537,7 @@ export default {
           myOperatorArr = myOperatorArr.filter(function (s) {
             return s && s.trim();
           });
+          // 将id转化为名称
           let myNameArr = []
           for(let i=0; i<myIdArr.length; i++){
             let myOperatorAndIdArr = myIdArr[i].split("@")
@@ -559,10 +561,55 @@ export default {
             if (myNameArr[i])
               this.tip += myNameArr[i]
           }
-
-
           this.targetTable = this.serverTargetTable.filter(p =>{
             return p.objectName.indexOf(mySearch) !== -1 || p.objectId.indexOf(mySearch) !== -1
+          })
+
+          // 获取只有id的数组
+          let myOnlyIdArr = []
+          for(let i=0,j=0;i<myIdArr.length;i++){
+            if(myIdArr[i] !== '' && myIdArr[i] !== '@' && myIdArr[i].indexOf("@") !== -1){
+              myOnlyIdArr[j] = myIdArr[i].substr(1,7)
+              j++
+            }
+          }
+          // 获取最小的id并将其补全七位
+          console.log("myOnlyIdArr：",myOnlyIdArr)
+          if(myOnlyIdArr !== []){
+
+          }
+          let getID = Math.min.apply(null,myOnlyIdArr);
+          if(getID !== Infinity){
+            for(let i=0;i<7;i++){
+              if(getID.length !== 7) getID = "0"+getID
+              else if(getID.length === 7) break
+            }
+          }
+          else{
+            getID = '1'
+          }
+          console.log('最小的id为：',getID)
+          // 根据最小id查询已有的流水号
+          let mySearchKeyword = "S"+getID
+          let searchArr = []
+          getOpDictSignalFindopsignalId(mySearchKeyword,1,40).then(request=>{
+            searchArr = request.data.body.data;
+            console.log("搜索到的数据为：",searchArr)
+            let dealSearchArr =[]
+            for(let i=0;i<searchArr.length;i++){
+              console.log("即将处理的字符串为：",searchArr[i].opsignalId)
+              dealSearchArr[i] = searchArr[i].opsignalId.substr(8,2)
+            }
+            let myIndex = Math.max.apply(null,dealSearchArr)+1
+            if(myIndex !== Infinity && myIndex<10){
+              myIndex = "0"+myIndex
+            }
+            if(myIndex === '0-Infinity'){
+              myIndex = '01'
+            }
+            console.log("经过处理后的序列号为：",dealSearchArr)
+            console.log("即将使用的序列号为：",myIndex)
+            this.form.opsignalId = "S"+getID +myIndex
           })
         }
 

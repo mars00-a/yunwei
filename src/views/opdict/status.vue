@@ -141,6 +141,7 @@
           <!--statusId-->
           <el-form-item label="状态的id" :rules="[{ required: true}]">
             <el-input
+              disabled="true"
               v-model="form.statusId"
             />
 <!--            :disabled="true"-->
@@ -466,7 +467,6 @@
       },
       //查找按钮的事件
       find(){
-        this.currentPage = 1
         if(this.FilterParameter_value === 'StatusId'){
           getStatusFindStatusId(this.CompleteValue,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
@@ -553,8 +553,6 @@
       },
       targetTableGetFocus(index,row){
         this.form.opsignalId = row.opsignalId;
-        // this.targetTable = row
-        // event
       },
       handleClose(done){
           this.form.statusId = '';
@@ -605,14 +603,12 @@
             let mySearchKeyword = "A" + val.substr(0,7)
             console.log("对应指标填写完成，用于查找运维状态id的字符串为：", mySearchKeyword)
             let checkLengthArr = []
+            let checkLength = 1
             getStatusFindStatusId(mySearchKeyword,1,20).then(request=>{
               checkLengthArr = request.data.body.data
-              console.log("在函数里，获取到的数组长度为：",checkLengthArr.length)
-              let checkLength = checkLengthArr.length+1
+              checkLength = checkLengthArr.length+1
+              this.form.statusId = 'A' + val.substr(0,7) + '0' + checkLength
             })
-            console.log("获取到的数组长度为：",checkLengthArr.length)
-            let checkLength = checkLengthArr.length+1
-            this.form.statusId = 'A' + val.substr(0,7) + '0'
           }
         }
       }

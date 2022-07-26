@@ -38,7 +38,7 @@
               filterable
               allow-create
               default-first-option
-              placeholder="请选择所属系统"
+              placeholder="请选择事件来源类型"
             >
               <!--              label是展示在页面选项中的内容-->
               <el-option
@@ -147,7 +147,48 @@ export default {
       targetTable: this.serverTable,
       serverTargetTable: this.serverTable,
       //所属系统
-      BelongingSystems: [],
+      BelongingSystems: [
+        {
+          value:0,
+          label:'0-所有系统'
+        },
+        {
+          value:1,
+          label:'1-安防系统（3000）'
+        },
+        {
+          value:2,
+          label:'2-智慧用电服务'
+        },
+        {
+          value:3,
+          label:'3-巡更巡检服务'
+        },
+        {
+          value:4,
+          label:'4-微信服务'
+        },
+        {
+          value:5,
+          label:'5-APP服务'
+        },
+        {
+          value:6,
+          label:'6-短信网关服务'
+        },
+        {
+          value:7,
+          label:'7-第三方短信服务'
+        },
+        {
+          value:8,
+          label:'8-2030N语音服务'
+        },
+        {
+          value:9,
+          label:'9-第三方语音服务'
+        }
+      ],
       //事件来源类型
       EventSourceTypes: [],
       //事件类型

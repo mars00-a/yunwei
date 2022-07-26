@@ -1,7 +1,22 @@
 import request from '@/utils/request'
 
-
-
+// *******************************服务相关
+// 新增
+export function getOpServiceCreate(data) {
+  return request({
+    url: '/api/OpServices/Create',
+    method: 'post',
+    data
+  })
+}
+// 修改
+export function getOpServiceUpdate(data) {
+  return request({
+    url: '/api/OpServices/Update',
+    method: 'post',
+    data
+  })
+}
 
 // *************************服务器相关*****************************
 // 删除
@@ -18,5 +33,286 @@ export  function getAllCustomerInfos() {
   return request({
     url: '/api/OpCustomer/All',
     method: 'get',
+  })
+}
+// 通过服务id查找使用服务的客户
+export  function getOpCustomerByService(serviceId) {
+  return request({
+    url: '/api/OpCustomerServices/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+// 创建关联
+export  function getOpCustomerServicesCreate(data) {
+  return request({
+    url: '/api/OpCustomerServices/Create',
+    method: 'post',
+    data
+  })
+}
+// 删除关联
+export  function getOpCustomerServicesDelete(customerId,serviceId) {
+  return request({
+    url: '/api/OpCustomerServices/Delete',
+    method: 'post',
+    params: {customerId,serviceId}
+  })
+}
+
+// ***********************************九种类型服务的创建
+export  function getOpsvSecurityCreate(data) {
+  return request({
+    url: '/api/OpsvSecurity/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsv2030NvsCreate(data) {
+  return request({
+    url: '/api/Opsv2030Nvs/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvAppCreate(data) {
+  return request({
+    url: '/api/OpsvApp/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvOtherSmsCreate(data) {
+  return request({
+    url: '/api/OpsvOtherSms/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvOtherVsCreate(data) {
+  return request({
+    url: '/api/OpsvOtherVs/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvPatrolCreate(data) {
+  return request({
+    url: '/api/OpsvPatrol/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvSmartHomeCreate(data) {
+  return request({
+    url: '/api/OpsvSmartHome/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvSmsCreate(data) {
+  return request({
+    url: '/api/OpsvSms/Create',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvWeixinCreate(data) {
+  return request({
+    url: '/api/OpsvWeixin/Create',
+    method: 'post',
+    data
+  })
+}
+// ***********************************九种类型服务的更新
+export  function getOpsvSecurityUpdate(data) {
+  return request({
+    url: '/api/OpsvSecurity/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsv2030NvsUpdate(data) {
+  return request({
+    url: '/api/Opsv2030Nvs/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvAppUpdate(data) {
+  return request({
+    url: '/api/OpsvApp/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvOtherSmsUpdate(data) {
+  return request({
+    url: '/api/OpsvOtherSms/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvOtherVsUpdate(data) {
+  return request({
+    url: '/api/OpsvOtherVs/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvPatrolUpdate(data) {
+  return request({
+    url: '/api/OpsvPatrol/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvSmartHomeUpdate(data) {
+  return request({
+    url: '/api/OpsvSmartHome/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvSmsUpdate(data) {
+  return request({
+    url: '/api/OpsvSms/Update',
+    method: 'post',
+    data
+  })
+}
+export  function getOpsvWeixinUpdate(data) {
+  return request({
+    url: '/api/OpsvWeixin/Update',
+    method: 'post',
+    data
+  })
+}
+// *************************************&&********九种表的删除
+export  function getOpsvSecurityDelete(serviceId) {
+  return request({
+    url: '/api/OpsvSecurity/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsv2030NvsDelete(serviceId) {
+  return request({
+    url: '/api/Opsv2030Nvs/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvAppDelete(serviceId) {
+  return request({
+    url: '/api/OpsvApp/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvOtherSmsDelete(serviceId) {
+  return request({
+    url: '/api/OpsvOtherSms/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvOtherVsDelete(serviceId) {
+  return request({
+    url: '/api/OpsvOtherVs/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvPatrolDelete(serviceId) {
+  return request({
+    url: '/api/OpsvPatrol/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvSmartHomeDelete(serviceId) {
+  return request({
+    url: '/api/OpsvSmartHome/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvSmsDelete(serviceId) {
+  return request({
+    url: '/api/OpsvSms/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+export  function getOpsvWeixinDelete(serviceId) {
+  return request({
+    url: '/api/OpsvWeixin/Delete',
+    method: 'post',
+    params: {serviceId}
+  })
+}
+// ***************************九种表的获取指定id的信息
+export  function getOpsvSecurityByService(serviceId) {
+  return request({
+    url: '/api/OpsvSecurity/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsv2030NvsByService(serviceId) {
+  return request({
+    url: '/api/Opsv2030Nvs/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvAppByService(serviceId) {
+  return request({
+    url: '/api/OpsvApp/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvOtherSmsByService(serviceId) {
+  return request({
+    url: '/api/OpsvOtherSms/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvOtherVsByService(serviceId) {
+  return request({
+    url: '/api/OpsvOtherVs/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvPatrolByService(serviceId) {
+  return request({
+    url: '/api/OpsvPatrol/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvSmartHomeByService(serviceId) {
+  return request({
+    url: '/api/OpsvSmartHome/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvSmsByService(serviceId) {
+  return request({
+    url: '/api/OpsvSms/ByService',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+export  function getOpsvWeixinByService(serviceId) {
+  return request({
+    url: '/api/OpsvWeixin/ByService',
+    method: 'get',
+    params: {serviceId}
   })
 }

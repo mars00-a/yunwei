@@ -6,6 +6,7 @@
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="指标id" :rules="[{ required: true}]">
             <el-input
+              disabled="true"
               v-model="form.opsignalId" />
           </el-form-item>
           <el-form-item label="指标名称">
