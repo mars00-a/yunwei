@@ -1029,7 +1029,7 @@ import {
   getOpsvSecurityDelete, getOpsv2030NvsDelete, getOpsvAppDelete, getOpsvOtherSmsDelete, getOpsvOtherVsDelete,
   getOpsvPatrolDelete, getOpsvSmartHomeDelete, getOpsvSmsDelete,getOpsvWeixinDelete,getOpCustomerByService,getOpCustomerServicesCreate,
   getOpCustomerServicesDelete
-} from '@/api/wang'
+} from '@/api/serverLedger'
 import {getOpDictSignalCreate} from "@/api/opdict";
   export default {
     name: 'op_service',
@@ -2197,10 +2197,21 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       }
     },
     mounted(){
-      this.dealData()
+      if(this.$route.params.ServerId === null){
+        this.dealData();
+      }else {
+        this.FilterParameter_value = '安装的id';
+        this.CompleteValue = this.$route.params.ServerId;
+        this.FilterParameter_value = 'ServerId';
+        console.log(this.CompleteValue);
+        getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
+          this.totalNumber = request.data.body.total;
+          this.tableData = request.data.body.data;
+        });
+      }
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
-      }
+      };
       // 获取所有客户信息表
       getAllCustomer().then(request=>{
         this.customerForm.searchAllCustomerInfos = request.data.body;
