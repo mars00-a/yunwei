@@ -39,7 +39,7 @@
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow"
         :cell-class-name="tableCellClassName">
-<!--        序号列-->
+        <!--        序号列-->
         <el-table-column
           width="50"
           type="index"
@@ -50,31 +50,31 @@
         <el-table-column
           prop="objectId"
           label="监测对象id"
-         >
+        >
         </el-table-column>
         <!--监控对象所属系统：systemName-->
         <el-table-column
           prop="systemName"
           label="监控对象所属系统"
-          >
+        >
         </el-table-column>
         <!--监控对象所属模块：moduleName-->
         <el-table-column
           prop="moduleName"
           label="监控对象所属模块"
-         >
+        >
         </el-table-column>
         <!--监测对象名称：objectName-->
         <el-table-column
           prop="objectName"
           label="监测对象名称"
-          >
+        >
         </el-table-column>
         <!--监测对象类型：category-->
         <el-table-column
           prop="category"
           label="监测对象类型"
-         >
+        >
         </el-table-column>
         <!--监测内容：item-->
         <el-table-column
@@ -251,27 +251,27 @@ export default{
       //过滤参数下拉框
       FilterParameters: [
         {
-        value: 'ObjectId',
-        label: '监测对象ID'
-      }, {
-        value: 'SystemName',
-        label: '监控对象所属系统'
-      }, {
-        value: 'ModuleName',
-        label: '监控对象所属模块'
-      }, {
-        value: 'ObjectName',
-        label: '监控对象名称'
-      }, {
-        value: 'Category',
-        label: '监控对象类型'
-      }, {
-        value: 'Item',
-        label: '监测内容'
-      }, {
-        value: 'Type',
-        label: '数据类型'
-      }],
+          value: 'ObjectId',
+          label: '监测对象ID'
+        }, {
+          value: 'SystemName',
+          label: '监控对象所属系统'
+        }, {
+          value: 'ModuleName',
+          label: '监控对象所属模块'
+        }, {
+          value: 'ObjectName',
+          label: '监控对象名称'
+        }, {
+          value: 'Category',
+          label: '监控对象类型'
+        }, {
+          value: 'Item',
+          label: '监测内容'
+        }, {
+          value: 'Type',
+          label: '数据类型'
+        }],
       //过滤参数
       FilterParameter_value: '',
       //查找输入框
