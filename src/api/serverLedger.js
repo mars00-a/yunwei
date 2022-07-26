@@ -107,7 +107,7 @@ export  function getOpCustomerDelete(customerId) {
 export  function getOpCustomerAll() {
   return request({
     url: '/api/OpCustomer/All',
-    method: 'grr',
+    method: 'get',
   })
 }
 
