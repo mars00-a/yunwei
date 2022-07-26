@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button @click="Find()" type="primary" id="Find">过 滤</el-button>
           <el-button @click="dealData" type="primary">恢 复</el-button>
-          <el-button type="success" id="Add" @click="visables.dialogChooseServiceType = true">新 增</el-button>
+          <el-button type="success" id="Add" @click="clickAdd()">新 增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -79,13 +79,13 @@
           <template slot-scope="scope">
             <el-row :gutter="10">
               <el-col :span="8">
-                <el-button type="primary" @click="openOneDialog(scope.row.serviceType)">修 改</el-button>
+                <el-button type="primary" @click="clickRevise(scope.row)">修 改</el-button>
               </el-col>
               <el-col :span="8">
-                <el-button type="danger" @click="serviceDel(scope.row.serviceId)">删 除</el-button>
+                <el-button type="danger" @click="serviceDel(scope.row)">删 除</el-button>
               </el-col>
               <el-col :span="8">
-                <el-button type="warning" @click="visables.dialogCustomerVisible = true">客 户</el-button>
+                <el-button type="warning" @click="openCustomer(scope.row)">客 户</el-button>
               </el-col>
             </el-row>
           </template>
@@ -194,44 +194,44 @@
         </el-table-column>
 <!--        客户经理-->
         <el-table-column
-          prop="areaManager"
+          prop="customer.areaManager"
           label="客户经理"
         >
         </el-table-column>
 <!--        客户名称-->
         <el-table-column
-          prop="company"
+          prop="customer.company"
           label="客户名称"
         >
         </el-table-column>
 <!--        联系电话-->
         <el-table-column
-          prop="contactPhone"
+          prop="customer.contactPhone"
           label="联系电话"
         >
         </el-table-column>
 <!--        回访时间-->
         <el-table-column
-          prop="revisitTime"
+          prop="customer.revisitTime"
           label="回访时间"
         >
         </el-table-column>
 <!--        客户地址-->
         <el-table-column
-          prop="address"
+          prop="customer.address"
           label="客户地址"
         >
         </el-table-column>
 <!--        备注-->
         <el-table-column
-          prop="note"
+          prop="customer.note"
           label="备注"
         >
         </el-table-column>
 <!--        操作栏-->
         <el-table-column label="操作" >
           <template slot-scope="scope">
-            <el-button type="danger" @click="CustomerDel(scope.row.customerId)">删 除</el-button>
+            <el-button type="danger" @click="serviceCustomerDel(scope.row)">删 除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -240,7 +240,7 @@
         <el-button type="primary" @click="myConfirm()">确 定</el-button>
       </span>
     </el-dialog>
-<!--------------------新增用户的弹窗------------>
+<!--------------------新增客户的弹窗------------>
     <el-dialog
     top="5vh"
     title="新增用户"
@@ -292,53 +292,93 @@
       title="请选择新增服务的类型"
       width="480px"
       :visible.sync="visables.dialogChooseServiceType">
-      <!--      搜索那一行-->
+
+      <el-form ref="addForm" :model="addForm" label-width="110px">
+        <!--服务类型-->
+        <el-form-item label="服务名称">
+          <el-input
+            v-model="addForm.serviceName" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="所属服务器">
+          <el-input
+            @focus="getFocus"
+            placeholder="输入id或名称搜索服务器"
+            v-model="addForm.serverId"
+          />
+        </el-form-item>
+      </el-form>
       <el-row>
         <el-col :span="8" style="margin-left: 15px">
-          <el-button type="primary" @click="openOneDialog(1)">安防(3000)</el-button>
+          <el-button type="primary" @click="clickAddSomeType(1)">安防(3000)</el-button>
         </el-col>
         <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(2)">智 慧 用 电</el-button>
+          <el-button type="primary" @click="clickAddSomeType(2)">智 慧 用 电</el-button>
         </el-col>
         <el-col :span="7">
-          <el-button type="primary" @click="openOneDialog(3)">巡 更 巡 检</el-button>
+          <el-button type="primary" @click="clickAddSomeType(3)">巡 更 巡 检</el-button>
         </el-col>
       </el-row>
       <el-row style="margin-top: 20px">
         <el-col :span="8"  style="margin-left: 15px">
-          <el-button type="primary" @click="openOneDialog(4)">微 信 服 务</el-button>
+          <el-button type="primary" @click="clickAddSomeType(4)">微 信 服 务</el-button>
         </el-col>
         <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(5)">APP&nbsp;&nbsp;&nbsp;服 务</el-button>
+          <el-button type="primary" @click="clickAddSomeType(5)">APP&nbsp;&nbsp;&nbsp;服 务</el-button>
         </el-col>
         <el-col :span="7">
-          <el-button type="primary" @click="openOneDialog(6)">短 信 网 关</el-button>
+          <el-button type="primary" @click="clickAddSomeType(6)">短 信 网 关</el-button>
         </el-col>
       </el-row>
       <el-row style="margin-top: 20px">
         <el-col :span="8"  style="margin-left: 15px">
-          <el-button type="primary" @click="openOneDialog(7)">第三方短信</el-button>
+          <el-button type="primary" @click="clickAddSomeType(7)">第三方短信</el-button>
         </el-col>
         <el-col :span="8">
-          <el-button type="primary" @click="openOneDialog(8)">语 音 服 务</el-button>
+          <el-button type="primary" @click="clickAddSomeType(8)">语 音 服 务</el-button>
         </el-col>
         <el-col :span="7">
-          <el-button type="primary" @click="openOneDialog(9)">第三方语音</el-button>
+          <el-button type="primary" @click="clickAddSomeType(9)">第三方语音</el-button>
         </el-col>
       </el-row>
       <!--      最下方操作-->
       <span slot="footer" class="dialog-footer">
         <el-button type="danger" @click="visables.dialogChooseServiceType = false">取 消</el-button>
       </span>
+<!--      左侧选择服务器列表-->
+      <div v-show = controlShow id="targetTable">
+        <el-table
+          :data="searchServerInfos"
+          height="95%"
+          border
+          style="width: 100%">
+          <el-table-column
+            active-class="targetTableGetFocus"
+            prop="serverId"
+            label="服务器id"
+            width="105%">
+          </el-table-column>
+          <el-table-column
+            prop="serverName"
+            label="服务器名称"
+            width="100%">
+          </el-table-column>
+          <el-table-column label="添加">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="addServer(scope.row)">添加</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-dialog>
-
-<!---------------------下面是九个弹窗---------------------------------------->
-
+<!-----------------------------------下面是九个弹窗---------------------------------------->
 <!--    安防服务（3000）-->
     <el-dialog
-      top="7vh"
+      top="2vh"
       title="安防服务（3000）"
-      width="60%"
+      width="50%"
       :visible.sync="visables.dialogSecurity"
       style="padding-bottom: 0"
     >
@@ -347,52 +387,84 @@
           <el-form ref="reviseForm" :model="nineDialogForm.securityForm" label-width="130px">
             <el-form-item label="服务实例id">
               <el-input
-                v-model="nineDialogForm.securityForm" />
+                disabled="true"
+                v-model="addForm.serviceId" />
+            </el-form-item>
+            <el-form-item label="服务名称">
+              <el-input
+                v-model="addForm.serviceName" />
+            </el-form-item>
+            <el-form-item label="安装的服务器id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serverId" />
             </el-form-item>
             <el-form-item label="数据库类型">
-              <el-input v-model="nineDialogForm.securityForm" />
+              <el-input v-model="nineDialogForm.securityForm.dbType" />
             </el-form-item>
             <el-form-item label="数据库IP">
-              <el-input v-model="nineDialogForm.securityForm" />
+              <el-input v-model="nineDialogForm.securityForm.dbIp" />
             </el-form-item>
             <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.dbPort"/>
             </el-form-item>
             <el-form-item label="数据库用户名">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.dbUser"/>
             </el-form-item>
             <el-form-item label="数据库密码">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.dbPwd"/>
             </el-form-item>
+            <el-form-item label="软件名称">
+            <el-input v-model="nineDialogForm.securityForm.software"/>
+          </el-form-item>
             <el-form-item label="版本信息">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.version"/>
             </el-form-item>
           </el-form>
         </el-col>
         <el-col :span="12">
           <el-form ref="reviseForm" :model="nineDialogForm.securityForm" label-width="120px">
             <el-form-item label="授权方式">
-              <el-input v-model="nineDialogForm.securityForm" />
+              <el-input v-model="nineDialogForm.securityForm.authorize" />
             </el-form-item>
             <el-form-item label="授权时间">
-              <el-input v-model="nineDialogForm.securityForm" />
+              <el-date-picker
+                :style="controlWidth"
+                v-model="nineDialogForm.securityForm.authorizeTime"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="授权状态">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.authorizeStatus"/>
             </el-form-item>
             <el-form-item label="授权数目">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.authorizeNum"/>
             </el-form-item>
             <el-form-item label="授权人员">
-              <el-input v-model="nineDialogForm.securityForm"/>
+              <el-input v-model="nineDialogForm.securityForm.authorizePerson"/>
+            </el-form-item>
+            <el-form-item label="客户数量">
+              <el-input v-model="nineDialogForm.securityForm.clientNum"/>
+            </el-form-item>
+            <el-form-item label="是否巡检">
+              <el-input v-model="nineDialogForm.securityForm.ispatrol"/>
+            </el-form-item>
+            <el-form-item label="过期时间">
+              <el-date-picker
+                :style="controlWidth"
+                v-model="nineDialogForm.securityForm.expireDate"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="备注">
-              <el-input v-model="nineDialogForm.securityForm" type="textarea"/>
+              <el-input v-model="nineDialogForm.securityForm.note" type="textarea"/>
             </el-form-item>
             <el-form-item label="创建时间">
               <el-date-picker
                 :style="controlWidth"
-                v-model="nineDialogForm.securityForm"
+                v-model="nineDialogForm.securityForm.time"
                 type="datetime"
                 placeholder="选择日期时间">
               </el-date-picker>
@@ -402,14 +474,14 @@
       </el-row>
       <span style="padding-top: 0" slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogSecurity = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvSecurity()">确认</el-button>
       </span>
     </el-dialog>
 <!--    智慧用电-->
     <el-dialog
       top="1vh"
       title="智慧用电"
-      width="60%"
+      width="50%"
       :visible.sync="visables.dialogSmartHome"
     >
       <el-row>
@@ -417,64 +489,79 @@
           <el-form ref="reviseForm" :model="nineDialogForm.smartHomeForm" label-width="130px">
             <el-form-item label="服务实例id">
               <el-input
-                v-model="nineDialogForm.smartHomeForm" />
+                disabled="true"
+                v-model="addForm.serviceId" />
+            </el-form-item>
+            <el-form-item label="服务名称">
+              <el-input
+                v-model="addForm.serviceName" />
+            </el-form-item>
+            <el-form-item label="安装的服务器id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serverId" />
             </el-form-item>
             <el-form-item label="版本信息">
-              <el-input v-model="nineDialogForm.smartHomeForm" />
+              <el-input v-model="nineDialogForm.smartHomeForm.version" />
             </el-form-item>
             <el-form-item label="小程序版本">
-              <el-input v-model="nineDialogForm.smartHomeForm" />
+              <el-input v-model="nineDialogForm.smartHomeForm.appVersion" />
             </el-form-item>
             <el-form-item label="数据库IP">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.mysqlIp"/>
             </el-form-item>
             <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.mysqlPort"/>
             </el-form-item>
             <el-form-item label="数据库用户名">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.mysqlUser"/>
             </el-form-item>
             <el-form-item label="数据库密码">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.mysqlPwd"/>
             </el-form-item>
             <el-form-item label="数据库IP">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
-            </el-form-item>
-            <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.smartHomeForm" />
+              <el-input v-model="nineDialogForm.smartHomeForm.influxdbIp"/>
             </el-form-item>
           </el-form>
         </el-col>
         <el-col :span="12">
           <el-form ref="reviseForm" :model="nineDialogForm.smartHomeForm" label-width="120px">
+            <el-form-item label="数据库端口">
+              <el-input v-model="nineDialogForm.smartHomeForm.influxdbPort" />
+            </el-form-item>
             <el-form-item label="数据库用户名">
-              <el-input v-model="nineDialogForm.smartHomeForm" />
+              <el-input v-model="nineDialogForm.smartHomeForm.influxdbUser" />
             </el-form-item>
             <el-form-item label="数据库密码">
-              <el-input v-model="nineDialogForm.smartHomeForm" />
+              <el-input v-model="nineDialogForm.smartHomeForm.influxdbPwd" />
             </el-form-item>
             <el-form-item label="授权方式">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.authorize"/>
             </el-form-item>
             <el-form-item label="授权时间">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-date-picker
+                :style="controlWidth"
+                v-model="nineDialogForm.smartHomeForm.authorizeTime"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="授权状态">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.authorizeStatus"/>
             </el-form-item>
             <el-form-item label="授权数目">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.authorizeNum"/>
             </el-form-item>
             <el-form-item label="授权人员">
-              <el-input v-model="nineDialogForm.smartHomeForm"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.authorizePerson"/>
             </el-form-item>
             <el-form-item label="备注">
-              <el-input v-model="nineDialogForm.smartHomeForm" type="textarea"/>
+              <el-input v-model="nineDialogForm.smartHomeForm.note" type="textarea"/>
             </el-form-item>
             <el-form-item label="创建时间">
               <el-date-picker
                 :style="controlWidth"
-                v-model="nineDialogForm.smartHomeForm"
+                v-model="nineDialogForm.smartHomeForm.time"
                 type="datetime"
                 placeholder="选择日期时间">
               </el-date-picker>
@@ -484,14 +571,14 @@
       </el-row>
       <span style="padding-top: 0" slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogSmartHome = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvSmartHome">确认</el-button>
       </span>
     </el-dialog>
 <!--    巡更巡检服务-->
     <el-dialog
-      top="7vh"
+      top="3vh"
       title="巡更巡检服务"
-      width="60%"
+      width="50%"
       :visible.sync="visables.dialogPatrol"
       style="padding-bottom: 0"
     >
@@ -500,52 +587,67 @@
           <el-form ref="reviseForm" :model="nineDialogForm.patrolForm" label-width="130px">
             <el-form-item label="服务实例id">
               <el-input
-                v-model="nineDialogForm.patrolForm" />
+                disabled="true"
+                v-model="addForm.serviceId" />
+            </el-form-item>
+            <el-form-item label="服务名称">
+              <el-input
+                v-model="addForm.serviceName" />
+            </el-form-item>
+            <el-form-item label="安装的服务器id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serverId" />
             </el-form-item>
             <el-form-item label="数据库类型">
-              <el-input v-model="nineDialogForm.patrolForm" />
+              <el-input v-model="nineDialogForm.patrolForm.dbType" />
             </el-form-item>
             <el-form-item label="数据库IP">
-              <el-input v-model="nineDialogForm.patrolForm" />
+              <el-input v-model="nineDialogForm.patrolForm.dbIp" />
             </el-form-item>
             <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.dbPort"/>
             </el-form-item>
             <el-form-item label="数据库用户名">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.dbUser"/>
             </el-form-item>
             <el-form-item label="数据库密码">
-              <el-input v-model="nineDialogForm.patrolForm"/>
-            </el-form-item>
-            <el-form-item label="版本信息">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.dbPwd"/>
             </el-form-item>
           </el-form>
         </el-col>
         <el-col :span="12">
           <el-form ref="reviseForm" :model="nineDialogForm.patrolForm" label-width="120px">
+            <el-form-item label="版本信息">
+              <el-input v-model="nineDialogForm.patrolForm.version"/>
+            </el-form-item>
             <el-form-item label="授权方式">
-              <el-input v-model="nineDialogForm.patrolForm" />
+              <el-input v-model="nineDialogForm.patrolForm.authorize" />
             </el-form-item>
             <el-form-item label="授权时间">
-              <el-input v-model="nineDialogForm.patrolForm" />
-            </el-form-item>
+            <el-date-picker
+              :style="controlWidth"
+              v-model="nineDialogForm.patrolForm.authorizeTime"
+              type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
             <el-form-item label="授权状态">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.authorizeStatus"/>
             </el-form-item>
             <el-form-item label="授权数目">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.authorizeNum"/>
             </el-form-item>
             <el-form-item label="授权人员">
-              <el-input v-model="nineDialogForm.patrolForm"/>
+              <el-input v-model="nineDialogForm.patrolForm.authorizePerson"/>
             </el-form-item>
             <el-form-item label="公司备注信息">
-              <el-input v-model="nineDialogForm.patrolForm" type="textarea"/>
+              <el-input v-model="nineDialogForm.patrolForm.note" type="textarea"/>
             </el-form-item>
             <el-form-item label="创建时间">
               <el-date-picker
                 :style="controlWidth"
-                v-model="nineDialogForm.patrolForm"
+                v-model="nineDialogForm.patrolForm.time"
                 type="datetime"
                 placeholder="选择日期时间">
               </el-date-picker>
@@ -555,14 +657,14 @@
       </el-row>
       <span style="padding-top: 0" slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogPatrol = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvPatrol">确认</el-button>
       </span>
     </el-dialog>
 <!--    微信服务-->
     <el-dialog
       top="1vh"
       title="微信服务"
-      width="60%"
+      width="50%"
       :visible.sync="visables.dialogWeixin"
       style="padding-bottom: 0"
     >
@@ -571,64 +673,71 @@
           <el-form ref="reviseForm" :model="nineDialogForm.weixinForm" label-width="130px">
             <el-form-item label="服务实例id">
               <el-input
-                v-model="nineDialogForm.weixinForm" />
+                disabled="true"
+                v-model="addForm.serviceId" />
+            </el-form-item>
+            <el-form-item label="服务名称">
+              <el-input
+                v-model="addForm.serviceName" />
+            </el-form-item>
+            <el-form-item label="安装的服务器id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serverId" />
             </el-form-item>
             <el-form-item label="中心id">
-              <el-input v-model="nineDialogForm.weixinForm" />
+              <el-input v-model="nineDialogForm.weixinForm.centerId" />
             </el-form-item>
             <el-form-item label="域名">
-              <el-input v-model="nineDialogForm.weixinForm" />
+              <el-input v-model="nineDialogForm.weixinForm.domain" />
             </el-form-item>
             <el-form-item label="FTP/IP">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.ftpIp"/>
             </el-form-item>
             <el-form-item label="FTP/UserName">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.ftpUser"/>
             </el-form-item>
             <el-form-item label="FTP/Password">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.ftpPwd"/>
             </el-form-item>
             <el-form-item label="微信公众号用户名">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.wxUser"/>
             </el-form-item>
             <el-form-item label="微信公众号密码">
-              <el-input v-model="nineDialogForm.weixinForm"/>
-            </el-form-item>
-            <el-form-item label="授权密钥">
-              <el-input v-model="nineDialogForm.weixinForm" />
+              <el-input v-model="nineDialogForm.weixinForm.wxPwd"/>
             </el-form-item>
           </el-form>
         </el-col>
         <el-col :span="12">
           <el-form ref="reviseForm" :model="nineDialogForm.weixinForm" label-width="120px">
+            <el-form-item label="授权密钥">
+              <el-input v-model="nineDialogForm.weixinForm.wxAuthkey" />
+            </el-form-item>
             <el-form-item label="Appid">
-              <el-input v-model="nineDialogForm.weixinForm" />
+              <el-input v-model="nineDialogForm.weixinForm.wxAppid" />
             </el-form-item>
             <el-form-item label="AppSecret">
-              <el-input v-model="nineDialogForm.weixinForm" />
+              <el-input v-model="nineDialogForm.weixinForm.wxAppsecret" />
             </el-form-item>
             <el-form-item label="服务器固定IP">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.serverIp"/>
             </el-form-item>
             <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.weixinForm"/>
-            </el-form-item>
-            <el-form-item label="数据库端口">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.dbPort"/>
             </el-form-item>
             <el-form-item label="数据库用户名">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.dbUser"/>
             </el-form-item>
             <el-form-item label="数据库密码">
-              <el-input v-model="nineDialogForm.weixinForm"/>
+              <el-input v-model="nineDialogForm.weixinForm.dbPwd"/>
             </el-form-item>
             <el-form-item label="公司备注信息">
-              <el-input v-model="nineDialogForm.weixinForm" type="textarea"/>
+              <el-input v-model="nineDialogForm.weixinForm.note" type="textarea"/>
             </el-form-item>
             <el-form-item label="创建时间">
               <el-date-picker
                 :style="controlWidth"
-                v-model="nineDialogForm.weixinForm"
+                v-model="nineDialogForm.weixinForm.time"
                 type="datetime"
                 placeholder="选择日期时间">
               </el-date-picker>
@@ -638,59 +747,77 @@
       </el-row>
       <span style="padding-top: 0" slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogWeixin = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvWeixin">确认</el-button>
       </span>
     </el-dialog>
 <!--    APP服务-->
     <el-dialog
-      top="1vh"
+      top="10vh"
       title="APP服务"
-      width="30%"
+      width="50%"
       :visible.sync="visables.dialogAPP"
     >
-      <el-form ref="reviseForm" :model="nineDialogForm.APPForm" label-width="110px">
-        <el-form-item label="服务实例id">
-          <el-input
-            v-model="nineDialogForm.APPForm" />
-        </el-form-item>
-        <el-form-item label="域名">
-          <el-input v-model="nineDialogForm.APPForm" />
-        </el-form-item>
-        <el-form-item label="服务IP">
-          <el-input v-model="nineDialogForm.APPForm" />
-        </el-form-item>
-        <el-form-item label="服务端口">
-          <el-input v-model="nineDialogForm.APPForm"/>
-        </el-form-item>
-        <el-form-item label="数据库IP">
-          <el-input v-model="nineDialogForm.APPForm"/>
-        </el-form-item>
-        <el-form-item label="数据库端口">
-          <el-input v-model="nineDialogForm.APPForm"/>
-        </el-form-item>
-        <el-form-item label="数据库用户名">
-          <el-input v-model="nineDialogForm.APPForm"/>
-        </el-form-item>
-        <el-form-item label="数据库密码">
-          <el-input v-model="nineDialogForm.APPForm"/>
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker
-            :style="controlWidth"
-            v-model="nineDialogForm.APPForm"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
+      <el-row>
+        <el-col :span="12">
+          <el-form ref="reviseForm" :model="nineDialogForm.APPForm" label-width="110px">
+            <el-form-item label="服务实例id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serviceId" />
+            </el-form-item>
+            <el-form-item label="服务名称">
+              <el-input
+                v-model="addForm.serviceName" />
+            </el-form-item>
+            <el-form-item label="安装的服务器id">
+              <el-input
+                disabled="true"
+                v-model="addForm.serverId" />
+            </el-form-item>
+            <el-form-item label="域名">
+              <el-input v-model="nineDialogForm.APPForm.url" />
+            </el-form-item>
+            <el-form-item label="服务IP">
+              <el-input v-model="nineDialogForm.APPForm.serviceIp" />
+            </el-form-item>
+            <el-form-item label="服务端口">
+              <el-input v-model="nineDialogForm.APPForm.servicePort"/>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="12">
+          <el-form ref="reviseForm" :model="nineDialogForm.APPForm" label-width="110px">
+            <el-form-item label="数据库IP">
+              <el-input v-model="nineDialogForm.APPForm.mysqlIp"/>
+            </el-form-item>
+            <el-form-item label="数据库端口">
+              <el-input v-model="nineDialogForm.APPForm.mysqlPort"/>
+            </el-form-item>
+            <el-form-item label="数据库用户名">
+              <el-input v-model="nineDialogForm.APPForm.mysqlUser"/>
+            </el-form-item>
+            <el-form-item label="数据库密码">
+              <el-input v-model="nineDialogForm.APPForm.mysqlPwd"/>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <el-date-picker
+                :style="controlWidth"
+                v-model="nineDialogForm.APPForm.time"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogAPP = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvAPP">确认</el-button>
       </span>
     </el-dialog>
 <!--    短信网关服务-->
     <el-dialog
-      top="5vh"
+      top="1vh"
       title="短信网关服务"
       width="30%"
       :visible.sync="visables.dialogSMS"
@@ -698,27 +825,37 @@
       <el-form ref="reviseForm" :model="nineDialogForm.SMSForm" label-width="110px">
         <el-form-item label="服务实例id">
           <el-input
-            v-model="nineDialogForm.SMSForm" />
+            disabled="true"
+            v-model="addForm.serviceId" />
+        </el-form-item>
+        <el-form-item label="服务名称">
+          <el-input
+            v-model="addForm.serviceName" />
+        </el-form-item>
+        <el-form-item label="安装的服务器id">
+          <el-input
+            disabled="true"
+            v-model="addForm.serverId" />
         </el-form-item>
         <el-form-item label="服务IP">
-          <el-input v-model="nineDialogForm.SMSForm" />
+          <el-input v-model="nineDialogForm.SMSForm.serviceIp" />
         </el-form-item>
         <el-form-item label="服务端口">
-          <el-input v-model="nineDialogForm.SMSForm" />
+          <el-input v-model="nineDialogForm.SMSForm.servicePort" />
         </el-form-item>
         <el-form-item label="节点ID">
-          <el-input v-model="nineDialogForm.SMSForm"/>
+          <el-input v-model="nineDialogForm.SMSForm.nodeId"/>
         </el-form-item>
         <el-form-item label="用户名">
-          <el-input v-model="nineDialogForm.SMSForm"/>
+          <el-input v-model="nineDialogForm.SMSForm.user"/>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="nineDialogForm.SMSForm"/>
+          <el-input v-model="nineDialogForm.SMSForm.pwd"/>
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="nineDialogForm.SMSForm"
+            v-model="nineDialogForm.SMSForm.time"
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
@@ -726,12 +863,12 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogSMS = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvSMS">确认</el-button>
       </span>
     </el-dialog>
 <!--    第三方短信服务-->
     <el-dialog
-      top="15vh"
+      top="7vh"
       title="第三方短信服务"
       width="30%"
       :visible.sync="visables.dialogOtherSMS"
@@ -739,24 +876,34 @@
       <el-form ref="reviseForm" :model="nineDialogForm.otherSMSForm" label-width="110px">
         <el-form-item label="服务实例id">
           <el-input
-            v-model="nineDialogForm.otherSMSForm" />
+            disabled="true"
+            v-model="addForm.serviceId" />
+        </el-form-item>
+        <el-form-item label="服务名称">
+          <el-input
+            v-model="addForm.serviceName" />
+        </el-form-item>
+        <el-form-item label="安装的服务器id">
+          <el-input
+            disabled="true"
+            v-model="addForm.serverId" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="http地址">
-          <el-input v-model="nineDialogForm.otherSMSForm" />
+          <el-input v-model="nineDialogForm.otherSMSForm.http" />
         </el-form-item>
         <!--服务数据表-->
         <el-form-item label="账号">
-          <el-input v-model="nineDialogForm.otherSMSForm" />
+          <el-input v-model="nineDialogForm.otherSMSForm.user" />
         </el-form-item>
         <!--备注-->
         <el-form-item label="密码">
-          <el-input v-model="nineDialogForm.otherSMSForm"/>
+          <el-input v-model="nineDialogForm.otherSMSForm.pwd"/>
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="nineDialogForm.otherSMSForm"
+            v-model="nineDialogForm.otherSMSForm.time"
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
@@ -764,12 +911,12 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogOtherSMS = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvOtherSMS">确认</el-button>
       </span>
     </el-dialog>
 <!--    语音服务-->
     <el-dialog
-      top="15vh"
+      top="7vh"
       title="语音服务"
       width="30%"
       :visible.sync="visables.dialogNVS"
@@ -777,24 +924,34 @@
       <el-form ref="reviseForm" :model="nineDialogForm.NVSForm" label-width="110px">
         <el-form-item label="服务实例id">
           <el-input
-            v-model="nineDialogForm.NVSForm" />
+            disabled="true"
+            v-model="addForm.serviceId" />
+        </el-form-item>
+        <el-form-item label="服务名称">
+          <el-input
+            v-model="addForm.serviceName" />
+        </el-form-item>
+        <el-form-item label="安装的服务器id">
+          <el-input
+            disabled="true"
+            v-model="addForm.serverId" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="2030设备GUID">
-          <el-input v-model="nineDialogForm.NVSForm" />
+          <el-input v-model="nineDialogForm.NVSForm._2030Guid" />
         </el-form-item>
         <!--服务数据表-->
         <el-form-item label="手机卡号">
-          <el-input v-model="nineDialogForm.NVSForm" />
+          <el-input v-model="nineDialogForm.NVSForm.phoneNum" />
         </el-form-item>
         <!--备注-->
         <el-form-item label="通道号">
-          <el-input v-model="nineDialogForm.NVSForm"/>
+          <el-input v-model="nineDialogForm.NVSForm.channelNum"/>
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="nineDialogForm.NVSForm"
+            v-model="nineDialogForm.NVSForm.time"
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
@@ -802,37 +959,47 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogNVS = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvNVS">确认</el-button>
       </span>
     </el-dialog>
 <!--    第三方语音服务-->
     <el-dialog
-      top="15vh"
+      top="7vh"
       title="第三方语音服务"
       width="30%"
       :visible.sync="visables.dialogOtherNVS"
     >
-      <el-form ref="reviseForm" :model="nineDialogForm.otherNVSForm" label-width="90px">
-      <el-form-item label="服务实例id">
-        <el-input
-          v-model="nineDialogForm.otherNVSForm" />
-      </el-form-item>
+      <el-form ref="reviseForm" :model="nineDialogForm.otherNVSForm" label-width="110px">
+        <el-form-item label="服务实例id">
+          <el-input
+            disabled="true"
+            v-model="addForm.serviceId" />
+        </el-form-item>
+        <el-form-item label="服务名称">
+          <el-input
+            v-model="addForm.serviceName" />
+        </el-form-item>
+        <el-form-item label="安装的服务器id">
+          <el-input
+            disabled="true"
+            v-model="addForm.serverId" />
+        </el-form-item>
       <!--服务名称-->
       <el-form-item label="http地址">
-        <el-input v-model="nineDialogForm.otherNVSForm" />
+        <el-input v-model="nineDialogForm.otherNVSForm.http" />
       </el-form-item>
       <!--服务数据表-->
       <el-form-item label="账号">
-        <el-input v-model="nineDialogForm.otherNVSForm" />
+        <el-input v-model="nineDialogForm.otherNVSForm.user" />
       </el-form-item>
       <!--备注-->
       <el-form-item label="密码">
-        <el-input v-model="nineDialogForm.otherNVSForm"/>
+        <el-input v-model="nineDialogForm.otherNVSForm.pwd"/>
       </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
             :style="controlWidth"
-            v-model="nineDialogForm.otherNVSForm"
+            v-model="nineDialogForm.otherNVSForm.time"
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
@@ -840,7 +1007,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogOtherNVS = false">取 消</el-button>
-        <el-button type="primary" @click="">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvOtherNVS">确认</el-button>
       </span>
     </el-dialog>
   </el-container>
@@ -852,10 +1019,26 @@ import {
   getServiceFindServerId, getServiceDelete, getAllCustomer
 } from '@/api/serverLedger'
 import {getOpServerPageList} from "@/api/serverLedger";
+import {
+  getOpsvSecurityCreate, getOpsv2030NvsCreate, getOpsvAppCreate, getOpsvOtherSmsCreate, getOpsvOtherVsCreate,
+  getOpsvPatrolCreate, getOpsvSmartHomeCreate, getOpsvSmsCreate,getOpsvWeixinCreate,getOpsvSecurityUpdate,
+  getOpsv2030NvsUpdate,getOpsvAppUpdate,getOpsvOtherSmsUpdate,getOpsvOtherVsUpdate,getOpsvPatrolUpdate,
+  getOpsvSmartHomeUpdate,getOpsvSmsUpdate,getOpsvWeixinUpdate,getOpServiceCreate,getOpsvSecurityByService, getOpsv2030NvsByService,
+  getOpsvAppByService, getOpsvOtherSmsByService, getOpsvOtherVsByService,
+  getOpsvPatrolByService, getOpsvSmartHomeByService, getOpsvSmsByService,getOpsvWeixinByService,getOpServiceUpdate,
+  getOpsvSecurityDelete, getOpsv2030NvsDelete, getOpsvAppDelete, getOpsvOtherSmsDelete, getOpsvOtherVsDelete,
+  getOpsvPatrolDelete, getOpsvSmartHomeDelete, getOpsvSmsDelete,getOpsvWeixinDelete,getOpCustomerByService,getOpCustomerServicesCreate,
+  getOpCustomerServicesDelete
+} from '@/api/wang'
+import {getOpDictSignalCreate} from "@/api/opdict";
   export default {
     name: 'op_service',
     data() {
       return {
+        controlServiceId:'',
+        // 控制新增还是修改，新增是0，修改是1
+        addOrRevise: 0,
+        controlShow: false,
         //*******************控制区*******************
         //过滤参数下拉框
         FilterParameters: [
@@ -899,7 +1082,8 @@ import {getOpServerPageList} from "@/api/serverLedger";
           },
 
         ],
-        // 所有的服务器数据，用于鼠标悬浮显示
+        // 所有的服务器数据，用于鼠标悬浮显示和添加新数据时服务器的选择
+        searchServerInfos:[],
         allServerInfos: [],
         //*******************分页尾部*******************
         // 分页
@@ -944,11 +1128,17 @@ import {getOpServerPageList} from "@/api/serverLedger";
           dialogOtherNVS: false,
         },
         //新增弹窗的数据
-        addForm: {},
+        addForm: {
+          serviceId:'',
+          serviceName:'',
+          serverId:'',
+          serviceType:'',
+        },
         // 修改弹窗的数据
         reviseForm: {},
         // 客户弹窗的数据和修改客户弹窗的数据
         customerForm: {
+          // 查询使用该服务的所有用户
           customerInfos: [
             {
               customerId: "001",
@@ -976,6 +1166,7 @@ import {getOpServerPageList} from "@/api/serverLedger";
               note: "视频处理厂"
             },
           ],
+          // 添加用户时搜索的关键字
           searchCustomerKeyword: '',
           // 所有的客户信息
           allCustomerInfos: [
@@ -1037,37 +1228,225 @@ import {getOpServerPageList} from "@/api/serverLedger";
         // 九个弹窗的数据
         nineDialogForm: {
           securityForm:{
-
+            serviceId: '',
+            dbType:'',
+            dbIp: '',
+            dbPort:'',
+            dbUser: '',
+            dbPwd:'',
+            software: '',
+            version:'',
+            authorize: '',
+            authorizeTime:'',
+            authorizeStatus: '',
+            authorizeNum:'',
+            authorizePerson: '',
+            clientNum:'',
+            ispatrol: '',
+            expireDate:'',
+            note: '',
+            time:'',
           },
           smartHomeForm:{
-
+            serviceId: '',
+            version:'',
+            appVersion: '',
+            mysqlIp:'',
+            mysqlPort: '',
+            mysqlUser:'',
+            mysqlPwd: '',
+            influxdbIp:'',
+            influxdbPort: '',
+            influxdbUser:'',
+            influxdbPwd: '',
+            authorize:'',
+            authorizeTime: '',
+            authorizeStatus:'',
+            authorizeNum: '',
+            authorizePerson:'',
+            note: '',
+            time:'',
           },
           patrolForm:{
-
+            serviceId: '',
+            dbType:'',
+            dbIp: '',
+            dbPort:'',
+            dbUser: '',
+            dbPwd:'',
+            version: '',
+            authorize:'',
+            authorizeTime: '',
+            authorizeStatus:'',
+            authorizeNum: '',
+            authorizePerson:'',
+            note: '',
+            time:'',
           },
           weixinForm:{
-
+            serviceId: '',
+            centerId:'',
+            domain: '',
+            ftpIp:'',
+            ftpUser: '',
+            ftpPwd:'',
+            wxUser: '',
+            wxPwd:'',
+            wxAuthkey: '',
+            wxAppid:'',
+            wxAppsecret: '',
+            serverIp:'',
+            dbPort:'',
+            dbUser: '',
+            dbPwd:'',
+            note: '',
+            time:'',
           },
           APPForm:{
-
+            serviceId: '',
+            url:'',
+            serviceIp: '',
+            servicePort:'',
+            mysqlIp: '',
+            mysqlPort:'',
+            mysqlUser: '',
+            mysqlPwd:'',
+            time: '',
           },
           SMSForm:{
-
+            serviceId: '',
+            url:'',
+            serviceIp: '',
+            servicePort:'',
+            nodeId: '',
+            user:'',
+            pwd: '',
+            time: '',
           },
           otherSMSForm:{
-
+            serviceId: '',
+            http:'',
+            user:'',
+            pwd: '',
+            time: '',
           },
           NVSForm:{
-
+            serviceId: '',
+            _2030Guid:'',
+            phoneNum:'',
+            channelNum: '',
+            time: '',
           },
           otherNVSForm: {
-
+            serviceId: '',
+            http:'',
+            user:'',
+            pwd: '',
+            time: '',
           },
-
         }
       }
     },
     methods:{
+      // 打开用户窗口
+      openCustomer(row){
+        this.visables.dialogCustomerVisible = true
+        this.controlServiceId = row.serviceId
+        getOpCustomerByService(row.serviceId).then(request=>{
+          this.customerForm.customerInfos = request.data.body;
+        });
+      },
+      clickAdd(){
+        this.visables.dialogChooseServiceType = true
+        this.addOrRevise = 0
+      },
+      // ***********************修改按钮
+      clickRevise(row){
+        this.addForm.serviceId = row.serviceId
+        this.addForm.serviceName = row.serviceName
+        this.addForm.serviceType = row.serviceType
+        this.addForm.serverId = row.serverId
+        this.addOrRevise = 1
+        this.openOneDialog(row.serviceType)
+        if(row.serviceType === 1){
+          getOpsvSecurityByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.securityForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 2){
+          getOpsvSmartHomeByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.smartHomeForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 3){
+          getOpsvPatrolByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.patrolForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 4){
+          getOpsvWeixinByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.weixinForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 5){
+          getOpsvAppByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.APPForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 6){
+          getOpsvSmsByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.SMSHomeForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 7){
+          getOpsvOtherSmsByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.otherSMSForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 8){
+          getOpsv2030NvsByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.NVSForm = request.data.body
+          });
+        }
+        else if(row.serviceType === 9){
+          getOpsvOtherVsByService(row.serviceId).then(request=>{
+            if(request.data.body)
+              this.nineDialogForm.otherNVSForm = request.data.body
+          });
+        }
+      },
+      // 点击了九个按钮中的一个就触发
+      clickAddSomeType(type){
+        this.addForm.serviceType = type
+        this.openOneDialog(type)
+        getServiceFindServiceId(this.addForm.serverId,1,200).then(request=>{
+          let totalArr = request.data.body.data;
+          // 获取返回的所有数的流水号
+          let indexArr = []
+          for(let i=0;i<totalArr.length;i++){
+            indexArr[i] = totalArr[i].serviceId.substr((totalArr[0].serviceId.length-2),2)
+          }
+          let myIndex = "0"+ (Math.max.apply(null,indexArr)+1)
+          if (myIndex === "0-Infinity"){
+            myIndex = '01'
+          }
+          this.addForm.serviceId = this.addForm.serverId + "0" + this.addForm.serviceType + myIndex
+        })
+      },
+      getFocus(){
+        this.controlShow = true
+      },
+      addServer(row){
+        this.addForm.serverId = row.serverId
+      },
       //**********************数据更新**********************
       Find(){
         if(this.FilterParameter_value === 'ServiceId'){
@@ -1083,18 +1462,13 @@ import {getOpServerPageList} from "@/api/serverLedger";
           })
         }
         else if(this.FilterParameter_value === 'ServiceType') {
-          console.log("触发了查询分页的服务类型查询")
           getServiceFindServiceType(this.CompleteValue, this.currentPage, this.size).then(request => {
-            console.log("返回的内容为：",request)
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
         }
         else if(this.FilterParameter_value === 'ServerId') {
-          console.log("触发了服务器id查询")
           getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
-            console.log("返回的结果为：", request)
-            console.log("返回的总数为：", request.data.body.total)
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
@@ -1159,7 +1533,6 @@ import {getOpServerPageList} from "@/api/serverLedger";
       openOneDialog(type){
         this.visables.dialogChooseServiceType = false
         if (type === 1){
-          console.log("打开了3000系统弹窗")
           this.visables.dialogSecurity = true
         }
         else if (type === 2){
@@ -1188,14 +1561,21 @@ import {getOpServerPageList} from "@/api/serverLedger";
         }
       },
       //删除客户
-      CustomerDel(id) {
-        console.log("进行了删除客户操作，被删除的客户的id为："+id)
+      serviceCustomerDel(row) {
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.delSuccessMessage()
+          console.log("客户id为：",row.customerId,"服务id为：",this.controlServiceId)
+          getOpCustomerServicesDelete(row.customerId,this.controlServiceId).then(request=>{
+            if(request.data.body){
+              getOpCustomerByService(this.controlServiceId).then(request=>{
+                this.customerForm.customerInfos = request.data.body;
+              });
+              this.delSuccessMessage()
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -1204,17 +1584,68 @@ import {getOpServerPageList} from "@/api/serverLedger";
         })
       },
       //删除主页面上的服务
-      serviceDel(id){
+      serviceDel(row){
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getServiceDelete(id).then(request=>{
+          getServiceDelete(row.serviceId).then(request=>{
             if (request.data.body) {
-              this.Find();
-              console.log("删除了一个服务，对应的服务id为："+id)
-              this.delSuccessMessage()
+              if (row.serviceType === 1){
+                getOpsvSecurityDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 2){
+                getOpsvSmartHomeDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 3){
+                getOpsvPatrolDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 4){
+                getOpsvWeixinDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 5){
+                getOpsvAppDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 6){
+                getOpsvSmsDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 7){
+                getOpsvOtherSmsDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 8){
+                getOpsv2030NvsDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
+              else if (row.serviceType === 9){
+                getOpsvOtherVsDelete(row.serviceId).then(request=>{
+                    this.Find();
+                    this.delSuccessMessage()
+                })
+              }
             } else {
               this.$message({
                 message: request.data.msg,
@@ -1234,6 +1665,13 @@ import {getOpServerPageList} from "@/api/serverLedger";
         this.visables.dialogCustomerVisible = false
         this.confirmSuccessMessage()
       },
+      // 新增成功提示
+      addSuccessMessage(){
+        this.$message({
+          message: '新增成功',
+          type: 'success'
+        })
+      },
       // 修改成功提示
       confirmSuccessMessage(){
         this.$message({
@@ -1250,13 +1688,22 @@ import {getOpServerPageList} from "@/api/serverLedger";
       },
       // 在新增用户的弹窗里点击添加用户到输入框
       addCustomerToInput(id){
-        console.log("点击了添加用户到输入框，用户的id为："+id)
         this.customerForm.searchCustomerKeyword = id
       },
       // 确认添加用户
       confirmAddCustomer(){
-        console.log("确认添加了客户，客户的id为："+this.customerForm.searchCustomerKeyword)
-        this.confirmSuccessMessage()
+        let data={
+          customerId:this.customerForm.searchCustomerKeyword,
+          serviceId:this.controlServiceId
+        }
+        getOpCustomerServicesCreate(data).then(request=>{
+          if(request.data.body){
+            getOpCustomerByService(this.controlServiceId).then(request=>{
+              this.customerForm.customerInfos = request.data.body;
+            });
+            this.addSuccessMessage()
+          }
+        })
         this.visables.dialogAddCustomerVisible = false
       },
       // 鼠标悬浮提示
@@ -1266,7 +1713,467 @@ import {getOpServerPageList} from "@/api/serverLedger";
             return this.allServerInfos[i].serverName
           }
         }
-      }
+      },
+      // **************************九个弹窗的确认按钮
+      // 安防系统确认
+      confirmOpsvSecurity(){
+        this.nineDialogForm.securityForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSecurityCreate(this.nineDialogForm.securityForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogSecurity = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSecurityUpdate(this.nineDialogForm.securityForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogSecurity = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 智慧用电
+      confirmOpsvSmartHome(){
+        this.nineDialogForm.smartHomeForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSmartHomeCreate(this.nineDialogForm.smartHomeForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogSmartHome = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSmartHomeUpdate(this.nineDialogForm.smartHomeForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogSmartHome = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 巡更巡检
+      confirmOpsvPatrol(){
+        this.nineDialogForm.patrolForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvPatrolCreate(this.nineDialogForm.patrolForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogPatrol = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvPatrolUpdate(this.nineDialogForm.patrolForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogPatrol = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 微信
+      confirmOpsvWeixin(){
+        this.nineDialogForm.weixinForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvWeixinCreate(this.nineDialogForm.weixinForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogWeixin = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvWeixinUpdate(this.nineDialogForm.weixinForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogWeixin = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // App服务
+      confirmOpsvAPP(){
+        this.nineDialogForm.APPForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvAppCreate(this.nineDialogForm.APPForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogAPP = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvAppUpdate(this.nineDialogForm.APPForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogAPP = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 短信网关服务
+      confirmOpsvSMS(){
+        this.nineDialogForm.SMSForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSmsCreate(this.nineDialogForm.SMSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogSMS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvSmsUpdate(this.nineDialogForm.SMSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogSMS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 第三方短信服务
+      confirmOpsvOtherSMS(){
+        this.nineDialogForm.otherSMSForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvOtherSmsCreate(this.nineDialogForm.otherSMSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogOtherSMS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvOtherSmsUpdate(this.nineDialogForm.otherSMSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogOtherSMS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 语音服务
+      confirmOpsvNVS(){
+        this.nineDialogForm.NVSForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsv2030NvsCreate(this.nineDialogForm.NVSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogNVS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsv2030NvsUpdate(this.nineDialogForm.NVSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogNVS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
+      // 第三方语音服务
+      confirmOpsvOtherNVS(){
+        this.nineDialogForm.otherNVSForm.serviceId = this.addForm.serviceId
+        if(this.addOrRevise === 0){
+          getOpServiceCreate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvOtherVsCreate(this.nineDialogForm.otherNVSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.addSuccessMessage()
+                  this.visables.dialogOtherNVS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+        else{
+          getOpServiceUpdate(this.addForm).then(request=>{
+            if(request.data.body){
+              getOpsvOtherVsUpdate(this.nineDialogForm.otherNVSForm).then(request=>{
+                if(request.data.body){
+                  this.Find();
+                  this.confirmSuccessMessage()
+                  this.visables.dialogOtherNVS = false
+                }else{
+                  this.$message({
+                    message: request.data.msg,
+                    type: 'warning'
+                  });
+                }
+              });
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+
+      },
     },
     watch:{
       // 检测新增用户弹窗页面的输入框内容
@@ -1275,6 +2182,16 @@ import {getOpServerPageList} from "@/api/serverLedger";
         handler(val){
           this.customerForm.searchAllCustomerInfos = this.customerForm.allCustomerInfos.filter(p =>{
             return p.company.indexOf(val) !== -1 || p.customerId.indexOf(val) !== -1
+          })
+        }
+      },
+      'addForm.serverId':{
+        immediate:true,
+        handler(val){
+          this.searchServerInfos = this.allServerInfos.filter(p => {
+            if (p.serverId !== null && p.serverName!==null) {
+            return p.serverId.indexOf(val) !== -1 || p.serverName.indexOf(val) !== -1
+            }
           })
         }
       }
@@ -1292,6 +2209,7 @@ import {getOpServerPageList} from "@/api/serverLedger";
       // 获取所有服务器信息表
       getOpServerPageList(1,1000).then(request=>{
         this.allServerInfos = request.data.body.data;
+        this.searchServerInfos = request.data.body.data;
       });
     }
   }
@@ -1333,4 +2251,10 @@ import {getOpServerPageList} from "@/api/serverLedger";
     right: 2rem;
     top: 0;
   }
+  #targetTable{
+       position: absolute;
+       top: 1%;
+       left:103%;
+       height: 100%;
+     }
 </style>

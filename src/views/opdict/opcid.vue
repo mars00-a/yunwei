@@ -182,7 +182,7 @@
               filterable
               allow-create
               default-first-option
-              placeholder="请选择所属系统"
+              placeholder="请选择事件来源类型"
             >
               <!--              label是展示在页面选项中的内容-->
               <el-option
@@ -331,7 +331,48 @@ export default {
       //右侧的指标表格
       serverTargetTable:[],
       // 所属系统
-      BelongingSystems: [],
+      BelongingSystems: [
+        {
+          value:0,
+          label:'0-所有系统'
+        },
+        {
+          value:1,
+          label:'1-安防系统（3000）'
+        },
+        {
+          value:2,
+          label:'2-智慧用电服务'
+        },
+        {
+          value:3,
+          label:'3-巡更巡检服务'
+        },
+        {
+          value:4,
+          label:'4-微信服务'
+        },
+        {
+          value:5,
+          label:'5-APP服务'
+        },
+        {
+          value:6,
+          label:'6-短信网关服务'
+        },
+        {
+          value:7,
+          label:'7-第三方短信服务'
+        },
+        {
+          value:8,
+          label:'8-2030N语音服务'
+        },
+        {
+          value:9,
+          label:'9-第三方语音服务'
+        }
+      ],
       //事件来源类型
       EventSourceTypes: [],
       //事件类型
@@ -366,13 +407,23 @@ export default {
         case 0:
           return "0-所有系统";
         case 1:
-          return "1-SK3000";
+          return "1-安防服务（3000）";
         case 2:
-          return "2-APP服务";
+          return "2-智慧用电服务";
         case 3:
-          return "3-智能家居";
+          return "3-巡更巡检服务";
         case 4:
-          return "4-智慧用电";
+          return "4-微信服务";
+        case 5:
+          return "5-APP服务";
+        case 6:
+          return "6-短信网关服务";
+        case 7:
+          return "7-第三方短信服务";
+        case 8:
+          return "8-2030N语音服务";
+        case 9:
+          return "9-第三方语音服务";
       }
     },
     dealEventType(row){
@@ -466,7 +517,6 @@ export default {
     },
     //查找按钮的事件
     Find(){
-      this.currentPage = 1
       if(this.FilterParameter_value === 'opcid'){
         getOpcidFindOpcid(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
@@ -583,7 +633,6 @@ export default {
         this.targetTable = this.serverTargetTable.filter(p =>{
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
-
 
         if(this.form.eventType !== '' && val.length === 10){
           this.form.opcid = 'E' + val.substr(1,7) + '0' + this.form.eventType

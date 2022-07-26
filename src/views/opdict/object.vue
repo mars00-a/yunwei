@@ -251,22 +251,22 @@ export default{
       FilterParameters: [
         {
         value: 'ObjectId',
-        label: '监控对象ID'
+        label: '监测对象ID'
       }, {
         value: 'SystemName',
-        label: '系统名称'
+        label: '监控对象所属系统'
       }, {
         value: 'ModuleName',
-        label: '模块名称'
+        label: '监控对象所属模块'
       }, {
         value: 'ObjectName',
         label: '监控对象名称'
       }, {
         value: 'Category',
-        label: '监控对象列表'
+        label: '监控对象类型'
       }, {
         value: 'Item',
-        label: '监控内容'
+        label: '监测内容'
       }, {
         value: 'Type',
         label: '数据类型'
@@ -406,7 +406,6 @@ export default{
     },
     //查找按钮的事件
     Find(){
-      this.currentPage = 1
       if(this.FilterParameter_value === 'ObjectId'){
         getObjectFindObjectId(this.CompleteValue,this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
@@ -493,6 +492,62 @@ export default{
     this.dropDownBox();
     this.myStyle = {
       height: document.body.clientHeight-50-30-64-70+"px"
+    }
+  },
+  watch:{
+    'form.systemName':{
+      immediate:true,
+      handler(val){
+        if(this.form.systemName !== '' && this.form.moduleName !== ''){
+          console.log("触发了属性的监视，其中所属系统和所属模块分别为：",this.form.systemName,this.form.moduleName)
+          let systemIndex = ''
+          let moduleIndex = ''
+          if (this.form.systemName === '所有系统') systemIndex = '00'
+          else if (this.form.systemName === 'SK3000') systemIndex = '01'
+          else if (this.form.systemName === 'APP') systemIndex = '02'
+          else if (this.form.systemName === '智能家居') systemIndex = '03'
+          else if (this.form.systemName === '智慧控电') systemIndex = '04'
+          else if (this.form.systemName === '智慧用电') systemIndex = '05'
+
+          if(this.form.moduleName === '硬件') moduleIndex = '00'
+          else if(this.form.moduleName === '系统服务') moduleIndex = '01'
+          else if(this.form.moduleName === '工作状态') moduleIndex = '02'
+          else if(this.form.moduleName === '授权状态') moduleIndex = '03'
+          else if(this.form.moduleName === '时刻乐居设备接入') moduleIndex = '04'
+          else if(this.form.moduleName === '物联网设备接入') moduleIndex = '05'
+          else if(this.form.moduleName === '语音设备接入') moduleIndex = '06'
+          else if(this.form.moduleName === '报警设备接入（新）') moduleIndex = '07'
+          else if(this.form.moduleName === '报警设备接入（旧）') moduleIndex = '08'
+          else if(this.form.moduleName === '设备接入层') moduleIndex = '09'
+          else if(this.form.moduleName === '消息队列') moduleIndex = '10'
+          else if(this.form.moduleName === '网关接入') moduleIndex = '11'
+          else if(this.form.moduleName === '设备数') moduleIndex = '12'
+          else if(this.form.moduleName === '用户数') moduleIndex = '13'
+
+          let searchFrontKeyword = systemIndex + moduleIndex
+          let serverSearchArr = []
+          console.log("被用于搜索的前半部分关键字是：",searchFrontKeyword)
+          for(let i=0;1<10;i++){
+            // index就是流水号
+            let index =''
+            if(i<10) index = "00"+i
+            else if(i<100) index = "0"+i
+            else index = i+''
+            let searchKeyword = searchFrontKeyword + index
+            let total;
+            getObjectFindObjectId(searchKeyword,1,10).then(request=>{
+              // this.totalNumber = request.data.body.total;
+              // serverSearchArr = request.data.body.data;
+              total = request.data.body.total
+              console.log(serverSearchArr)
+            })
+            if (total === 0){
+              this.form.objectId = searchFrontKeyword
+              break;
+            }
+          }
+        }
+      }
     }
   }
 }
