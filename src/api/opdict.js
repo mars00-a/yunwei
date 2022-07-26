@@ -458,3 +458,12 @@ export  function getOTable() {
     method: 'get',
   })
 }
+
+// 生成对象id
+export  function getObjectId(system,module) {
+  return request({
+    url: '/api/MonitorObject/GenerateId',
+    method: 'get',
+    params: {system,module}
+  })
+}
