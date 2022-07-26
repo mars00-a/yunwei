@@ -466,7 +466,7 @@ import {
   getOpServerLoginCreate,
   getOpServerLoginDelete
 } from '@/api/serverLedger'
-import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/wang'
+import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serverLedger'
   export default {
     name: 'op_server',
     components: {
