@@ -1073,15 +1073,7 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           width: '100%'
         },
         //表格数据
-        tableData: [
-          {
-            serviceId: '1231',
-            serviceName: '31231',
-            serverId: '3123',
-            serviceType: '31231'
-          },
-
-        ],
+        tableData: [],
         // 所有的服务器数据，用于鼠标悬浮显示和添加新数据时服务器的选择
         searchServerInfos:[],
         allServerInfos: [],
@@ -1817,7 +1809,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
             }
           });
         }
-
       },
       // 巡更巡检
       confirmOpsvPatrol(){
@@ -2205,12 +2196,12 @@ import {getOpDictSignalCreate} from "@/api/opdict";
         this.FilterParameter_value = '安装的id';
         this.CompleteValue = this.$route.params.ServerId;
         this.FilterParameter_value = 'ServerId';
-        console.log(this.CompleteValue);
         getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         });
       }
+      this.visables.dialogChooseServiceType = this.$route.params.dialogChooseServiceType;
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
