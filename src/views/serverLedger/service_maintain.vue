@@ -1807,7 +1807,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
             }
           });
         }
-
       },
       // 巡更巡检
       confirmOpsvPatrol(){
@@ -2195,12 +2194,12 @@ import {getOpDictSignalCreate} from "@/api/opdict";
         this.FilterParameter_value = '安装的id';
         this.CompleteValue = this.$route.params.ServerId;
         this.FilterParameter_value = 'ServerId';
-        console.log(this.CompleteValue);
         getServiceFindServerId(this.CompleteValue, this.currentPage, this.size).then(request => {
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         });
       }
+      this.visables.dialogChooseServiceType = this.$route.params.dialogChooseServiceType;
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
