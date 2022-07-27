@@ -1073,15 +1073,7 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           width: '100%'
         },
         //表格数据
-        tableData: [
-          {
-            serviceId: '1231',
-            serviceName: '31231',
-            serverId: '3123',
-            serviceType: '31231'
-          },
-
-        ],
+        tableData: [],
         // 所有的服务器数据，用于鼠标悬浮显示和添加新数据时服务器的选择
         searchServerInfos:[],
         allServerInfos: [],

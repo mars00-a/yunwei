@@ -210,7 +210,7 @@
     </el-dialog>
 
     <!--修改按钮的弹窗-->
-    <el-dialog top="1vh" title="新增服务器信息" :visible.sync="dialogReviseVisible" width="30%">
+    <el-dialog top="1vh" title="修改服务器信息" :visible.sync="dialogReviseVisible" width="30%">
       <el-form ref="reviseForm" :model="reviseForm" label-width="100px">
         <!--服务器id-->
         <el-form-item label="服务器ID" :rules="[{ required: true}]">
@@ -508,7 +508,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
           height:"29rem"
         },
         //表格数据
-        tableData: [{}],
+        tableData: [],
         allTableData:[],
         //*******************分页尾部*******************
         // 分页
@@ -855,6 +855,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
           }
         }
       },
+      //自动生成相应的ID
       'addForm.customerId':{
         immediate:true,
         handler(val){
