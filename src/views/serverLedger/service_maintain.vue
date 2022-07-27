@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button @click="Find()" type="primary" id="Find">过 滤</el-button>
+          <el-button @click="currentPage = 1,Find()" type="primary" id="Find">过 滤</el-button>
           <el-button @click="dealData" type="primary">恢 复</el-button>
           <el-button type="success" id="Add" @click="clickAdd()">新 增</el-button>
         </el-col>
@@ -1427,7 +1427,9 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       clickAddSomeType(type){
         this.addForm.serviceType = type
         this.openOneDialog(type)
-        getServiceFindServiceId(this.addForm.serverId,1,200).then(request=>{
+        let searchKeyword = this.addForm.serverId+"0"+type
+        console.log("用于查找的关键字是：",searchKeyword)
+        getServiceFindServiceId(searchKeyword,1,200).then(request=>{
           let totalArr = request.data.body.data;
           // 获取返回的所有数的流水号
           let indexArr = []
@@ -1438,7 +1440,7 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           if (myIndex === "0-Infinity"){
             myIndex = '01'
           }
-          this.addForm.serviceId = this.addForm.serverId + "0" + this.addForm.serviceType + myIndex
+          this.addForm.serviceId = searchKeyword + myIndex
         })
       },
       getFocus(){
