@@ -208,6 +208,12 @@ export const constantRoutes = [
         name: 'MsgPush',
         meta: { title: '消息推送配置', icon: 'link' },
         component: () => import('@/views/messagePush/msgPush')
+      },
+      {
+        path: 'historicalMsg',
+        name: 'historicalMsg',
+        meta: { title: '历史记录', icon: 'link' },
+        component: () => import('@/views/messagePush/historicalMsg')
       }
     ]
   },
