@@ -264,12 +264,20 @@ export function getOpServerLoginCreate(data) {
     data
   })
 }
-//删除务器登录信息
+//删除服务器登录信息
 export function getOpServerLoginDelete(serverId,loginSoft) {
   return request({
     url:'/api/OpServerLogin/Delete',
     method:'post',
     params:{serverId,loginSoft}
+  })
+}
+//修改服务器登录信息
+export function getOpServerLoginUpdate(data) {
+  return request({
+    url:'/api/OpServerLogin/Update',
+    method:'post',
+    data
   })
 }
 
