@@ -15,6 +15,9 @@ export default {
     return{
       anFangFuWu:false
     }
+  },
+  mounted(){
+    console.log('csr',this)
   }
 }
 </script>

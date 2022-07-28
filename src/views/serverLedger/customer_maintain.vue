@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary" id="Find" @click="currentPage=1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogAddVisible = true, dealAddForm()">新增</el-button>
         </el-col>
@@ -96,12 +96,7 @@
           :show-overflow-tooltip="true"
         >
         </el-table-column>
-        <!--区域经理ID：areaManagerId-->
-        <el-table-column
-          prop="areaManagerId"
-          label="区域经理ID"
-        >
-        </el-table-column>
+
         <!--操作栏-->
         <el-table-column
           label="操作" width="345">
@@ -398,6 +393,7 @@
         <!--服务器id-->
         <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
+            :disabled="true"
             v-model="newServerForm.serverId" />
         </el-form-item>
         <!--服务器类型-->
@@ -568,10 +564,7 @@
         },{
           value: 'Note',
           label: '备注'
-        },{
-          value: 'AreaManagerId',
-          label: '区域经理ID'
-        },],
+        }],
         //过滤参数的值
         FilterParameter_value: '',
         //查找输入框
@@ -921,17 +914,23 @@
       },
       //创建新的服务器
       CreateNewServer(){
-        let dealData=[];
-        for(let i=0;i<this.serverTable.length;i++){
-          dealData[i] = this.serverTable[i].serverId
-        }
-        let max = dealData.reduce((total,value)=>total>value?total:value);
-        max = max.slice(-2);
-        if(max>='09'){
-          this.newServerForm.serverId = this.nowCustomerId+'S'+(parseInt(max)+1);
+        if(this.serverTable.length === 0){
+          this.newServerForm.serverId = this.nowCustomerId+'S01';
         }else{
-          this.newServerForm.serverId = this.nowCustomerId+'S0'+(parseInt(max)+1);
+          let dealData=[];
+          for(let i=0;i<this.serverTable.length;i++){
+            dealData[i] = this.serverTable[i].serverId
+          }
+          let max = dealData.reduce((total,value)=>total>value?total:value);
+          max = max.slice(-2);
+          console.log(max);
+          if(max>='09'){
+            this.newServerForm.serverId = this.nowCustomerId+'S'+(parseInt(max)+1);
+          }else{
+            this.newServerForm.serverId = this.nowCustomerId+'S0'+(parseInt(max)+1);
+          }
         }
+
       },
       //服务按钮的相关事件
       getService(row){
@@ -1013,26 +1012,6 @@
       };
     },
     watch:{
-      'reviseForm.areaManager':{
-        immediate:true,
-        handler(val){
-          let backupTableData;
-          backupTableData = this.totalTableData.filter((myval,index,arr) =>{
-            if(myval.areaManager !== null){
-              return (myval.areaManager.indexOf(val) !== -1)
-            }
-          });
-          let MaxId = [];
-          console.log("backupTableData"+backupTableData);
-          for(let i=0;i<backupTableData.length;i++){
-            MaxId[i] = backupTableData[i].customerId;
-          }
-          let max = MaxId.reduce((total,value)=>total>value?total:value);
-          let number = max.replace(/[^0-9]/ig,"");
-          let String = max.replace(/[^a-z]+/ig,"");
-          this.reviseForm.customerId = String + (Array(4).join('0') + (parseInt(number)+1)).slice(-4);
-        }
-      },
       'addForm.areaManager':{
         immediate:true,
         handler(val){
@@ -1042,15 +1021,18 @@
               return (myval.areaManager.indexOf(val) !== -1)
             }
           });
-          let MaxId = [];
-          console.log("backupTableData"+backupTableData);
-          for(let i=0;i<backupTableData.length;i++){
-            MaxId[i] = backupTableData[i].customerId;
+          if(backupTableData.length !== 0){
+            let MaxId = [];
+            let getAreaManagerId = backupTableData[0].areaManagerId;
+            for(let i=0;i<backupTableData.length;i++){
+              MaxId[i] = backupTableData[i].customerId;
+            }
+            let max = MaxId.reduce((total,value)=>total>value?total:value);
+            let number = max.replace(/[^0-9]/ig,"");
+            let String = max.replace(/[^a-z]+/ig,"");
+            this.addForm.customerId = String + (Array(4).join('0') + (parseInt(number)+1)).slice(-4);
+            this.addForm.areaManagerId = getAreaManagerId;
           }
-          let max = MaxId.reduce((total,value)=>total>value?total:value);
-          let number = max.replace(/[^0-9]/ig,"");
-          let String = max.replace(/[^a-z]+/ig,"");
-          this.addForm.customerId = String + (Array(4).join('0') + (parseInt(number)+1)).slice(-4);
         }
       },
       'ServerIdTableCompleteValue':{

@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="Find()">过滤</el-button>
+          <el-button type="primary" id="Find" @click="currentPage=1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="dialogAddVisible = true, getAllServerId()">新增</el-button>
         </el-col>
@@ -95,7 +95,7 @@
                 <el-button type="danger" @click="Del(scope.row.serverId)">删除</el-button>
               </el-col>
               <el-col :span="4.8">
-                <el-button type="warning" @click="dialogCustomerVisible = true, getCustomer(scope.row)">客户</el-button>
+                <el-button type="warning" @click="dialogCustomerVisible = true, getCustomerId(), getCustomer(scope.row)">客户</el-button>
               </el-col>
               <el-col :span="4.8">
                 <el-button type="info" @click="dialogServiceVisible = true, gotoService(scope.row)">服务</el-button>
@@ -257,12 +257,12 @@
     </el-dialog>
 
     <!--客户按钮的弹窗-->
-    <el-dialog title="修改客户信息" :visible.sync="dialogCustomerVisible" width="30%">
-      <el-form ref="CustomerForm" :model="customerForm" label-width="90px">
+    <el-dialog top="20vh" title="相关客户信息" :visible.sync="dialogCustomerVisible" width="23%">
+      <el-form  ref="CustomerForm" :model="customerForm" label-width="90px">
         <!--客户ID-->
         <el-form-item label="客户ID">
           <el-input
-            @focus="getCustomerId"
+            :disabled="true"
             v-model="CustomerForm.customerId" />
         </el-form-item>
         <!--选择日期-->
@@ -283,6 +283,13 @@
         </el-form-item>
         <!--客户id选择列表-->
         <div v-show = tableCustomerVisible id="targetTable">
+          <el-row :gutter="30">
+            <el-col :span="24">
+              <el-tooltip class="item" effect="dark" content="输入客户ID/名称进行查询" placement="top">
+                <el-input v-model="CustomerIdTableCompleteValue" placeholder="查询输入"/>
+              </el-tooltip>
+            </el-col>
+          </el-row>
           <el-table
             :data="targetCustomerIdTable"
             height="500"
@@ -299,11 +306,11 @@
               label="客户名称"
               width="100%">
             </el-table-column>
-            <el-table-column label="添加">
+            <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="targetTableGetFocus(scope.$index, scope.row)">添加</el-button>
+                  @click="targetTableGetFocus(scope.$index, scope.row)">绑定</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -316,7 +323,7 @@
     </el-dialog>
 
     <!--服务按钮的弹窗-->
-    <el-dialog title="修改服务信息" :visible.sync="dialogServiceVisible" width="30%">
+    <el-dialog title="相关服务信息" :visible.sync="dialogServiceVisible" width="30%">
       <el-form ref="serviceForm" :model="serviceForm" label-width="90px">
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
@@ -344,7 +351,7 @@
     </el-dialog>
 
     <!--登录按钮的弹窗-->
-    <el-dialog title="修改登录信息" :visible.sync="dialogLoginVisible" width="60%">
+    <el-dialog title="相关登录信息" :visible.sync="dialogLoginVisible" width="60%">
       <el-table
         :data="loginTable"
         height="350"
@@ -352,6 +359,7 @@
         style="width: 100%">
         <el-table-column
           prop="serverId"
+          width="100"
           label="服务器ID">
         </el-table-column>
         <el-table-column
@@ -382,10 +390,13 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="90">
+          width="170">
           <template slot-scope="scope">
             <el-row :gutter="10">
-              <el-col :span="24">
+              <el-col :span="12">
+                <el-button type="primary" @click="dialogLoginReviseVisible=true, DealLoginRevise(scope.row)">编辑</el-button>
+              </el-col>
+              <el-col :span="12">
                 <el-button type="danger" @click="LoginDel(scope.row)">删除</el-button>
               </el-col>
             </el-row>
@@ -399,7 +410,7 @@
       </span>
     </el-dialog>
     <el-dialog top="9vh" title="新增登录信息" :visible.sync="dialogLoginAddVisible" width="30%">
-      <el-form ref="loginAddForm" :model="customerAddForm" label-width="90px">
+      <el-form ref="loginAddForm" :model="loginAddForm" label-width="90px">
         <!--服务器ID-->
         <el-form-item label="服务器ID">
           <el-input :disabled="true" v-model="loginAddForm.serverId" />
@@ -444,6 +455,52 @@
         <el-button type="primary" @click="dialogLoginAddVisible = false, CreateLogin()">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog top="9vh" title="编辑登录信息" :visible.sync="dialogLoginReviseVisible" width="30%">
+      <el-form ref="loginReviseForm" :model="loginReviseForm" label-width="90px">
+        <!--服务器ID-->
+        <el-form-item label="服务器ID">
+          <el-input :disabled="true" v-model="loginReviseForm.serverId" />
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="服务器IP">
+          <el-input v-model="loginReviseForm.serverIp" />
+        </el-form-item>
+        <!--服务器端口-->
+        <el-form-item label="服务器端口">
+          <el-input v-model="loginReviseForm.serverPort" />
+        </el-form-item>
+        <!--使用工具-->
+        <el-form-item label="使用工具">
+          <el-select
+            v-model="loginReviseForm.loginSoft"
+            :style="controlWidth"
+            placeholder="请选择">
+            <el-option
+              v-for="item in Tools"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--登录用户名-->
+        <el-form-item label="登录用户名">
+          <el-input v-model="loginReviseForm.loginName" />
+        </el-form-item>
+        <!--登录密码-->
+        <el-form-item label="登录密码">
+          <el-input v-model="loginReviseForm.loginPwd" />
+        </el-form-item>
+        <!--备注-->
+        <el-form-item label="备注">
+          <el-input v-model="loginReviseForm.note" type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogLoginReviseVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogLoginReviseVisible = false, ConfirmReviseLogin()">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -464,7 +521,8 @@ import {
   getOpCustomerServerCreate,
   getOpServerLoginByServerId,
   getOpServerLoginCreate,
-  getOpServerLoginDelete
+  getOpServerLoginDelete,
+  getOpServerLoginUpdate
 } from '@/api/serverLedger'
 import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serverLedger'
   export default {
@@ -536,6 +594,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
         CustomerForm:{},
         BackupCustomerForm:{},
         nowServerId:'',
+        CustomerIdTableCompleteValue:'',
         targetCustomerIdTable:[],
         //服务的弹窗
         dialogServiceVisible: false,
@@ -543,6 +602,8 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
         //登录的弹窗
         dialogLoginVisible: false,
         dialogLoginAddVisible:false,
+        dialogLoginReviseVisible:false,
+        loginReviseForm:{},
         loginTable:[],
         loginAddForm:{},
         Tools:[{
@@ -661,6 +722,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
             if(request.data.body[0] !== undefined){
               this.CustomerForm = request.data.body[0];
               this.BackupCustomerForm = {...request.data.body[0]};
+              this.CustomerIdTableCompleteValue = this.CustomerForm.customerId;
             }
             else{
               this.CustomerForm = {};
@@ -781,11 +843,14 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
       //添加客户id
       targetTableGetFocus(index,row){
         this.CustomerForm.customerId = row.customerId;
+        this.CustomerIdTableCompleteValue = this.CustomerForm.customerId;
       },
       //获取登录信息
       getLogin(row){
         this.nowServerId = row.serverId;
         this.loginAddForm.serverId = this.nowServerId;
+        this.loginAddForm.serverIp = row.serverIp;
+        this.loginAddForm.serverPort = row.serverPort;
         getOpServerLoginByServerId(row.serverId).then(request=>{
           this.loginTable = request.data.body;
         })
@@ -838,11 +903,32 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
             message: '已取消删除'
           })
         })
+      },
+      DealLoginRevise(row){
+        this.loginReviseForm = {...row};
+      },
+      ConfirmReviseLogin(){
+        getOpServerLoginUpdate(this.loginReviseForm).then(request=>{
+          if (request.data.body) {
+            getOpServerLoginByServerId(this.nowServerId).then(request=>{
+              this.loginTable = request.data.body;
+            });
+            this.$message({
+              type: 'success',
+              message: '修改成功'
+            })
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
       }
     },
     watch:{
       //当对应指标中输入东西的时候搜索
-      'CustomerForm.customerId':{
+      'CustomerIdTableCompleteValue':{
         immediate:true,
         handler(val){
           if(val !== undefined){
@@ -927,7 +1013,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
   }
   #targetTable{
     position: absolute;
-    top: 1%;
+    top: 0;
     left:103%;
   }
   #targetIdTable{

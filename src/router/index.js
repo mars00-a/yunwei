@@ -196,6 +196,21 @@ export const constantRoutes = [
       }
     ]
   },
+  // 服务器台账
+  {
+    path: '/messagePush',
+    component: Layout,
+    redirect: '/messagePush/msgPush',
+    meta: { title: '消息推送配置', icon: 'link' },
+    children: [
+      {
+        path: 'msgPush',
+        name: 'MsgPush',
+        meta: { title: '消息推送配置', icon: 'link' },
+        component: () => import('@/views/messagePush/msgPush')
+      }
+    ]
+  },
 ]
 
 /**
