@@ -52,17 +52,27 @@
       </el-table>
 
       <div id="targetTable">
-        <el-row :gutter="30">
-          <el-col :span="24">
+        <el-row :gutter="2">
+          <el-col :span="16">
             <el-input v-model="searchKeyword" placeholder="输入事件id或事件名称进行查询"/>
+          </el-col>
+          <el-col :span="4">
+            <el-button @click="addSomeEvent">添加选中项</el-button>
+          </el-col>
+          <el-col :span="4">
           </el-col>
         </el-row>
         <el-table
           :data="searchAllEventList"
           height="580"
           border
+          @selection-change="handleSelectionChange"
           width="200"
         >
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
           <el-table-column
             prop="eventId"
             label="事件ID"
@@ -180,6 +190,9 @@
         },
         addEvent(row){
           console.log("点击了添加事件按钮，即将添加的事件为：",row.eventId)
+        },
+        addSomeEvent(){
+          console.log("点击了添加某些选中项的按钮，内容为：",this.selectEventList)
         }
       },
       watch:{
