@@ -1,7 +1,44 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <el-row :gutter="10" id="Control">
+      <el-row id="Control">
+        <!--过滤参数选择-->
+        <el-col :span="6">
+          <span>用户姓名：</span>
+          <el-input v-model="UserNameCompleteValue" placeholder="请输入内容" :style="controlWidth.control2width"/>
+        </el-col>
+        <!--过滤参数选择-->
+        <el-col :span="6">
+          <span>接收方式：</span>
+          <el-select v-model="ReceiveTypeValue" placeholder="请选择">
+            <el-option
+              v-for="item in ReceiveTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="6">
+          <span>起始时间：</span>
+          <el-date-picker
+            :style="controlWidth.control1width"
+            v-model="beginTime"
+            type="datetime"
+            placeholder="选择起始日期时间">
+          </el-date-picker>
+        </el-col>
+        <el-col :span="6">
+          <span>截止时间：</span>
+          <el-date-picker
+            :style="controlWidth.control1width"
+            v-model="endTime"
+            type="datetime"
+            placeholder="选择截止日期时间">
+          </el-date-picker>
+        </el-col>
+      </el-row>
+      <el-row :gutter="10" id="Control1">
         <!--过滤参数选择-->
         <el-col :span="6">
           <span id="FilterParameters">过滤参数：</span>
@@ -14,18 +51,14 @@
             </el-option>
           </el-select>
         </el-col>
-        <!--查找输入框-->
-        <el-col :span="1">
-          <span id="Value">值：</span>
-        </el-col>
-        <el-col :span="4">
-          <el-input v-model="CompleteValue" placeholder="请输入内容"/>
+        <el-col :span="6">
+          <span>过滤的值：</span>
+          <el-input v-model="CompleteValue" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="13">
+        <el-col :span="12">
           <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
-          <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -47,6 +80,12 @@
         <!--服务类型id：serviceType-->
         <el-table-column
           prop="serviceType"
+          label="用户姓名"
+        >
+        </el-table-column>
+        <!--服务类型id：serviceType-->
+        <el-table-column
+          prop="serviceType"
           label="服务器名称"
         >
         </el-table-column>
@@ -59,14 +98,14 @@
         <!--服务信息存放表：serviceTable-->
         <el-table-column
           prop="serviceTable"
-          label="发生事件"
+          label="发生时间"
         >
         </el-table-column>
         <!--操作栏-->
         <el-table-column
-          label="操作" width="265">
+          label="操作" width="95">
           <template slot-scope="scope">
-
+            <el-button type="primary">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -96,32 +135,6 @@
         </el-col>
       </el-row>
     </el-footer>
-    <!--新增按钮的弹窗-->
-    <el-dialog title="新增" :visible.sync="dialogVisible" width="30%">
-      <el-form ref="form" :model="form" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
-          <el-input
-            v-model="form.serviceType" />
-        </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="form.serviceName" />
-        </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="form.serviceTable" />
-        </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="form.note"  type="textarea"/>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.serviceType)">确 定</el-button>
-        </span>
-    </el-dialog>
   </el-container>
 </template>
 
@@ -136,23 +149,28 @@
     },
     data() {
       return {
+        //*******************页面自适应参数*******************
+        controlWidth:{
+          control1width:{
+            width: "66%"
+          },
+          control2width:{
+            width: "63%"
+          },
+        },
         myStyle:{
-          height:"29rem"
+          height:''
         },
         //*******************控制区*******************
-        FilterParameters: [
-          {
-            value: 'serviceType',
-            label: '接收id'
-          },{
+        FilterParameters: [{
             value: 'serviceName',
-            label: '用户名称'
+            label: '服务器名称'
           },{
             value: 'serviceTable',
-            label: '接收类型'
+            label: '时间名称'
           },{
             value: 'note',
-            label: '接收地址'
+            label: '发生时间'
           }],
         //过滤参数
         FilterParameter_value: '',
@@ -308,20 +326,30 @@
     mounted(){
       this.dealData();
       this.myStyle = {
-        height: document.body.clientHeight-50-30-64-70+"px"
+        height: document.body.clientHeight-50-80-64-70+"px"
       }
-    }
+    },
+    props:{
+
+    },
   }
 </script>
 
 <style scoped>
   #Header{
+    min-height: 7rem;
     background: #f1f3f4;
   }
   #Find{
     margin-left: 1rem;
   }
   #Control{
+    margin-top: 0.8rem;
+  }
+  #Control1{
+    margin-top: 0.8rem;
+  }
+  #Control2{
     margin-top: 0.8rem;
   }
   /*设置分页属性*/
