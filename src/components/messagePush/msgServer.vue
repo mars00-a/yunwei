@@ -74,7 +74,7 @@
           label="操作"
           width="170">
           <template slot-scope="scope">
-            <ServerEvent/>
+            <ServerEvent @click="dealServerData(scope.row)" :ServerData="msgEventData"/>
           </template>
         </el-table-column>
       </el-table>
@@ -82,32 +82,32 @@
       <div id="targetTable">
         <el-row :gutter="30">
           <el-col :span="24">
-            <el-tooltip class="item" effect="dark" content="输入服务器IP/名称进行查询" placement="top">
-              <el-input v-model="CustomerIdTableCompleteValue" placeholder="查询输入"/>
+            <el-tooltip class="item" effect="dark" content="输入服务器名称/IP进行查询" placement="top">
+              <el-input v-model="ServerTableCompleteValue" placeholder="查询输入"/>
             </el-tooltip>
           </el-col>
         </el-row>
         <el-table
-          :data="targetCustomerIdTable"
+          :data="targetServerTable"
           height="580"
           border
           style="width: 100%">
           <el-table-column
             active-class="targetTableGetFocus"
-            prop="customerId"
-            label="客户ID"
+            prop="serverName"
+            label="服务器名称"
             width="105%">
           </el-table-column>
           <el-table-column
-            prop="company"
-            label="客户名称"
+            prop="serverIp"
+            label="服务器IP"
             width="100%">
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="targetTableGetFocus(scope.$index, scope.row)">绑定</el-button>
+                @click="targetTableGetFocus(scope.$index, scope.row)">关联</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -124,6 +124,8 @@
     },
     data() {
       return {
+        //组件交互的数据
+        msgEventData:{},
         //***********宽度自适应**********
         controlWidth:{
           width: "100%"
@@ -146,7 +148,27 @@
         //**********服务器按钮的弹窗**********
         dialogServerVisible:false,   //用于弹窗的显示
         myServerTable:[{}],   //需要推送信息的服务器
-        serverTable:[],   //服务器信息表
+        backupServerTable:[{
+          serverName: '123',
+          serverIp:'123'
+        },{
+          serverName: '111',
+          serverIp:'121'
+        },{
+          serverName: '333',
+          serverIp:'334'
+        }],   //服务器信息表备份
+        targetServerTable:[{
+          serverName: '123',
+          serverIp:'123'
+        },{
+          serverName: '111',
+          serverIp:'121'
+        },{
+          serverName: '333',
+          serverIp:'334'
+        }],   //服务器信息表
+        ServerTableCompleteValue:'',
       }
     },
     methods: {
@@ -182,14 +204,31 @@
         else{
           this.$emit("Revise",this.form);
         }
+      },
+      dealServerData(row){
+        this.msgEventData.users = {...this.myData};
+        this.msgEventData.servers = {...row}
       }
     },
     //接入来自../../../views/opdict/object的数据
     props:{
       myData:Array
+    },
+    watch:{
+      'ServerTableCompleteValue':{
+        immediate:true,
+        handler(val){
+          if(val !== ''){
+            this.targetServerTable = this.backupServerTable.filter(p =>{
+              return p.serverName.indexOf(val) !== -1 || p.serverIp.indexOf(val) !== -1
+            });
+          } else{
+            this.targetServerTable = this.backupServerTable;
+          }
+        }
+      }
     }
   }
-
 </script>
 
 <style scoped>
