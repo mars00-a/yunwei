@@ -1,11 +1,14 @@
 <template>
 <div>
   <el-row :gutter="10">
-    <el-col :span="12">
+    <el-col :span="8">
       <el-button type="danger">移除</el-button>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="8">
       <el-button type="primary" @click="visibleEvent = true">事件</el-button>
+    </el-col>
+    <el-col :span="8">
+      <el-button type="info" @click="historyButton = true">历史</el-button>
     </el-col>
     <el-dialog
       top="7vh"
@@ -93,10 +96,9 @@
       data(){
         return{
           visibleEvent:false,
-          // 下两条用于获取事件所属的服务器和接收id
-          controlReceiveId:'',
-          // 接收id
-          controlServerId:'',
+          // 下两条用于获取事件所属的服务器和 接收id
+          ReceiveData:this.ReceiveData,
+          ServerData:this.ServerData,
           // 服务器绑定的事件列表
           eventList:[
             {
@@ -154,7 +156,18 @@
           searchKeyword:'',
         }
       },
+      props:{
+        receiveData:Object,
+        serverData:Object,
+      },
       methods:{
+        //历史按钮
+        historyButton(){
+          let tmp = this.serverData
+          let serverEventData = Object.assign(this.serverData, this.serverData);
+          this.serverData = tmp
+          this.$router.push({name:'historicalMsg',params:{serverEventData}});
+        },
         handleSelectionChange(val){
           this.selectEventList = val
         },

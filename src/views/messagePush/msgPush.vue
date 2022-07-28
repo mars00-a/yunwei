@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
-          <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
+          <el-button type="success" id="Add" @click="addReceiver()">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -46,7 +46,7 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="serviceType"
+          prop="receiveId"
           label="接收id"
         >
         </el-table-column>
@@ -70,7 +70,7 @@
         </el-table-column>
         <!--操作栏-->
         <el-table-column
-          label="操作" width="265">
+          label="操作" width="350">
           <template slot-scope="scope">
             <msgServer :myData="scope.row" @Revise='GetRevise' @Del='GetDel'/>
           </template>
@@ -108,7 +108,8 @@
         <!--服务类型-->
         <el-form-item label="服务类型id" :rules="[{ required: true}]">
           <el-input
-            v-model="form.serviceType" />
+            disabled="true"
+            v-model="form.receiveId" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="服务名称">
@@ -125,7 +126,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.serviceType)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,Confirm(form.receiveId)">确 定</el-button>
         </span>
     </el-dialog>
   </el-container>
@@ -148,7 +149,7 @@
         //*******************控制区*******************
         FilterParameters: [
           {
-            value: 'serviceType',
+            value: 'receiveId',
             label: '接收id'
           },{
             value: 'serviceName',
@@ -167,14 +168,21 @@
         //新增
         dialogVisible: false,
         form: {
-          serviceType: '',
+          receiveId: '',
           serviceName: '',
           serviceTable: '',
           note: '',
         },
         //*******************中间主体*******************
         //表格数据
-        tableData: [],
+        tableData: [
+          {
+            receiveId: 1,
+            customerName: '张三',
+            receiveType: '邮箱',
+            receiveAddress: '123456'
+          }
+        ],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -193,7 +201,7 @@
       dealData(){
         getOpDictServicePageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
-          this.tableData = request.data.body.data;
+          // this.tableData = request.data.body.data;
         });
         this.FilterParameter_value = '';
         this.CompleteValue='';
@@ -244,10 +252,21 @@
           });
         }
       },
+      // 点击新增按钮
+      addReceiver(){
+        this.dialogVisible = true
+        // 已有流水号数组
+        let indexArr = []
+        for(let i=0;i<this.tableData.length;i++){
+          indexArr[i] = this.tableData[i].receiveId
+        }
+        let maxIndex = Math.max.apply(null,indexArr)
+        this.form.receiveId = maxIndex+1
+      },
       //查找按钮的事件
       Find(){
         this.currentPage = 1
-        if(this.FilterParameter_value === 'serviceType'){
+        if(this.FilterParameter_value === 'receiveId'){
           getOpDictServiceFindServiceType(this.CompleteValue,this.currentPage,this.size).then(request=>{
             console.log(request);
             this.totalNumber = request.data.body.total;

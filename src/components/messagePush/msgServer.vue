@@ -1,13 +1,16 @@
 <template>
-  <el-row :gutter="10">
-    <el-col :span="6.8">
-      <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
+  <el-row :gutter="5">
+    <el-col :span="5.7">
+      <el-button type="primary" @click="Revise">修 改</el-button>
     </el-col>
-    <el-col :span="6.8"><div class="grid-content bg-purple">
-      <el-button type="danger" @click="Del">删除</el-button>
-    </div></el-col>
-    <el-col :span="10.4">
-      <el-button type="success" @click="dialogServerVisible = true">服务器</el-button>
+    <el-col :span="5.7">
+      <el-button type="danger" @click="Del">删 除</el-button>
+    </el-col>
+    <el-col :span="6.9">
+      <el-button type="success" @click="serverButton">服务器</el-button>
+    </el-col>
+    <el-col :span="5.7">
+      <el-button type="info" @click="historyButton">历 史</el-button>
     </el-col>
     <!--修改弹窗-->
     <el-dialog title="修改" :visible.sync="dialogVisible" width="30%">
@@ -59,7 +62,7 @@
           label="服务器名称">
         </el-table-column>
         <el-table-column
-          prop="serverName"
+          prop="level"
           label="服务器级别">
         </el-table-column>
         <el-table-column
@@ -72,9 +75,13 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="170">
+          width="230">
           <template slot-scope="scope">
-            <ServerEvent @click="dealServerData(scope.row)" :ServerData="msgEventData"/>
+            <ServerEvent
+              :receiveData="myData"
+              :serverData = "scope.row"
+              @click="dealServerData(scope.row)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -124,6 +131,7 @@
     },
     data() {
       return {
+        myOwnData:this.myData,
         //组件交互的数据
         msgEventData:{},
         //***********宽度自适应**********
@@ -138,7 +146,8 @@
           serviceTable: '',
           note: ''
         },   //编辑弹窗的表单
-        receiveTypes:[{
+        receiveTypes:[
+          {
           value:'微信',
           label:'微信'
         },{
@@ -147,8 +156,14 @@
         }],   //接收类型下拉框
         //**********服务器按钮的弹窗**********
         dialogServerVisible:false,   //用于弹窗的显示
-        myServerTable:[{}],   //需要推送信息的服务器
-        backupServerTable:[{
+        myServerTable:[
+          {
+            serverId:123,
+
+          }
+        ],   //需要推送信息的服务器
+        backupServerTable:[
+          {
           serverName: '123',
           serverIp:'123'
         },{
@@ -189,11 +204,16 @@
       },
       //点击编辑时将该行的数据传入弹窗中
       Revise(){
+        this.dialogVisible = true
         this.form= {...this.myData}
       },
       //编辑弹窗点击取消时响应
       Cancel() {
         this.$message('取消成功')
+      },
+      // 点击历史按钮
+      historyButton(){
+        this.$router.push({name:'historicalMsg',params:{msgServerData:this.myOwnData}});
       },
       //编辑弹窗点击确认时响应
       Confirm(id) {
@@ -208,11 +228,14 @@
       dealServerData(row){
         this.msgEventData.users = {...this.myData};
         this.msgEventData.servers = {...row}
+      },
+      serverButton(){
+        this.dialogServerVisible = true
       }
     },
     //接入来自../../../views/opdict/object的数据
     props:{
-      myData:Array
+      myData: Object
     },
     watch:{
       'ServerTableCompleteValue':{
@@ -227,6 +250,9 @@
           }
         }
       }
+    },
+    mounted() {
+      console.log(this.myData)
     }
   }
 </script>
