@@ -74,14 +74,7 @@
           label="操作"
           width="170">
           <template slot-scope="scope">
-            <el-row :gutter="10">
-              <el-col :span="12">
-                <el-button type="danger">移除</el-button>
-              </el-col>
-              <el-col :span="12">
-                <el-button type="success">详细</el-button>
-              </el-col>
-            </el-row>
+            <ServerEvent/>
           </template>
         </el-table-column>
       </el-table>
@@ -123,8 +116,12 @@
   </el-row>
 </template>
 <script>
+  import ServerEvent from './serverEvent'
   export default {
     name: 'msgServer',
+    components:{
+      ServerEvent,
+    },
     data() {
       return {
         //***********宽度自适应**********
