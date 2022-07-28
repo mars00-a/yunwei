@@ -327,11 +327,10 @@
       this.dealData();
       this.myStyle = {
         height: document.body.clientHeight-50-80-64-70+"px"
-      }
-    },
-    props:{
-
-    },
+      };
+      console.log(this.$route.params.msgServerData);
+      console.log(this.$route.params.serverEventData);
+    }
   }
 </script>
 

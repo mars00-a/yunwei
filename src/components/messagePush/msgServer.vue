@@ -47,7 +47,7 @@
         </span>
     </el-dialog>
     <!--服务器弹窗-->
-    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="50%">
+    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="55%">
       <el-table
         :data="myServerTable"
         height="500"
@@ -114,11 +114,31 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="targetTableGetFocus(scope.$index, scope.row)">关联</el-button>
+                @click="dialogAssociationVisible = true">关联</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
+    </el-dialog>
+    <el-dialog title="关联" :visible.sync="dialogAssociationVisible" width="30%">
+      <el-form ref="form" :model="form" label-width="100px">
+        <!--服务类型-->
+        <el-form-item label="服务器级别">
+          <el-input v-model="AssociationForm.serviceType" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="报警时间间隔">
+          <el-input v-model="AssociationForm.serviceName" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="平安报周期">
+          <el-input v-model="AssociationForm.serviceName" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogAssociationVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogAssociationVisible = false">确 定</el-button>
+        </span>
     </el-dialog>
   </el-row>
 </template>
@@ -184,6 +204,8 @@
           serverIp:'334'
         }],   //服务器信息表
         ServerTableCompleteValue:'',
+        dialogAssociationVisible:false,
+        AssociationForm:{}
       }
     },
     methods: {
@@ -213,6 +235,7 @@
       },
       // 点击历史按钮
       historyButton(){
+        console.log('historyButton',this.myOwnData);
         this.$router.push({name:'historicalMsg',params:{msgServerData:this.myOwnData}});
       },
       //编辑弹窗点击确认时响应
