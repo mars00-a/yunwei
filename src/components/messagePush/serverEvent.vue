@@ -8,7 +8,7 @@
       <el-button type="primary" @click="visibleEvent = true">事件</el-button>
     </el-col>
     <el-col :span="8">
-      <el-button type="info" @click="historyButton = true">历史</el-button>
+      <el-button type="primary" @click="historyButton">历史</el-button>
     </el-col>
     <el-dialog
       top="7vh"
@@ -97,8 +97,8 @@
         return{
           visibleEvent:false,
           // 下两条用于获取事件所属的服务器和 接收id
-          ReceiveData:this.ReceiveData,
-          ServerData:this.ServerData,
+          myReceive:this.receiveData,
+          myServer:this.serverData,
           // 服务器绑定的事件列表
           eventList:[
             {
@@ -163,10 +163,13 @@
       methods:{
         //历史按钮
         historyButton(){
-          let tmp = this.serverData
-          let serverEventData = Object.assign(this.serverData, this.serverData);
-          this.serverData = tmp
-          this.$router.push({name:'historicalMsg',params:{serverEventData}});
+          let tmp = this.myReceive
+          let Data = Object.assign(this.myReceive, this.myServer);
+          this.myReceive = tmp
+          console.log('myReceive',this.myReceive)
+          console.log('serverData：',this.myServer)
+          console.log('serverEventData：',Data)
+          this.$router.push({name:'historicalMsg',params:{serverEventData:Data}});
         },
         handleSelectionChange(val){
           this.selectEventList = val

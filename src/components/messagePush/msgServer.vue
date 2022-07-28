@@ -252,7 +252,7 @@
       }
     },
     mounted() {
-      console.log(this.myData)
+      // console.log(this.myData)
     }
   }
 </script>
