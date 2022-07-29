@@ -50,3 +50,33 @@ export  function getOpUserReveiceUserList() {
     method: 'get',
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//************************用户日志相关接口
+//获取记录分页
+export  function getUserEventLogPageList(index,size) {
+  return request({
+    url: '/api/UserEventLog/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}
+//分页查找
+export  function getUserEventLogFind(index,size) {
+  return request({
+    url: '/api/UserEventLog/PageList',
+    method: 'get',
+    params: {index,size}
+  })
+}

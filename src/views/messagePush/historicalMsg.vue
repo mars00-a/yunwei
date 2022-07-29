@@ -72,31 +72,32 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="serviceType"
+          prop="receive.userId"
           label="用户姓名"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="serviceType"
+          prop="receive.receiveType"
+          :formatter="receiveTypeFormat"
           label="接收方式"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="serviceType"
+          prop="server.serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
-          prop="serviceName"
+          prop="opEvent.opcidName"
           label="事件名称"
         >
         </el-table-column>
         <!--服务信息存放表：serviceTable-->
         <el-table-column
-          prop="serviceTable"
+          prop="time"
           label="发生时间"
         >
         </el-table-column>
@@ -141,6 +142,7 @@
   import msgServer from '../../components/messagePush/msgServer'
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
+  import {getUserEventLogPageList, } from '@/api/messagePush'
   export default {
     name: "historical-msg",
     components: {
@@ -169,11 +171,11 @@
         eventNameSearchKeyword: '',
         ReceiveTypes: [
           {
-            value: '微信',
+            value: '1',
             label: '微信'
           },
           {
-            value: '邮箱',
+            value: '2',
             label: '邮箱'
           }
         ],
@@ -218,9 +220,17 @@
     },
     methods:{
       //************************分页************************
+      receiveTypeFormat(row){
+        if(row.receive.receiveType === 1){
+          return "微信"
+        }
+        if(row.receive.receiveType === 2){
+          return "邮箱"
+        }
+      },
       //处理页面初始数据
       dealData(){
-        getOpDictServicePageList(this.currentPage,this.size).then(request=>{
+        getUserEventLogPageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
         });
@@ -345,7 +355,24 @@
       this.myStyle = {
         height: document.body.clientHeight-50-80-64-70+"px"
       };
-      console.log(this.$route.params.msgServerData);
+      if(this.$route.params.msgServerData !== undefined){
+        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
+        if(this.$route.params.msgServerData.receiveType === 1){
+          this.ReceiveTypeSearchKeyword = '微信';
+        }
+        if(this.$route.params.msgServerData.receiveType === 2){
+          this.ReceiveTypeSearchKeyword = '邮箱';
+        }
+      }
+      if(this.$route.params.serverEventData !== undefined){
+        this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
+        if(this.$route.params.serverEventData.receiveType === 1){
+          this.ReceiveTypeSearchKeyword = '微信';
+        }
+        if(this.$route.params.serverEventData.receiveType === 2){
+          this.ReceiveTypeSearchKeyword = '邮箱';
+        }
+      }
       console.log(this.$route.params.serverEventData);
     }
   }
