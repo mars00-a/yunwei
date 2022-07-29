@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import {getOpUserServerEventUnBindList} from '@/api/wang'
+import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServerEventCreate} from '@/api/wang'
     export default {
       name: "server-event",
       data(){
@@ -179,9 +179,9 @@ import {getOpUserServerEventUnBindList} from '@/api/wang'
         eventButton(){
           this.visibleEvent = true
           getOpUserServerEventUnBindList(this.controlReceiveId,this.controlServerId,1,10000).then(request=>{
-            console.log("触发了请求未绑定的事件，内容为：",request)
+            console.log("触发了请求未绑定的事件，接收id和服务器id为：",this.controlReceiveId,this.controlServerId,"内容为：",request)
             this.allEventList = request.data.body.data;
-            this.allEventList = request.data.body.data;
+            this.searchAllEventList = request.data.body.data;
           });
         },
         //历史按钮
@@ -200,13 +200,77 @@ import {getOpUserServerEventUnBindList} from '@/api/wang'
         // 删除事件
         deleteEvent(row){
           console.log("点击了删除事件按钮，即将删除的接收id：",this.controlReceiveId,'即将删除的服务器：',this.controlServerId,"即将删除的事件：",row.eventId)
+          let eventIdList = [row.eventId]
+          getOpUserServerEventDelete(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
+            console.log("触发了删除事件，接收id和服务器id为和事件id：",this.controlReceiveId,this.controlServerId,eventIdList)
+            if(request.data.body){
+              this.delSuccessMessage()
+            }
+            else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
         },
+        // 新增事件
         addEvent(row){
           console.log("点击了添加事件按钮，即将添加的事件为：",row.eventId)
+          let eventIdList = [row.eventId]
+          getOpUserServerEventDelete(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
+            console.log("触发了新增事件，接收id和服务器id为和事件id：",this.controlReceiveId,this.controlServerId,eventIdList)
+            if(request.data.body){
+              this.addSuccessMessage()
+            }
+            else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
         },
         addSomeEvent(){
-          console.log("点击了添加某些选中项的按钮，内容为：",this.selectEventList)
-        }
+          // console.log("点击了添加某些选中项的按钮，内容为：",this.selectEventList)
+          let eventIdList = []
+          for(let i=0;i<this.selectEventList.length;i++){
+            eventIdList[i] = this.selectEventList[i].eventId
+          }
+          getOpUserServerEventDelete(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
+            console.log("触发了新增事件，接收id和服务器id为和事件id：",this.controlReceiveId,this.controlServerId,eventIdList)
+            if(request.data.body){
+              this.addSuccessMessage()
+            }
+            else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        },
+        // 新增成功提示
+        addSuccessMessage(){
+          this.$message({
+            message: '新增成功',
+            type: 'success'
+          })
+        },
+        // 修改成功提示
+        confirmSuccessMessage(){
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+        },
+        // 删除成功提示
+        delSuccessMessage(){
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+        },
       },
       watch:{
         searchKeyword:{

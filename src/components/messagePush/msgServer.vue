@@ -95,7 +95,7 @@
           </el-col>
         </el-row>
         <el-table
-          :data="targetServerTable"
+          :data="serverList"
           height="575"
           border
           style="width: 100%">
@@ -144,6 +144,7 @@
 </template>
 <script>
   import ServerEvent from './serverEvent'
+  import {getOpUserServerEventUnBindList, getOpUserServerReceivePageList} from '@/api/wang'
   export default {
     name: 'msgServer',
     components:{
@@ -151,14 +152,16 @@
     },
     data() {
       return {
+        // 从父组件传来的接收id
+        controlReceiveId: this.myData.receiveId,
         myOwnData:this.myData,
         //组件交互的数据
         msgEventData:{},
-        //***********宽度自适应**********
+        //************************************************** 宽度自适应 **********
         controlWidth:{
           width: "100%"
         },
-        //**********编辑按钮的弹窗**********
+        //************************************************** 编辑按钮的弹窗 *****
         dialogVisible: false,   //用于弹窗的显示
         form: {
           serviceType: '',
@@ -174,7 +177,7 @@
           value:'邮箱',
           label:'邮箱'
         }],   //接收类型下拉框
-        //**********服务器按钮的弹窗**********
+        //*********************************************** 服务器按钮的弹窗 **************
         dialogServerVisible:false,   //用于弹窗的显示
         myServerTable:[
           {
@@ -182,7 +185,8 @@
 
           }
         ],   //需要推送信息的服务器
-        backupServerTable:[
+        //所有服务器信息表备份
+        allServerList:[
           {
           serverName: '123',
           serverIp:'123'
@@ -192,8 +196,10 @@
         },{
           serverName: '333',
           serverIp:'334'
-        }],   //服务器信息表备份
-        targetServerTable:[{
+        }],
+        //展示出来经过搜索的服务器信息表
+        searchServerList:[
+          {
           serverName: '123',
           serverIp:'123'
         },{
@@ -202,7 +208,7 @@
         },{
           serverName: '333',
           serverIp:'334'
-        }],   //服务器信息表
+        }],
         ServerTableCompleteValue:'',
         dialogAssociationVisible:false,
         AssociationForm:{}
@@ -254,6 +260,10 @@
       },
       serverButton(){
         this.dialogServerVisible = true
+        getOpUserServerReceivePageList(this.controlReceiveId,1,10000).then(request=>{
+          console.log("触发了请求未绑定的服务器，接收id为：",this.controlReceiveId,"内容为：",request)
+          this.myServerTable = request.data.body.data;
+        });
       }
     },
     //接入来自../../../views/opdict/object的数据
@@ -265,11 +275,11 @@
         immediate:true,
         handler(val){
           if(val !== ''){
-            this.targetServerTable = this.backupServerTable.filter(p =>{
+            this.searchServerList = this.allServerList.filter(p =>{
               return p.serverName.indexOf(val) !== -1 || p.serverIp.indexOf(val) !== -1
             });
           } else{
-            this.targetServerTable = this.backupServerTable;
+            this.searchServerList = this.allServerList;
           }
         }
       }

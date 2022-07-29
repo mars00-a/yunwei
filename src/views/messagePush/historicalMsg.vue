@@ -5,12 +5,12 @@
         <!--过滤参数选择-->
         <el-col :span="6">
           <span>用户姓名：</span>
-          <el-input v-model="UserNameCompleteValue" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--过滤参数选择-->
         <el-col :span="6">
           <span>接收方式：</span>
-          <el-select v-model="ReceiveTypeValue" placeholder="请选择">
+          <el-select v-model="ReceiveTypeSearchKeyword" placeholder="请选择">
             <el-option
               v-for="item in ReceiveTypes"
               :key="item.value"
@@ -23,7 +23,7 @@
           <span>起始时间：</span>
           <el-date-picker
             :style="controlWidth.control1width"
-            v-model="beginTime"
+            v-model="beginTimeSearchKeyword"
             type="datetime"
             placeholder="选择起始日期时间">
           </el-date-picker>
@@ -32,7 +32,7 @@
           <span>截止时间：</span>
           <el-date-picker
             :style="controlWidth.control1width"
-            v-model="endTime"
+            v-model="endTimeSearchKeyword"
             type="datetime"
             placeholder="选择截止日期时间">
           </el-date-picker>
@@ -41,19 +41,12 @@
       <el-row :gutter="10" id="Control1">
         <!--过滤参数选择-->
         <el-col :span="6">
-          <span id="FilterParameters">过滤参数：</span>
-          <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
-            <el-option
-              v-for="item in FilterParameters"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <span id="FilterParameters">服务器名：</span>
+          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="6">
-          <span>过滤的值：</span>
-          <el-input v-model="CompleteValue" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <span>事件名称：</span>
+          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="12">
@@ -81,6 +74,12 @@
         <el-table-column
           prop="serviceType"
           label="用户姓名"
+        >
+        </el-table-column>
+        <!--接收方式-->
+        <el-table-column
+          prop="serviceType"
+          label="接收方式"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
@@ -162,7 +161,25 @@
           height:''
         },
         //*******************控制区*******************
-        FilterParameters: [{
+        UserNameSearchKeyword:'',
+        ReceiveTypeSearchKeyword:'',
+        beginTimeSearchKeyword:'',
+        endTimeSearchKeyword:'',
+        serverNameSearchKeyword: '',
+        eventNameSearchKeyword: '',
+        ReceiveTypes: [
+          {
+            value: '微信',
+            label: '微信'
+          },
+          {
+            value: '邮箱',
+            label: '邮箱'
+          }
+        ],
+        // 过滤参数列表
+        FilterParameters: [
+          {
             value: 'serviceName',
             label: '服务器名称'
           },{
@@ -176,7 +193,7 @@
         FilterParameter_value: '',
         //查找输入框
         CompleteValue:'',
-        //新增
+        //**************************新增***********************
         dialogVisible: false,
         form: {
           serviceType: '',
