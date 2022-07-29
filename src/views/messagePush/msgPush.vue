@@ -25,7 +25,7 @@
         <el-col :span="13">
           <el-button type="primary" id="Find" @click="currentPage = 1, Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
-          <el-button type="success" id="Add" @click="addReceiver()">新增</el-button>
+          <el-button type="success" id="Add" @click="dialogVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -105,29 +105,57 @@
     <!--新增按钮的弹窗-->
     <el-dialog title="新增" :visible.sync="dialogVisible" width="30%">
       <el-form ref="form" :model="form" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="服务类型id" :rules="[{ required: true}]">
-          <el-input
-            disabled="true"
-            v-model="form.receiveId" />
+        <!--用户名称-->
+        <el-form-item label="用户名称">
+          <el-input v-model="form.userName" @focus="dealUserTableData()"/>
         </el-form-item>
-        <!--服务名称-->
-        <el-form-item label="服务名称">
-          <el-input v-model="form.serviceName" />
+        <!--接收类型-->
+        <el-form-item label="接收类型">
+          <el-select v-model="form.receiveType" placeholder="请选择" :style="controlWidth">
+            <el-option
+              v-for="item in ReceiveTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <!--服务数据表-->
-        <el-form-item label="服务数据表">
-          <el-input v-model="form.serviceTable" />
+        <!--接收地址-->
+        <el-form-item label="接收地址">
+          <el-input v-model="form.receiveAccount"/>
         </el-form-item>
-        <!--备注-->
-        <el-form-item label="备注">
-          <el-input v-model="form.note"  type="textarea"/>
-        </el-form-item>
+        <!--用户选择表格-->
+        <div v-show = showUserTable id="userTable">
+          <el-table
+            :data="userTable"
+            height="400"
+            border
+            style="width: 100%">
+            <el-table-column
+              active-class="targetTableGetFocus"
+              prop="userId"
+              label="用户id"
+              width="105%">
+            </el-table-column>
+            <el-table-column
+              prop="userName"
+              label="用户名称"
+              width="100%">
+            </el-table-column>
+            <el-table-column label="添加">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="getUser(scope.$index,scope.row)">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.receiveId)">确 定</el-button>
-        </span>
+          <el-button type="primary" @click="dialogVisible = false,Confirm()">确 定</el-button>
+      </span>
     </el-dialog>
   </el-container>
 </template>
@@ -137,7 +165,7 @@
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
   import {getOpUserReveicePageList, getOpUserReveiceFindUserName, getOpUserReveiceFindReceiveId, getOpUserReveiceFindReceiveType,
-    getOpUserReveiceFindReceiveAccount,
+    getOpUserReveiceFindReceiveAccount, getOpUserReveiceCreate, getOpUserReveiceUserList,
   } from '@/api/messagePush'
   export default {
     name: 'msg-push',
@@ -146,15 +174,14 @@
     },
     data() {
       return {
+        controlWidth:{
+          width:"100%"
+        },
         myStyle:{
           height:"29rem"
         },
         //*******************控制区*******************
-        FilterParameters: [
-          {
-            value: 'receiveId',
-            label: '接收id'
-          },{
+        FilterParameters: [{
             value: 'userName',
             label: '用户名称'
           },{
@@ -169,12 +196,21 @@
         //查找输入框
         CompleteValue:'',
         //新增
+        showUserTable: false,
         dialogVisible: false,
+        userTable:[],   //用户列表
+        backupUserTable:[],
+        ReceiveTypes:[{
+          value:1,
+          label:'微信'
+        },{
+          value:2,
+          label:'邮箱'
+        }],
         form: {
-          receiveId: '',
-          serviceName: '',
-          serviceTable: '',
-          note: '',
+          userName:'',
+          receiveType:'',
+          receiveAccount:''
         },
         //*******************中间主体*******************
         //表格数据
@@ -225,52 +261,43 @@
       Cancel() {
         this.$message('取消成功')
       },
-      Confirm(id) {
-        //非空验证
-        if(id === ""){
-          this.dialogVisible = true;
-          this.$message.error('服务类型id不能为空');
-        }
-        else{
-          getOpDictServiceCreate(this.form).then(request=>{
-            if(request.data.body){
-              this.Find();
-              this.$message({
-                message: '新增成功',
-                type: 'success'
-              });
-            }else{
-              super.$message({
-                message: request.data.msg,
-                type: 'warning'
-              });
-            }
-          });
-        }
+      Confirm() {
+        getOpUserReveiceCreate(this.form).then(request=>{
+          if(request.data.body){
+            this.Find();
+            this.$message({
+              message: '新增成功',
+              type: 'success'
+            });
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
       },
-      // 点击新增按钮
-      addReceiver(){
-        this.dialogVisible = true
-        // 已有流水号数组
-        let indexArr = []
-        for(let i=0;i<this.tableData.length;i++){
-          indexArr[i] = this.tableData[i].receiveId
-        }
-        let maxIndex = Math.max.apply(null,indexArr)
-        this.form.receiveId = maxIndex+1
+      dealUserTableData(){
+        this.showUserTable = true;
+        getOpUserReveiceUserList().then(request=>{
+          if(request.data.body){
+            this.userTable = request.data.body;
+            this.backupUserTable = request.data.body;
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        })
+      },
+      getUser(index,row){
+        this.form.userName = row.userName;
       },
       //查找按钮的事件
       Find(){
         if(this.FilterParameter_value === 'userName'){
           getOpUserReveiceFindUserName(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            this.totalNumber = request.data.body.total;
-            this.tableData = request.data.body.data;
-          })
-        }
-        else if(this.FilterParameter_value === 'receiveId'){
-          console.log('receiveId',this.CompleteValue);
-          getOpUserReveiceFindReceiveId(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            console.log('request',request);
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
@@ -331,6 +358,18 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       }
+    },
+    watch:{
+      'form.userName':{
+        immediate:true,
+        handler(val){
+          this.userTable = this.backupUserTable.filter(p =>{
+            if(p.userId !== null || p.userName !== null){
+              return p.userId.toString().indexOf(val) !== -1 || p.userName.indexOf(val) !== -1
+            }
+          });
+        }
+      }
     }
   }
 </script>
@@ -370,5 +409,10 @@
   #controlBigPosition{
     position: absolute;
     right: 7.2rem;
+  }
+  #userTable{
+    position: absolute;
+    top: 0;
+    left:103%;
   }
 </style>

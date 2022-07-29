@@ -35,4 +35,18 @@ export  function getOpUserReveiceFindReceiveAccount(receiveAccount,index,size) {
     params: {receiveAccount,index,size}
   })
 }
-
+//新增
+export  function getOpUserReveiceCreate(data) {
+  return request({
+    url: '/api/OpUserReveice/Create',
+    method: 'post',
+    data
+  })
+}
+//获取所有用户列表
+export  function getOpUserReveiceUserList() {
+  return request({
+    url: '/api/OpUserReveice/UserList',
+    method: 'get',
+  })
+}
