@@ -5,7 +5,7 @@
       <el-button type="danger">移除</el-button>
     </el-col>
     <el-col :span="8">
-      <el-button type="primary" @click="visibleEvent = true">事件</el-button>
+      <el-button type="primary" @click="eventButton">事件</el-button>
     </el-col>
     <el-col :span="8">
       <el-button type="info" @click="historyButton">历史</el-button>
@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import {getOpUserServerEventUnBindList} from '@/api/wang'
     export default {
       name: "server-event",
       data(){
@@ -109,6 +110,9 @@
           // 下两条用于获取事件所属的服务器和 接收id
           myReceive:this.receiveData,
           myServer:this.serverData,
+          // 下面两条属性用于获取接收id和服务器id
+          controlReceiveId:this.receiveData.receiveId,
+          controlServerId:this.serverData.serverId,
           // 服务器绑定的事件列表
           eventList:[
             {
@@ -171,6 +175,15 @@
         serverData:Object,
       },
       methods:{
+        // 事件按钮
+        eventButton(){
+          this.visibleEvent = true
+          getOpUserServerEventUnBindList(this.controlReceiveId,this.controlServerId,1,10000).then(request=>{
+            console.log("触发了请求未绑定的事件，内容为：",request)
+            this.allEventList = request.data.body.data;
+            this.allEventList = request.data.body.data;
+          });
+        },
         //历史按钮
         historyButton(){
           let tmp = this.myReceive

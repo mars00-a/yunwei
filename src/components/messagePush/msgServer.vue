@@ -178,7 +178,7 @@
         dialogServerVisible:false,   //用于弹窗的显示
         myServerTable:[
           {
-            serverId:123,
+            serverId:'General###211209FJQZ0001',
 
           }
         ],   //需要推送信息的服务器
