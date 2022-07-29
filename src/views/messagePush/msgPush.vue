@@ -59,6 +59,7 @@
         <!--接收类型：receiveType-->
         <el-table-column
           prop="receiveType"
+          :formatter="receiveTypeFormat"
           label="接收类型"
         >
         </el-table-column>
@@ -165,7 +166,7 @@
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
   import {getOpUserReveicePageList, getOpUserReveiceFindUserName, getOpUserReveiceFindReceiveId, getOpUserReveiceFindReceiveType,
-    getOpUserReveiceFindReceiveAccount, getOpUserReveiceCreate, getOpUserReveiceUserList,
+    getOpUserReveiceFindReceiveAccount, getOpUserReveiceCreate, getOpUserReveiceUserList, getOpUserReveiceUpdate, getOpUserReveiceDelete,
   } from '@/api/messagePush'
   export default {
     name: 'msg-push',
@@ -229,6 +230,14 @@
     },
     methods:{
       //************************分页************************
+      receiveTypeFormat(row){
+        if(row.receiveType === 1){
+          return "微信"
+        }
+        if(row.receiveType === 2){
+          return "邮箱"
+        }
+      },
       //处理页面初始数据
       dealData(){
         getOpUserReveicePageList(this.currentPage,this.size).then(request=>{
@@ -321,7 +330,7 @@
       //************************修改、删除按钮************************
       //修改、删除后的表数据返回到以下两个函数
       GetRevise(msg){
-        getOpDictServiceUpdate(msg).then(request=>{
+        getOpUserReveiceUpdate(msg).then(request=>{
           if(request.data.body){
             this.Find();
             this.$message({
@@ -337,7 +346,7 @@
         });
       },
       GetDel(msg){
-        getOpDictServiceDelete(msg).then(request=>{
+        getOpUserReveiceDelete(msg).then(request=>{
           this.Find();
           if(request.data.body){
             this.$message({

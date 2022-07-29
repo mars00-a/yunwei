@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="5">
     <el-col :span="5.7">
-      <el-button type="primary" @click="Revise">修 改</el-button>
+      <el-button type="primary" @click="Revise()">修 改</el-button>
     </el-col>
     <el-col :span="5.7">
       <el-button type="danger" @click="Del">删 除</el-button>
@@ -15,19 +15,13 @@
     <!--修改弹窗-->
     <el-dialog title="修改" :visible.sync="dialogVisible" width="30%">
       <el-form ref="form" :model="form" label-width="90px">
-        <!--服务类型-->
-        <el-form-item label="接收id" :rules="[{ required: true}]">
-          <el-input
-            :disabled="true"
-            v-model="form.serviceType" />
-        </el-form-item>
-        <!--服务名称-->
+        <!--用户名称-->
         <el-form-item label="用户名称">
-          <el-input v-model="form.serviceName" />
+          <el-input v-model="form.userName" @focus="showUserTable = true"/>
         </el-form-item>
-        <!--服务数据表-->
+        <!--接收类型-->
         <el-form-item label="接收类型">
-          <el-select v-model="form.serviceTable" :style="controlWidth" placeholder="请选择">
+          <el-select v-model="form.receiveType" :style="controlWidth" placeholder="请选择">
             <el-option
               v-for="item in receiveTypes"
               :key="item.value"
@@ -36,14 +30,41 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <!--备注-->
+        <!--接收地址-->
         <el-form-item label="接收地址">
-          <el-input v-model="form.note"  type="textarea"/>
+          <el-input v-model="form.receiveAccount"/>
         </el-form-item>
+        <!--用户选择表格-->
+        <div v-show = showUserTable id="userTable">
+          <el-table
+            :data="userTable"
+            height="400"
+            border
+            style="width: 100%">
+            <el-table-column
+              active-class="targetTableGetFocus"
+              prop="userId"
+              label="用户id"
+              width="105%">
+            </el-table-column>
+            <el-table-column
+              prop="userName"
+              label="用户名称"
+              width="100%">
+            </el-table-column>
+            <el-table-column label="添加">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="getUser(scope.$index,scope.row)">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false,Cancel()">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false,Confirm(form.f_service_type)">确 定</el-button>
+          <el-button type="primary" @click="dialogVisible = false,ReviseConfirm()">确 定</el-button>
         </span>
     </el-dialog>
     <!--服务器弹窗-->
@@ -145,6 +166,7 @@
 <script>
   import ServerEvent from './serverEvent'
   import {getOpUserServerEventUnBindList, getOpUserServerReceivePageList} from '@/api/wang'
+  import {getOpUserReveiceUserList, getOpUserServerReceiveUnBindList} from '@/api/messagePush'
   export default {
     name: 'msgServer',
     components:{
@@ -163,52 +185,29 @@
         },
         //************************************************** 编辑按钮的弹窗 *****
         dialogVisible: false,   //用于弹窗的显示
+        showUserTable:false,
+        userTable:[],
+        backupUserTable:[],
         form: {
-          serviceType: '',
-          serviceName: '',
-          serviceTable: '',
-          note: ''
+          userName: '',
+          receiveType: '',
+          receiveAccount: '',
         },   //编辑弹窗的表单
         receiveTypes:[
           {
-          value:'微信',
+          value: 1,
           label:'微信'
         },{
-          value:'邮箱',
+          value: 2,
           label:'邮箱'
         }],   //接收类型下拉框
         //*********************************************** 服务器按钮的弹窗 **************
         dialogServerVisible:false,   //用于弹窗的显示
-        myServerTable:[
-          {
-            serverId:'General###211209FJQZ0001',
-
-          }
-        ],   //需要推送信息的服务器
+        myServerTable:[],   //需要推送信息的服务器
         //所有服务器信息表备份
-        allServerList:[
-          {
-          serverName: '123',
-          serverIp:'123'
-        },{
-          serverName: '111',
-          serverIp:'121'
-        },{
-          serverName: '333',
-          serverIp:'334'
-        }],
+        allServerList:[],
         //展示出来经过搜索的服务器信息表
-        searchServerList:[
-          {
-          serverName: '123',
-          serverIp:'123'
-        },{
-          serverName: '111',
-          serverIp:'121'
-        },{
-          serverName: '333',
-          serverIp:'334'
-        }],
+        searchServerList:[],
         ServerTableCompleteValue:'',
         dialogAssociationVisible:false,
         AssociationForm:{}
@@ -222,7 +221,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$emit("Del",this.myData.serviceType);
+          this.$emit("Del",this.myData.receiveId);
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -232,8 +231,22 @@
       },
       //点击编辑时将该行的数据传入弹窗中
       Revise(){
-        this.dialogVisible = true
-        this.form= {...this.myData}
+        this.dialogVisible = true;
+        getOpUserReveiceUserList().then(request=>{
+          if(request.data.body){
+            this.userTable = request.data.body;
+            this.backupUserTable = request.data.body;
+            this.form= {...this.myData};
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+      },
+      getUser(index,row){
+        this.form.userName = row.userName;
       },
       //编辑弹窗点击取消时响应
       Cancel() {
@@ -245,14 +258,8 @@
         this.$router.push({name:'historicalMsg',params:{msgServerData:this.myOwnData}});
       },
       //编辑弹窗点击确认时响应
-      Confirm(id) {
-        if(id === ""){
-          this.dialogVisible = true;
-          this.$message.error('服务类型id不能为空');
-        }
-        else{
-          this.$emit("Revise",this.form);
-        }
+      ReviseConfirm() {
+        this.$emit("Revise",this.form)
       },
       dealServerData(row){
         this.msgEventData.users = {...this.myData};
@@ -260,14 +267,17 @@
       },
       // 点击服务器按钮
       serverButton(){
-        this.dialogServerVisible = true
+        this.dialogServerVisible = true;
+        this.ServerTableCompleteValue = '';
         getOpUserServerReceivePageList(this.controlReceiveId,1,10000).then(request=>{
-          console.log("触发了请求未绑定的服务器，接收id为：",this.controlReceiveId,"内容为：",request)
           this.myServerTable = request.data.body.data;
         });
+        getOpUserServerReceiveUnBindList(this.myData.receiveId).then(request=>{
+          this.allServerList = request.data.body;
+          this.searchServerList = request.data.body;
+        })
       }
     },
-    //接入来自../../../views/opdict/object的数据
     props:{
       myData: Object
     },
@@ -276,12 +286,27 @@
         immediate:true,
         handler(val){
           if(val !== ''){
+            console.log(val);
+            console.log(this.allServerList);
             this.searchServerList = this.allServerList.filter(p =>{
-              return p.serverName.indexOf(val) !== -1 || p.serverIp.indexOf(val) !== -1
+              if(p.serverName !== null && p.serverIp !== null){
+                return p.serverName.indexOf(val) !== -1 || p.serverIp.indexOf(val) !== -1
+              }
             });
           } else{
             this.searchServerList = this.allServerList;
           }
+        }
+      },
+      'form.userName':{
+        immediate:true,
+        handler(val){
+          console.log(val);
+          this.userTable = this.backupUserTable.filter(p =>{
+            if(p.userId !== null || p.userName !== null){
+              return p.userId.toString().indexOf(val) !== -1 || p.userName.indexOf(val) !== -1
+            }
+          });
         }
       }
     },
@@ -296,5 +321,10 @@
     position: absolute;
     top: 0;
     left:101%;
+  }
+  #userTable{
+    position: absolute;
+    top: 0;
+    left:103%;
   }
 </style>

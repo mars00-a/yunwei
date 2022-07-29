@@ -50,15 +50,36 @@ export  function getOpUserReveiceUserList() {
     method: 'get',
   })
 }
+//编辑
+export  function getOpUserReveiceUpdate(data) {
+  return request({
+    url: '/api/OpUserReveice/Update',
+    method: 'post',
+    data
+  })
+}
+//删除
+export  function getOpUserReveiceDelete(receiveId) {
+  return request({
+    url: '/api/OpUserReveice/Delete',
+    method: 'post',
+    params:{receiveId}
+  })
+}
 
 
 
 
 
 
-
-
-
+//获取未绑定的服务器
+export  function getOpUserServerReceiveUnBindList(receiveId) {
+  return request({
+    url: '/api/OpUserServerReceive/UnBindList',
+    method: 'post',
+    params:{receiveId}
+  })
+}
 
 
 
