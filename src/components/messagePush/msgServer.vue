@@ -54,23 +54,23 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="serverId"
+          prop="server.serverId"
           label="服务器ID">
         </el-table-column>
         <el-table-column
-          prop="serverName"
+          prop="server.serverName"
           label="服务器名称">
         </el-table-column>
         <el-table-column
-          prop="level"
+          prop="eventLevel"
           label="服务器级别">
         </el-table-column>
         <el-table-column
-          prop="serverName"
+          prop="alarmCycle"
           label="报警时间间隔">
         </el-table-column>
         <el-table-column
-          prop="serverName"
+          prop="keepAlive"
           label="平安报周期">
         </el-table-column>
         <el-table-column
@@ -95,7 +95,7 @@
           </el-col>
         </el-row>
         <el-table
-          :data="serverList"
+          :data="searchServerList"
           height="575"
           border
           style="width: 100%">
