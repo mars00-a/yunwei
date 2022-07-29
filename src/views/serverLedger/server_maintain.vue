@@ -428,6 +428,7 @@
           <el-select
             v-model="loginAddForm.loginSoft"
             :style="controlWidth"
+            filterable
             placeholder="请选择">
             <el-option
               v-for="item in Tools"
