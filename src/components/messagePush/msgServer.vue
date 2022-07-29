@@ -96,7 +96,7 @@
         </el-row>
         <el-table
           :data="targetServerTable"
-          height="580"
+          height="575"
           border
           style="width: 100%">
           <el-table-column
@@ -284,6 +284,6 @@
   #targetTable{
     position: absolute;
     top: 0;
-    left:103%;
+    left:101%;
   }
 </style>

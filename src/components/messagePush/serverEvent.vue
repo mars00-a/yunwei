@@ -8,7 +8,7 @@
       <el-button type="primary" @click="visibleEvent = true">事件</el-button>
     </el-col>
     <el-col :span="8">
-      <el-button type="primary" @click="historyButton">历史</el-button>
+      <el-button type="info" @click="historyButton">历史</el-button>
     </el-col>
     <el-dialog
       top="7vh"
@@ -64,7 +64,7 @@
         </el-row>
         <el-table
           :data="searchAllEventList"
-          height="580"
+          height="555"
           border
           @selection-change="handleSelectionChange"
           width="200"
