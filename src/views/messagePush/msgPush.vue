@@ -23,7 +23,7 @@
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="13">
-          <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
+          <el-button type="primary" id="Find" @click="currentPage = 1, Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
           <el-button type="success" id="Add" @click="addReceiver()">新增</el-button>
         </el-col>
@@ -44,27 +44,27 @@
           label="序号"
         >
         </el-table-column>
-        <!--服务类型id：serviceType-->
+        <!--接收id：receiveId-->
         <el-table-column
           prop="receiveId"
           label="接收id"
         >
         </el-table-column>
-        <!--服务类型名称：serviceName-->
+        <!--用户名称：userName-->
         <el-table-column
-          prop="serviceName"
+          prop="userName"
           label="用户名称"
         >
         </el-table-column>
-        <!--服务信息存放表：serviceTable-->
+        <!--接收类型：receiveType-->
         <el-table-column
-          prop="serviceTable"
+          prop="receiveType"
           label="接收类型"
         >
         </el-table-column>
-        <!--说明：note-->
+        <!--接收地址：receiveAccount-->
         <el-table-column
-          prop="note"
+          prop="receiveAccount"
           label="接收地址"
         >
         </el-table-column>
@@ -136,6 +136,9 @@
   import msgServer from '../../components/messagePush/msgServer'
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
+  import {getOpUserReveicePageList, getOpUserReveiceFindUserName, getOpUserReveiceFindReceiveId, getOpUserReveiceFindReceiveType,
+    getOpUserReveiceFindReceiveAccount,
+  } from '@/api/messagePush'
   export default {
     name: 'msg-push',
     components: {
@@ -152,13 +155,13 @@
             value: 'receiveId',
             label: '接收id'
           },{
-            value: 'serviceName',
+            value: 'userName',
             label: '用户名称'
           },{
-            value: 'serviceTable',
+            value: 'receiveType',
             label: '接收类型'
           },{
-            value: 'note',
+            value: 'receiveAccount',
             label: '接收地址'
           }],
         //过滤参数
@@ -175,14 +178,7 @@
         },
         //*******************中间主体*******************
         //表格数据
-        tableData: [
-          {
-            receiveId: 1,
-            customerName: '张三',
-            receiveType: '邮箱',
-            receiveAddress: '123456'
-          }
-        ],
+        tableData: [],
         //*******************分页尾部*******************
         // 分页
         //currentPage进入的第一页是第几页
@@ -199,9 +195,9 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getOpDictServicePageList(this.currentPage,this.size).then(request=>{
+        getOpUserReveicePageList(this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
-          // this.tableData = request.data.body.data;
+          this.tableData = request.data.body.data;
         });
         this.FilterParameter_value = '';
         this.CompleteValue='';
@@ -265,28 +261,28 @@
       },
       //查找按钮的事件
       Find(){
-        this.currentPage = 1
-        if(this.FilterParameter_value === 'receiveId'){
-          getOpDictServiceFindServiceType(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            console.log(request);
+        if(this.FilterParameter_value === 'userName'){
+          getOpUserReveiceFindUserName(this.CompleteValue,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
         }
-        else if(this.FilterParameter_value === 'serviceName'){
-          getOpDictServiceFindServiceName(this.CompleteValue,this.currentPage,this.size).then(request=>{
+        else if(this.FilterParameter_value === 'receiveId'){
+          console.log('receiveId',this.CompleteValue);
+          getOpUserReveiceFindReceiveId(this.CompleteValue,this.currentPage,this.size).then(request=>{
+            console.log('request',request);
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
         }
-        else if(this.FilterParameter_value === 'serviceTable'){
-          getOpDictServiceFindServiceTable(this.CompleteValue,this.currentPage,this.size).then(request=>{
+        else if(this.FilterParameter_value === 'receiveType'){
+          getOpUserReveiceFindReceiveType(this.CompleteValue,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
         }
-        else if(this.FilterParameter_value === 'note'){
-          getOpDictServiceFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+        else if(this.FilterParameter_value === 'receiveAccount'){
+          getOpUserReveiceFindReceiveAccount(this.CompleteValue,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
