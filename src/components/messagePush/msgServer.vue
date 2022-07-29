@@ -75,7 +75,7 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="230">
+          width="240">
           <template slot-scope="scope">
             <ServerEvent
               :receiveData="myData"
@@ -258,6 +258,7 @@
         this.msgEventData.users = {...this.myData};
         this.msgEventData.servers = {...row}
       },
+      // 点击服务器按钮
       serverButton(){
         this.dialogServerVisible = true
         getOpUserServerReceivePageList(this.controlReceiveId,1,10000).then(request=>{

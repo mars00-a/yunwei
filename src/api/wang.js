@@ -33,3 +33,19 @@ export  function getOpUserServerReceivePageList(receiveId,index,size) {
     params:{receiveId,index,size}
   })
 }
+// 删除服务器
+export  function getOpUserServerReceiveDelete(receiveId,serverId) {
+  return request({
+    url: '/api/OpUserServerReceive/Delete',
+    method: 'post',
+    params:{receiveId,serverId}
+  })
+}
+// 修改服务器
+export  function getOpUserServerReceiveUpdate(data) {
+  return request({
+    url: '/api/OpUserServerReceive/Update',
+    method: 'post',
+    data
+  })
+}

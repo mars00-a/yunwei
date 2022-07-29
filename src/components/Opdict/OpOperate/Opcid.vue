@@ -2,7 +2,7 @@
   <el-row :gutter="10">
     <el-col :span="12"><div class="grid-content bg-purple">
       <el-button type="primary" @click="dialogVisible = true,Revise()">修改</el-button>
-      <el-dialog top="1vh" title="新增运维事件" :visible.sync="dialogVisible" width="30%">
+      <el-dialog top="1vh" title="修改运维事件" :visible.sync="dialogVisible" width="30%">
         <!--            左侧表单栏-->
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="事件id" :rules="[{ required: true}]">

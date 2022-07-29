@@ -1,14 +1,17 @@
 <template>
 <div>
   <el-row :gutter="10">
-    <el-col :span="8">
-      <el-button type="danger">移除</el-button>
+    <el-col :span="6">
+      <el-button type="danger"  size="small" @click="deleteButton">删除</el-button>
     </el-col>
-    <el-col :span="8">
-      <el-button type="primary" @click="eventButton">事件</el-button>
+    <el-col :span="6">
+      <el-button type="primary" size="small" @click="reviseButton">修改</el-button>
     </el-col>
-    <el-col :span="8">
-      <el-button type="info" @click="historyButton">历史</el-button>
+    <el-col :span="6">
+      <el-button type="primary" size="small" @click="eventButton">事件</el-button>
+    </el-col>
+    <el-col :span="6">
+      <el-button type="info" size="small" @click="historyButton">历史</el-button>
     </el-col>
     <el-dialog
       top="7vh"
@@ -94,6 +97,26 @@
       </div>
 
     </el-dialog>
+    <el-dialog title="关联" :visible.sync="visibleRevise" width="30%">
+      <el-form ref="form" :model="reviseForm" label-width="100px">
+        <!--服务类型-->
+        <el-form-item label="服务器级别">
+          <el-input v-model="reviseForm.eventLevel" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="报警时间间隔">
+          <el-input v-model="reviseForm.alarmCycle" />
+        </el-form-item>
+        <!--服务名称-->
+        <el-form-item label="平安报周期">
+          <el-input v-model="reviseForm.keepAlive" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="visibleRevise = false">取 消</el-button>
+          <el-button type="primary" @click="confirmReviseServer">确 定</el-button>
+        </span>
+    </el-dialog>
   </el-row>
 </div>
 
@@ -101,12 +124,19 @@
 </template>
 
 <script>
-import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServerEventCreate} from '@/api/wang'
+import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServerEventCreate,getOpUserServerReceiveDelete,
+  getOpUserServerReceiveUpdate,} from '@/api/wang'
     export default {
       name: "server-event",
       data(){
         return{
           visibleEvent:false,
+          visibleRevise:false,
+          reviseForm: {
+            eventLevel:'',
+            alarmCycle:'',
+            keepAlive:''
+          },
           // 下两条用于获取事件所属的服务器和 接收id
           myReceive:this.receiveData,
           myServer:this.serverData,
@@ -175,6 +205,47 @@ import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServe
         serverData:Object,
       },
       methods:{
+        // 删除服务器按钮
+        deleteButton(){
+          getOpUserServerReceiveDelete(this.controlReceiveId,this.controlServerId).then(request=>{
+            console.log("触发了删除服务器，接收id和服务器id为：：",this.controlReceiveId,this.controlServerId)
+            if(request.data.body){
+              this.delSuccessMessage()
+            }
+            else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        },
+        // 修改按钮
+        reviseButton(){
+          this.visibleRevise = true
+        },
+        // 确认修改服务器
+        confirmReviseServer(){
+          let myData = {
+            receiveId: this.controlReceiveId,
+            serverId: this.controlServerId,
+            alarmCycle: this.reviseForm.alarmCycle,
+            keepAlive: this.reviseForm.keepAlive,
+            eventLevel: this.reviseForm.eventLevel
+          }
+          getOpUserServerReceiveUpdate(myData).then(request=>{
+            if(request.data.body){
+
+              this.confirmSuccessMessage()
+              this.visibleRevise = false
+            }else{
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        },
         // 事件按钮
         eventButton(){
           this.visibleEvent = true
@@ -218,7 +289,7 @@ import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServe
         addEvent(row){
           console.log("点击了添加事件按钮，即将添加的事件为：",row.eventId)
           let eventIdList = [row.eventId]
-          getOpUserServerEventDelete(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
+          getOpUserServerEventCreate(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
             console.log("触发了新增事件，接收id和服务器id为和事件id：",this.controlReceiveId,this.controlServerId,eventIdList)
             if(request.data.body){
               this.addSuccessMessage()
@@ -237,7 +308,7 @@ import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServe
           for(let i=0;i<this.selectEventList.length;i++){
             eventIdList[i] = this.selectEventList[i].eventId
           }
-          getOpUserServerEventDelete(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
+          getOpUserServerEventCreate(this.controlReceiveId,this.controlServerId,eventIdList).then(request=>{
             console.log("触发了新增事件，接收id和服务器id为和事件id：",this.controlReceiveId,this.controlServerId,eventIdList)
             if(request.data.body){
               this.addSuccessMessage()
@@ -258,7 +329,7 @@ import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServe
           })
         },
         // 修改成功提示
-        confirmSuccessMessage(){
+        reviseSuccessMessage(){
           this.$message({
             message: '修改成功',
             type: 'success'
