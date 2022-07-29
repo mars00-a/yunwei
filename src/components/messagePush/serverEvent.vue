@@ -52,7 +52,7 @@
       </el-table>
 
       <div id="targetTable">
-        <el-row :gutter="2">
+        <el-row :gutter="1">
           <el-col :span="16">
             <el-input v-model="searchKeyword" placeholder="输入事件id或事件名称进行查询"/>
           </el-col>
@@ -212,6 +212,6 @@
 #targetTable{
   position: absolute;
   top: 0;
-  left:103%;
+  left:101%;
 }
 </style>
