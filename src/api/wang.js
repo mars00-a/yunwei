@@ -8,12 +8,21 @@ export  function getOpUserServerEventUnBindList(receiveId,serverId,index,size) {
     params:{receiveId,serverId,index,size}
   })
 }
+// 获取已绑定的事件列表
+export  function getOpUserServerEventPageList(receiveId,serverId,index,size) {
+  return request({
+    url: '/api/OpUserServerEvent/PageList',
+    method: 'get',
+    params:{receiveId,serverId,index,size}
+  })
+}
 // 删除事件
 export  function getOpUserServerEventDelete(receiveId,serverId,data) {
   return request({
     url: '/api/OpUserServerEvent/Delete',
     method: 'post',
-    params:{receiveId,serverId,data}
+    params:{receiveId,serverId},
+    data
   })
 }
 // 新增事件
@@ -21,7 +30,8 @@ export  function getOpUserServerEventCreate(receiveId,serverId,data) {
   return request({
     url: '/api/OpUserServerEvent/Create',
     method: 'post',
-    params:{receiveId,serverId,data}
+    params:{receiveId,serverId},
+    data
   })
 }
 //**************************************** 服务器相关 *************************************************
@@ -45,6 +55,15 @@ export  function getOpUserServerReceiveDelete(receiveId,serverId) {
 export  function getOpUserServerReceiveUpdate(data) {
   return request({
     url: '/api/OpUserServerReceive/Update',
+    method: 'post',
+    data
+  })
+}
+
+// 绑定服务器
+export  function getOpUserServerReceiveCreate(data) {
+  return request({
+    url: '/api/OpUserServerReceive/Create',
     method: 'post',
     data
   })

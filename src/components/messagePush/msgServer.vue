@@ -1,10 +1,10 @@
 <template>
   <el-row :gutter="5">
     <el-col :span="5.7">
-      <el-button type="primary" @click="Revise()">修 改</el-button>
+      <el-button type="primary" @click="ReviseReceive">修 改</el-button>
     </el-col>
     <el-col :span="5.7">
-      <el-button type="danger" @click="Del">删 除</el-button>
+      <el-button type="danger" @click="DelReceive">删 除</el-button>
     </el-col>
     <el-col :span="6.9">
       <el-button type="success" @click="serverButton">服务器</el-button>
@@ -12,7 +12,7 @@
     <el-col :span="5.7">
       <el-button type="info" @click="historyButton">历 史</el-button>
     </el-col>
-    <!--修改弹窗-->
+    <!--修改接收信息弹窗-->
     <el-dialog title="修改" :visible.sync="dialogVisible" width="30%">
       <el-form ref="form" :model="form" label-width="90px">
         <!--用户名称-->
@@ -102,6 +102,8 @@
               :receiveData="myData"
               :serverData = "scope.row"
               @click="dealServerData(scope.row)"
+              @Revise='GetRevise'
+              @Del='GetDel'
             />
           </template>
         </el-table-column>
@@ -122,20 +124,20 @@
           style="width: 100%">
           <el-table-column
             active-class="targetTableGetFocus"
-            prop="serverName"
-            label="服务器名称"
+            prop="serverId"
+            label="服务器id"
             width="105%">
           </el-table-column>
           <el-table-column
-            prop="serverIp"
-            label="服务器IP"
+            prop="serverName"
+            label="服务器名称"
             width="100%">
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="dialogAssociationVisible = true">关联</el-button>
+                @click="addServerButton(scope.row)">关联</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -145,27 +147,32 @@
       <el-form ref="form" :model="form" label-width="100px">
         <!--服务类型-->
         <el-form-item label="服务器级别">
-          <el-input v-model="AssociationForm.serviceType" />
+          <el-input v-model="AssociationForm.eventLevel" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="报警时间间隔">
-          <el-input v-model="AssociationForm.serviceName" />
+          <el-input v-model="AssociationForm.alarmCycle" />
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="平安报周期">
-          <el-input v-model="AssociationForm.serviceName" />
+          <el-input v-model="AssociationForm.keepAlive" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="dialogAssociationVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogAssociationVisible = false">确 定</el-button>
+          <el-button type="primary" @click="confirmAddServer">确 定</el-button>
         </span>
     </el-dialog>
   </el-row>
 </template>
 <script>
   import ServerEvent from './serverEvent'
-  import {getOpUserServerEventUnBindList, getOpUserServerReceivePageList} from '@/api/wang'
+  import {
+    getOpUserServerEventUnBindList,
+    getOpUserServerReceivePageList,
+    getOpUserServerReceiveCreate,
+    getOpUserServerEventCreate
+  } from '@/api/wang'
   import {getOpUserReveiceUserList, getOpUserServerReceiveUnBindList} from '@/api/messagePush'
   export default {
     name: 'msgServer',
@@ -174,9 +181,6 @@
     },
     data() {
       return {
-        // 从父组件传来的接收id
-        controlReceiveId: this.myData.receiveId,
-        myOwnData:this.myData,
         //组件交互的数据
         msgEventData:{},
         //************************************************** 宽度自适应 **********
@@ -210,12 +214,62 @@
         searchServerList:[],
         ServerTableCompleteValue:'',
         dialogAssociationVisible:false,
-        AssociationForm:{}
+        AssociationForm:{
+          receiveId:'',
+          serverId:'',
+          eventLevel:'',
+          keepAlive:'',
+          alarmCycle:''
+        }
       }
     },
     methods: {
+      // 确认添加服务器
+      confirmAddServer(){
+        this.dialogAssociationVisible = false
+        console.log(this.AssociationForm)
+        getOpUserServerReceiveCreate(this.AssociationForm).then(request=>{
+          console.log("触发了绑定服务器，内容为：",this.AssociationForm)
+          if(request.data.body){
+            this.addSuccessMessage()
+            this.serverButton()
+          }
+          else{
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+      },
+      // 添加服务器
+      addServerButton(row){
+        this.dialogAssociationVisible = true
+        this.AssociationForm.receiveId=this.myData.receiveId
+        this.AssociationForm.serverId = row.serverId
+      },
+      GetDel(){
+        this.ServerTableCompleteValue = '';
+        getOpUserServerReceivePageList(this.myData.receiveId,1,10000).then(request=>{
+          this.myServerTable = request.data.body.data;
+        });
+        getOpUserServerReceiveUnBindList(this.myData.receiveId).then(request=>{
+          this.allServerList = request.data.body;
+          this.searchServerList = request.data.body;
+        })
+      },
+      GetRevise(){
+        this.ServerTableCompleteValue = '';
+        getOpUserServerReceivePageList(this.myData.receiveId,1,10000).then(request=>{
+          this.myServerTable = request.data.body.data;
+        });
+        getOpUserServerReceiveUnBindList(this.myData.receiveId).then(request=>{
+          this.allServerList = request.data.body;
+          this.searchServerList = request.data.body;
+        })
+      },
       //删除功能的事件
-      Del() {
+      DelReceive() {
         this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -230,7 +284,7 @@
         })
       },
       //点击编辑时将该行的数据传入弹窗中
-      Revise(){
+      ReviseReceive(){
         this.dialogVisible = true;
         getOpUserReveiceUserList().then(request=>{
           if(request.data.body){
@@ -254,8 +308,8 @@
       },
       // 点击历史按钮
       historyButton(){
-        console.log('historyButton',this.myOwnData);
-        this.$router.push({name:'historicalMsg',params:{msgServerData:this.myOwnData}});
+        console.log('historyButton',this.myData);
+        this.$router.push({name:'historicalMsg',params:{msgServerData:this.myData}});
       },
       //编辑弹窗点击确认时响应
       ReviseConfirm() {
@@ -269,14 +323,36 @@
       serverButton(){
         this.dialogServerVisible = true;
         this.ServerTableCompleteValue = '';
-        getOpUserServerReceivePageList(this.controlReceiveId,1,10000).then(request=>{
+        getOpUserServerReceivePageList(this.myData.receiveId,1,10000).then(request=>{
           this.myServerTable = request.data.body.data;
         });
         getOpUserServerReceiveUnBindList(this.myData.receiveId).then(request=>{
           this.allServerList = request.data.body;
           this.searchServerList = request.data.body;
         })
-      }
+      },
+
+      // 新增成功提示
+      addSuccessMessage(){
+        this.$message({
+          message: '新增成功',
+          type: 'success'
+        })
+      },
+      // 修改成功提示
+      reviseSuccessMessage(){
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+      },
+      // 删除成功提示
+      delSuccessMessage(){
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+      },
     },
     props:{
       myData: Object

@@ -72,7 +72,7 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="receive.userId"
+          prop="receive.user.userName"
           label="用户姓名"
         >
         </el-table-column>

@@ -27,22 +27,22 @@
         border
       >
         <el-table-column
-          prop="eventId"
+          prop="opcid"
           label="事件id"
         >
         </el-table-column>
         <el-table-column
-          prop="eventName"
+          prop="opEvent.opcidName"
           label="事件名称"
         >
         </el-table-column>
         <el-table-column
-          prop="threshold"
+          prop="opEvent.threshold"
           label="阈值"
         >
         </el-table-column>
         <el-table-column
-          prop="level"
+          prop="opEvent.level"
           label="等级"
         >
         </el-table-column>
@@ -78,12 +78,12 @@
             width="55">
           </el-table-column>
           <el-table-column
-            prop="eventId"
+            prop="opcid"
             label="事件ID"
             width="105%">
           </el-table-column>
           <el-table-column
-            prop="eventName"
+            prop="opcidName"
             label="事件名称"
             width="100%">
           </el-table-column>
@@ -131,7 +131,7 @@
 
 <script>
 import {getOpUserServerEventUnBindList,getOpUserServerEventDelete,getOpUserServerEventCreate,getOpUserServerReceiveDelete,
-  getOpUserServerReceiveUpdate,} from '@/api/wang'
+  getOpUserServerReceiveUpdate,getOpUserServerEventPageList} from '@/api/wang'
 export default {
   name: "server-event",
   data(){
@@ -146,8 +146,8 @@ export default {
       // 服务器绑定的事件列表
       eventList:[
         {
-          eventId: 'E000100101',
-          eventName: 'CPU占用率',
+          opcid: 'E000100101',
+          opcidName: 'CPU占用率',
           threshold: 90,
           level: 4
         },
@@ -157,20 +157,20 @@ export default {
       // 所有的事件列表和搜索出来的事件列表
       allEventList: [
         {
-          eventId: 'E000100101',
-          eventName: 'CPU占用率',
+          opcid: 'E000100101',
+          opcidName: 'CPU占用率',
           threshold: 90,
           level: 4
         },
         {
-          eventId: 'E000',
-          eventName: 'Caaa占用率',
+          opcid: 'E000',
+          opcidName: 'Caaa占用率',
           threshold: 80,
           level: 3
         },
         {
-          eventId: '100101',
-          eventName: '用率',
+          opcid: '100101',
+          opcidName: '用率',
           threshold: 70,
           level: 2
         },
@@ -178,20 +178,20 @@ export default {
       ],
       searchAllEventList:[
         {
-          eventId: 'E000100101',
-          eventName: 'CPU占用率',
+          opcid: 'E000100101',
+          opcidName: 'CPU占用率',
           threshold: 90,
           level: 4
         },
         {
-          eventId: 'E000',
-          eventName: 'Caaa占用率',
+          opcid: 'E000',
+          opcidName: 'Caaa占用率',
           threshold: 80,
           level: 3
         },
         {
-          eventId: '100101',
-          eventName: '用率',
+          opcid: '100101',
+          opcidName: '用率',
           threshold: 70,
           level: 2
         },
@@ -207,19 +207,31 @@ export default {
   methods:{
     // 删除服务器按钮
     deleteButton(){
-      getOpUserServerReceiveDelete(this.receiveData.receiveId,this.serverData.serverId).then(request=>{
-        console.log("触发了删除服务器，接收id和服务器id为：：",this.receiveData.receiveId,this.serverData.serverId)
-        if(request.data.body){
-          this.delSuccessMessage()
-          this.$emit("Del");
-        }
-        else{
-          this.$message({
-            message: request.data.msg,
-            type: 'warning'
-          });
-        }
-      });
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        getOpUserServerReceiveDelete(this.receiveData.receiveId,this.serverData.serverId).then(request=>{
+          console.log("触发了删除服务器，接收id和服务器id为：：",this.receiveData.receiveId,this.serverData.serverId)
+          if(request.data.body){
+            this.delSuccessMessage()
+            this.$emit("Del");
+          }
+          else{
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+
     },
     // 修改按钮
     reviseButton(){
@@ -254,10 +266,18 @@ export default {
     // 事件按钮
     eventButton(){
       this.visibleEvent = true
+      this.searchKeyword = ''
+      // 请求未绑定的事件列表
       getOpUserServerEventUnBindList(this.receiveData.receiveId,this.serverData.serverId,1,10000).then(request=>{
         console.log("触发了请求未绑定的事件，接收id和服务器id为：",this.receiveData.receiveId,this.serverData.serverId,"内容为：",request)
         this.allEventList = request.data.body.data;
         this.searchAllEventList = request.data.body.data;
+      });
+      // 请求已经绑定的事件列表
+
+      getOpUserServerEventPageList(this.receiveData.receiveId,this.serverData.serverId,1,10000).then(request=>{
+        console.log("触发了请求未绑定的事件，接收id和服务器id为：",this.receiveData.receiveId,this.serverData.serverId,"内容为：",request)
+        this.eventList = request.data.body.data
       });
     },
     //历史按钮
@@ -276,11 +296,12 @@ export default {
     // 删除事件
     deleteEvent(row){
       console.log("点击了删除事件按钮，即将删除的接收id：",this.receiveData.receiveId,'即将删除的服务器：',this.serverData.serverId,"即将删除的事件：",row.eventId)
-      let eventIdList = [row.eventId]
+      let eventIdList = [row.opcid]
       getOpUserServerEventDelete(this.receiveData.receiveId,this.serverData.serverId,eventIdList).then(request=>{
         console.log("触发了删除事件，接收id和服务器id为和事件id：",this.receiveData.receiveId,this.serverData.serverId,eventIdList)
         if(request.data.body){
           this.delSuccessMessage()
+          this.eventButton()
         }
         else{
           this.$message({
@@ -292,12 +313,13 @@ export default {
     },
     // 新增事件
     addEvent(row){
-      console.log("点击了添加事件按钮，即将添加的事件为：",row.eventId)
-      let eventIdList = [row.eventId]
+      console.log("点击了添加事件按钮，即将添加的事件为：",row.opcid)
+      let eventIdList = [row.opcid]
       getOpUserServerEventCreate(this.receiveData.receiveId,this.serverData.serverId,eventIdList).then(request=>{
         console.log("触发了新增事件，接收id和服务器id为和事件id：",this.receiveData.receiveId,this.serverData.serverId,eventIdList)
         if(request.data.body){
           this.addSuccessMessage()
+          this.eventButton()
         }
         else{
           this.$message({
@@ -311,12 +333,15 @@ export default {
       // console.log("点击了添加某些选中项的按钮，内容为：",this.selectEventList)
       let eventIdList = []
       for(let i=0;i<this.selectEventList.length;i++){
-        eventIdList[i] = this.selectEventList[i].eventId
+        eventIdList[i] = this.selectEventList[i].opcid
       }
+      console.log("在请求之前看接收id和服务器id：",this.receiveData.receiveId,this.serverData.serverId)
+      console.log("发送的数据为：",eventIdList)
       getOpUserServerEventCreate(this.receiveData.receiveId,this.serverData.serverId,eventIdList).then(request=>{
         console.log("触发了新增事件，接收id和服务器id为和事件id：",this.receiveData.receiveId,this.serverData.serverId,eventIdList)
         if(request.data.body){
           this.addSuccessMessage()
+          this.eventButton()
         }
         else{
           this.$message({
@@ -353,7 +378,7 @@ export default {
       immediate:true,
       handler(val){
         this.searchAllEventList = this.allEventList.filter(p =>{
-          return p.eventId.indexOf(val) !== -1 || p.eventName.indexOf(val) !== -1
+          return p.opcid.indexOf(val) !== -1 || p.opcidName.indexOf(val) !== -1
         })
       }
     }
