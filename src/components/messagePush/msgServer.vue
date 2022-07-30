@@ -68,7 +68,7 @@
         </span>
     </el-dialog>
     <!--服务器弹窗-->
-    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="60%" style="padding-right: 3rem">
+    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="75%" style="padding-right: 15rem">
       <el-table
         :data="myServerTable"
         height="500"
