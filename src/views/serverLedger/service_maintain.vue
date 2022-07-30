@@ -174,7 +174,7 @@
     <el-dialog
       width="70%"
       top="2vh"
-      title="修改客户信息"
+      title="修改客户绑定信息"
       :visible.sync="visables.dialogCustomerVisible">
       <el-table
         height="480"
@@ -459,14 +459,8 @@
             <el-input-number v-model="nineDialogForm.securityForm.clientNum" :min="3" :max="20" label="请输入3-20之间的数字"/>
           </el-form-item>
           <el-form-item label="是否巡检">
-            <el-select v-model="nineDialogForm.securityForm.ispatrol" placeholder="请选择">
-              <el-option
-                v-for="item in ispatrolList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+            <el-radio v-model="nineDialogForm.securityForm.ispatrol" label='0'>否</el-radio>
+            <el-radio v-model="nineDialogForm.securityForm.ispatrol" label="1">是</el-radio>
           </el-form-item>
           <el-form-item label="是否永久授权">
             <el-radio v-model="isPermanentAuthorize" label='0'>否</el-radio>
@@ -672,11 +666,12 @@
     </el-dialog>
 <!--    微信服务-->
     <el-dialog
-      top="0vh"
+      top="1vh"
       title="微信服务"
       width="50%"
       :visible.sync="visables.dialogWeixin"
-      style="padding-bottom: 0"
+      class="c1"
+      style="padding-bottom: 0;height: 100%"
     >
       <el-row>
         <el-col :span="12">
@@ -747,9 +742,9 @@
           </el-form>
         </el-col>
       </el-row>
-      <span style="padding-top: 0" slot="footer" class="dialog-footer">
+      <span style="padding-top: 0.1rem" slot="footer" class="dialog-footer">
         <el-button type="info" plain @click="visables.dialogWeixin = false">取 消</el-button>
-        <el-button type="primary" @click="confirmOpsvWeixin">确认</el-button>
+        <el-button type="primary" @click="confirmOpsvWeixin">确 认</el-button>
       </span>
     </el-dialog>
 <!--    APP服务-->
@@ -1195,19 +1190,8 @@ import {getOpDictSignalCreate} from "@/api/opdict";
             label: '100000--白金'
           },
         ],
-        // 安放服务弹窗的是否巡检
-        ispatrolList:[
-          {
-            value: 0,
-            label: '0--不巡检'
-          },
-          {
-            value: 1,
-            label: '1--巡检'
-          }
-        ],
         // 安放服务弹窗的是否永久授权
-        isPermanentAuthorize: '0',
+        isPermanentAuthorize: '1',
         // 是否显示选择授权过期时间
         controlIsPermanentAuthorizeShow: true,
         // 九个弹窗的数据
@@ -1227,7 +1211,7 @@ import {getOpDictSignalCreate} from "@/api/opdict";
             authorizeNum:'',
             authorizePerson: '',
             clientNum:'',
-            ispatrol: '',
+            ispatrol: '0',
             expireDate:'',
             note: '',
             time:'',
@@ -1700,8 +1684,13 @@ import {getOpDictSignalCreate} from "@/api/opdict";
         console.log(dataArr)
         for (let i=0;i<this.customerForm.selectServiceList.length;i++){
           getOpCustomerServicesCreate(dataArr[i]).then(request=>{
-            if(request.data.body){}
-            else{
+            if(request.data.body && i >= this.customerForm.selectServiceList.length-1){
+              getOpCustomerByService(this.controlServiceId).then(request=>{
+                this.customerForm.customerInfos = request.data.body;
+              });
+              this.addSuccessMessage()
+            }
+            else if(!(request.data.body)){
               this.$message({
                 message: request.data.msg+"id为"+dataArr[i].customerId+"的数据提交失败",
                 type: 'warning'
@@ -1710,10 +1699,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           })
         }
 
-        getOpCustomerByService(this.controlServiceId).then(request=>{
-          this.customerForm.customerInfos = request.data.body;
-        });
-        this.addSuccessMessage()
 
         this.customerForm.searchCustomerKeyword = ''
         this.visables.dialogAddCustomerVisible = false
@@ -2304,4 +2289,5 @@ import {getOpDictSignalCreate} from "@/api/opdict";
        left:103%;
        height: 100%;
      }
+  >>>.c1 .el-dialog__body{padding-bottom: 0}
 </style>
