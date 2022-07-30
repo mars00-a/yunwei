@@ -142,7 +142,7 @@
   import msgServer from '../../components/messagePush/msgServer'
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
-  import {getUserEventLogPageList, } from '@/api/messagePush'
+  import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
   export default {
     name: "historical-msg",
     components: {
@@ -171,11 +171,11 @@
         eventNameSearchKeyword: '',
         ReceiveTypes: [
           {
-            value: '1',
+            value: 1,
             label: '微信'
           },
           {
-            value: '2',
+            value: 2,
             label: '邮箱'
           }
         ],
@@ -285,28 +285,10 @@
       },
       //查找按钮的事件
       Find(){
-        this.currentPage = 1
-        if(this.FilterParameter_value === 'serviceType'){
-          getOpDictServiceFindServiceType(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            console.log(request);
-            this.totalNumber = request.data.body.total;
-            this.tableData = request.data.body.data;
-          })
-        }
-        else if(this.FilterParameter_value === 'serviceName'){
-          getOpDictServiceFindServiceName(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            this.totalNumber = request.data.body.total;
-            this.tableData = request.data.body.data;
-          })
-        }
-        else if(this.FilterParameter_value === 'serviceTable'){
-          getOpDictServiceFindServiceTable(this.CompleteValue,this.currentPage,this.size).then(request=>{
-            this.totalNumber = request.data.body.total;
-            this.tableData = request.data.body.data;
-          })
-        }
-        else if(this.FilterParameter_value === 'note'){
-          getOpDictServiceFindNote(this.CompleteValue,this.currentPage,this.size).then(request=>{
+        if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
+          this.endTimeSearchKeyword||this.serverNameSearchKeyword||this.eventNameSearchKeyword !== '') {
+          getUserEventLogFind(this.UserNameSearchKeyword,this.ReceiveTypeSearchKeyword,this.beginTimeSearchKeyword, this.endTimeSearchKeyword,
+            this.serverNameSearchKeyword,this.eventNameSearchKeyword,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
           })
@@ -351,29 +333,25 @@
       },
     },
     mounted(){
-      this.dealData();
       this.myStyle = {
         height: document.body.clientHeight-50-80-64-70+"px"
       };
       if(this.$route.params.msgServerData !== undefined){
         this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        if(this.$route.params.msgServerData.receiveType === 1){
-          this.ReceiveTypeSearchKeyword = '微信';
-        }
-        if(this.$route.params.msgServerData.receiveType === 2){
-          this.ReceiveTypeSearchKeyword = '邮箱';
+        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
+        this.Find();
+      }
+      else {
+        if(this.$route.params.serverEventData !== undefined){
+          console.log()
+          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
+          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
+          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
+          this.Find();
+        }else{
+          this.dealData();
         }
       }
-      if(this.$route.params.serverEventData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-        if(this.$route.params.serverEventData.receiveType === 1){
-          this.ReceiveTypeSearchKeyword = '微信';
-        }
-        if(this.$route.params.serverEventData.receiveType === 2){
-          this.ReceiveTypeSearchKeyword = '邮箱';
-        }
-      }
-      console.log(this.$route.params.serverEventData);
     }
   }
 </script>

@@ -2,16 +2,16 @@
 <div>
   <el-row :gutter="10">
     <el-col :span="6">
-      <el-button type="danger"  size="small" @click="deleteButton">删除</el-button>
+      <el-button type="danger" @click="deleteButton">删除</el-button>
     </el-col>
     <el-col :span="6">
-      <el-button type="primary" size="small" @click="reviseButton">修改</el-button>
+      <el-button type="primary" @click="reviseButton">修改</el-button>
     </el-col>
     <el-col :span="6">
-      <el-button type="primary" size="small" @click="eventButton">事件</el-button>
+      <el-button type="primary" @click="eventButton">事件</el-button>
     </el-col>
     <el-col :span="6">
-      <el-button type="info" size="small" @click="historyButton">历史</el-button>
+      <el-button type="info" @click="historyButton">历史</el-button>
     </el-col>
 <!--    服务器已经绑定的事件列表-->
     <el-dialog

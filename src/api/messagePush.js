@@ -94,10 +94,11 @@ export  function getUserEventLogPageList(index,size) {
   })
 }
 //分页查找
-export  function getUserEventLogFind(index,size) {
+export  function getUserEventLogFind(userName,receiveType,startTime,endTime,serverName,opcidName,index,size) {
   return request({
     url: '/api/UserEventLog/PageList',
     method: 'get',
-    params: {index,size}
+    params: {userName,receiveType,startTime,endTime,serverName,opcidName,index,size}
   })
 }
+

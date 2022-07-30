@@ -68,11 +68,12 @@
         </span>
     </el-dialog>
     <!--服务器弹窗-->
-    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="55%">
+    <el-dialog top="8vh" title="需要推送信息的服务器" :visible.sync="dialogServerVisible" width="60%" style="padding-right: 3rem">
       <el-table
         :data="myServerTable"
         height="500"
         border
+        class="ServerTable"
         style="width: 100%">
         <el-table-column
           prop="server.serverId"
@@ -96,7 +97,7 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="240">
+          width="320">
           <template slot-scope="scope">
             <ServerEvent
               :receiveData="myData"
