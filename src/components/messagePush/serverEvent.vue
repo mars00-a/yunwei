@@ -103,19 +103,28 @@
       append-to-body
       title="关联"
       :visible.sync="visibleRevise"
-      width="30%">
+      width="25%">
       <el-form ref="form" :model="reviseForm" label-width="100px">
         <!--服务类型-->
         <el-form-item label="服务器级别">
-          <el-input v-model="reviseForm.eventLevel" />
+          <el-input-number
+            style="width: 100%"
+            v-model="reviseForm.eventLevel"
+            :min="1"
+            :max="6"
+            label="请输入1-6之间的数字"/>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="报警时间间隔">
-          <el-input v-model="reviseForm.alarmCycle" />
+          <el-input v-model="reviseForm.alarmCycle" >
+            <template slot="append">分钟</template>
+          </el-input>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="平安报周期">
-          <el-input v-model="reviseForm.keepAlive" />
+          <el-input v-model="reviseForm.keepAlive" >
+            <template slot="append">天</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

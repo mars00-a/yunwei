@@ -144,19 +144,28 @@
         </el-table>
       </div>
     </el-dialog>
-    <el-dialog title="关联" :visible.sync="dialogAssociationVisible" width="30%">
+    <el-dialog title="关联" :visible.sync="dialogAssociationVisible" width="25%">
       <el-form ref="form" :model="form" label-width="100px">
         <!--服务类型-->
         <el-form-item label="服务器级别">
-          <el-input v-model="AssociationForm.eventLevel" />
+          <el-input-number
+            style="width: 100%"
+            v-model="AssociationForm.eventLevel"
+            :min="1"
+            :max="6"
+            label="请输入1-6之间的数字"/>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="报警时间间隔">
-          <el-input v-model="AssociationForm.alarmCycle" />
+          <el-input v-model="AssociationForm.alarmCycle" >
+            <template slot="append">分钟</template>
+          </el-input>
         </el-form-item>
         <!--服务名称-->
         <el-form-item label="平安报周期">
-          <el-input v-model="AssociationForm.keepAlive" />
+          <el-input v-model="AssociationForm.keepAlive" >
+            <template slot="append">天</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
