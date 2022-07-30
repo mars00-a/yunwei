@@ -85,23 +85,28 @@
         </el-table-column>
         <!--操作栏-->
         <el-table-column
-          label="操作" width="415">
+          label="操作" width="245">
           <template slot-scope="scope">
             <el-row :gutter="10">
-              <el-col :span="4.8">
+              <el-col :span="8">
                 <el-button type="primary" @click="dialogReviseVisible = true, ReviseServer(scope.row)">修改</el-button>
               </el-col>
-              <el-col :span="4.8">
+              <el-col :span="8">
                 <el-button type="danger" @click="Del(scope.row.serverId)">删除</el-button>
               </el-col>
-              <el-col :span="4.8">
+              <el-col :span="8">
                 <el-button type="warning" @click="dialogCustomerVisible = true, getCustomerId(), getCustomer(scope.row)">客户</el-button>
               </el-col>
-              <el-col :span="4.8">
+            </el-row>
+            <el-row :gutter="10" style="padding-top: 0.1rem">
+              <el-col :span="8">
                 <el-button type="info" @click="dialogServiceVisible = true, gotoService(scope.row)">服务</el-button>
               </el-col>
-              <el-col :span="4.8">
+              <el-col :span="8">
                 <el-button type="success" @click="dialogLoginVisible = true, getLogin(scope.row)">登录</el-button>
+              </el-col>
+              <el-col :span="8">
+                <el-button type="primary">事件</el-button>
               </el-col>
             </el-row>
           </template>
@@ -429,12 +434,14 @@
             v-model="loginAddForm.loginSoft"
             :style="controlWidth"
             filterable
+            allow-create
+            default-first-option
             placeholder="请选择">
             <el-option
               v-for="item in Tools"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key=item
+              :label=item
+              :value=item>
             </el-option>
           </el-select>
         </el-form-item>
@@ -478,9 +485,9 @@
             placeholder="请选择">
             <el-option
               v-for="item in Tools"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key=item
+              :label=item
+              :value=item>
             </el-option>
           </el-select>
         </el-form-item>
@@ -523,7 +530,8 @@ import {
   getOpServerLoginByServerId,
   getOpServerLoginCreate,
   getOpServerLoginDelete,
-  getOpServerLoginUpdate
+  getOpServerLoginUpdate,
+  getOpServerLoginLoginSoftList
 } from '@/api/serverLedger'
 import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serverLedger'
   export default {
@@ -607,19 +615,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
         loginReviseForm:{},
         loginTable:[],
         loginAddForm:{},
-        Tools:[{
-          value:'桌面远程控制',
-          label:'桌面远程控制'
-        },{
-          value:'桌面远程连接',
-          label:'桌面远程连接'
-        },{
-          value:'向日葵',
-          label:'向日葵'
-        },{
-          value:'VNC',
-          label:'VNC'
-        }],
+        Tools:[],
       }
     },
     methods:{
@@ -854,9 +850,12 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
         this.nowServerId = row.serverId;
         this.loginAddForm.serverId = this.nowServerId;
         this.loginAddForm.serverIp = row.serverIp;
-        this.loginAddForm.serverPort = row.serverPort;
+        this.loginAddForm.serverPort = 3389;
         getOpServerLoginByServerId(row.serverId).then(request=>{
           this.loginTable = request.data.body;
+        });
+        getOpServerLoginLoginSoftList().then(request=>{
+          this.Tools = request.data.body;
         })
       },
       //新增登录信息

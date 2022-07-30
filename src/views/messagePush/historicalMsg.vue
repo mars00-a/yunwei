@@ -172,11 +172,11 @@
         ReceiveTypes: [
           {
             value: 1,
-            label: '微信'
+            label: '邮箱'
           },
           {
             value: 2,
-            label: '邮箱'
+            label: '微信'
           }
         ],
         // 过滤参数列表
@@ -222,10 +222,10 @@
       //************************分页************************
       receiveTypeFormat(row){
         if(row.receive.receiveType === 1){
-          return "微信"
+          return "邮箱"
         }
         if(row.receive.receiveType === 2){
-          return "邮箱"
+          return "微信"
         }
       },
       //处理页面初始数据

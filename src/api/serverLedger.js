@@ -280,7 +280,13 @@ export function getOpServerLoginUpdate(data) {
     data
   })
 }
-
+//获取所有登录方式
+export function getOpServerLoginLoginSoftList() {
+  return request({
+    url:'/api/OpServerLogin/LoginSoftList',
+    method:'get',
+  })
+}
 
 
 
