@@ -611,6 +611,9 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
           value:'桌面远程控制',
           label:'桌面远程控制'
         },{
+          value:'桌面远程连接',
+          label:'桌面远程连接'
+        },{
           value:'向日葵',
           label:'向日葵'
         },{
