@@ -234,22 +234,52 @@ export const constantRoutes = [
         path: 'CPU',
         name: 'CPU',
         meta: { title: 'CPU使用实时状态', icon: 'link' },
-        component: () => import('@/views/ServerInfomation/CPU')
+        component: () => import('@/views/ServerInformation/CPU')
       },{
         path: 'disk',
         name: 'disk',
         meta: { title: '磁盘空间最新状态', icon: 'link' },
-        component: () => import('@/views/ServerInfomation/disk')
+        component: () => import('@/views/ServerInformation/disk')
       },{
         path: 'hardware',
         name: 'hardware',
         meta: { title: '硬件实时状态', icon: 'link' },
-        component: () => import('@/views/ServerInfomation/hardware')
+        component: () => import('@/views/ServerInformation/hardware')
       },{
         path: 'ram',
         name: 'ram',
         meta: { title: '内存实时状态表', icon: 'link' },
-        component: () => import('@/views/ServerInfomation/ram')
+        component: () => import('@/views/ServerInformation/ram')
+      }
+    ]
+  },
+  //网络授权服务器查看
+  {
+    path: '/NetworkAuthorizationServerInformation',
+    component: Layout,
+    redirect: '/NetworkAuthorizationServerInformation/CPU',
+    meta: { title: '网络授权服务器查看', icon: 'link' },
+    children: [
+      {
+        path: 'CPU',
+        name: 'CPU',
+        meta: { title: 'CPU使用实时状态', icon: 'link' },
+        component: () => import('@/views/NetworkAuthorizationServerInformation/CPU')
+      },{
+        path: 'disk',
+        name: 'disk',
+        meta: { title: '磁盘空间最新状态', icon: 'link' },
+        component: () => import('@/views/NetworkAuthorizationServerInformation/disk')
+      },{
+        path: 'hardware',
+        name: 'hardware',
+        meta: { title: '硬件实时状态', icon: 'link' },
+        component: () => import('@/views/NetworkAuthorizationServerInformation/hardware')
+      },{
+        path: 'ram',
+        name: 'ram',
+        meta: { title: '内存实时状态表', icon: 'link' },
+        component: () => import('@/views/NetworkAuthorizationServerInformation/ram')
       }
     ]
   },

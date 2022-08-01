@@ -1,20 +1,19 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <el-row id="Control">
+      <el-row :gutter="10" id="Control1">
         <!--过滤参数选择-->
+        <el-col :span="6">
+          <span id="FilterParameters">服务器名称：</span>
+          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+        </el-col>
         <el-col :span="6">
           <span>服务器IP：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
-        </el-col>
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span>服务器名称：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="6">
-          <span>内存：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <span>磁盘名称：</span>
+          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="6">
@@ -38,47 +37,51 @@
           label="序号"
         >
         </el-table-column>
-        <!--服务类型id：serviceType-->
+        <!--服务器名称：serviceType-->
         <el-table-column
           prop="receive.user.userName"
           label="服务器名称"
         >
         </el-table-column>
-        <!--接收方式-->
+        <!--服务器IP-->
         <el-table-column
           prop="receive.receiveType"
-          :formatter="receiveTypeFormat"
+          width="140"
           label="服务器IP"
         >
         </el-table-column>
-        <!--服务类型id：serviceType-->
+        <!--磁盘名称：serviceType-->
         <el-table-column
+          width="120"
           prop="server.serverName"
-          label="内存"
+          label="磁盘名称"
         >
         </el-table-column>
-        <!--服务类型名称：serviceName-->
+        <!--总空间(GB)：serviceName-->
         <el-table-column
           prop="opEvent.opcidName"
-          label="已占用比例(%)"
+          label="总空间(GB)"
         >
         </el-table-column>
-        <!--服务信息存放表：serviceTable-->
-        <el-table-column
-          prop="time"
-          label="已用空间(GB)"
-        >
-        </el-table-column>
+        <!--剩余空间(GB)：serviceTable-->
         <el-table-column
           prop="time"
           label="剩余空间(GB)"
         >
         </el-table-column>
+        <!--已占用比例(%)：serviceTable-->
         <el-table-column
           prop="time"
-          label="总空间(GB)"
+          label="已占用比例(%)"
         >
         </el-table-column>
+        <!--已占用空间(GB)：serviceTable-->
+        <el-table-column
+          prop="time"
+          label="已占用空间(GB)"
+        >
+        </el-table-column>
+        <!--数据时间：serviceTable-->
         <el-table-column
           prop="time"
           label="数据时间"
@@ -120,7 +123,7 @@
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
   import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
   export default {
-    name: "ram",
+    name: "disk",
     components: {
       msgServer
     },
@@ -145,6 +148,40 @@
         endTimeSearchKeyword:'',
         serverNameSearchKeyword: '',
         eventNameSearchKeyword: '',
+        ReceiveTypes: [
+          {
+            value: 1,
+            label: '邮箱'
+          },
+          {
+            value: 2,
+            label: '微信'
+          }
+        ],
+        // 过滤参数列表
+        FilterParameters: [
+          {
+            value: 'serviceName',
+            label: '服务器名称'
+          },{
+            value: 'serviceTable',
+            label: '时间名称'
+          },{
+            value: 'note',
+            label: '发生时间'
+          }],
+        //过滤参数
+        FilterParameter_value: '',
+        //查找输入框
+        CompleteValue:'',
+        //**************************新增***********************
+        dialogVisible: false,
+        form: {
+          serviceType: '',
+          serviceName: '',
+          serviceTable: '',
+          note: '',
+        },
         //*******************中间主体*******************
         //表格数据
         tableData: [],
@@ -190,6 +227,33 @@
         this.Find();
       },
       //************************新增与查找按钮************************
+      //新增功能弹窗的取消和确认
+      Cancel() {
+        this.$message('取消成功')
+      },
+      Confirm(id) {
+        //非空验证
+        if(id === ""){
+          this.dialogVisible = true;
+          this.$message.error('服务类型id不能为空');
+        }
+        else{
+          getOpDictServiceCreate(this.form).then(request=>{
+            if(request.data.body){
+              this.Find();
+              this.$message({
+                message: '新增成功',
+                type: 'success'
+              });
+            }else{
+              super.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          });
+        }
+      },
       //查找按钮的事件
       Find(){
         if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
@@ -204,34 +268,53 @@
           this.dealData()
         }
       },
+      //************************修改、删除按钮************************
+      //修改、删除后的表数据返回到以下两个函数
+      GetRevise(msg){
+        getOpDictServiceUpdate(msg).then(request=>{
+          if(request.data.body){
+            this.Find();
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            });
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+      },
+      GetDel(msg){
+        getOpDictServiceDelete(msg).then(request=>{
+          this.Find();
+          if(request.data.body){
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }else{
+            super.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
+      },
     },
     mounted(){
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
-      if(this.$route.params.msgServerData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
-        this.Find();
-      }
-      else {
-        if(this.$route.params.serverEventData !== undefined){
-          console.log()
-          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
-          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
-          this.Find();
-        }else{
-          this.dealData();
-        }
-      }
+      this.dealData();
     }
   }
 </script>
 
 <style scoped>
   #Header{
-    min-height: 3.5rem;
+    min-height: 4rem;
     background: #f1f3f4;
   }
   #Find{
