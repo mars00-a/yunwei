@@ -223,6 +223,36 @@ export const constantRoutes = [
       }
     ]
   },
+  //服务器查看
+  {
+    path: '/ServeerInfomation',
+    component: Layout,
+    redirect: '/ServerInfomation/CPU',
+    meta: { title: '服务器查看', icon: 'link' },
+    children: [
+      {
+        path: 'CPU',
+        name: 'CPU',
+        meta: { title: 'CPU使用实时状态', icon: 'link' },
+        component: () => import('@/views/ServerInfomation/CPU')
+      },{
+        path: 'disk',
+        name: 'disk',
+        meta: { title: '磁盘空间最新状态', icon: 'link' },
+        component: () => import('@/views/ServerInfomation/disk')
+      },{
+        path: 'hardware',
+        name: 'hardware',
+        meta: { title: '硬件实时状态', icon: 'link' },
+        component: () => import('@/views/ServerInfomation/hardware')
+      },{
+        path: 'ram',
+        name: 'ram',
+        meta: { title: '内存实时状态表', icon: 'link' },
+        component: () => import('@/views/ServerInfomation/ram')
+      }
+    ]
+  },
 ]
 
 /**
