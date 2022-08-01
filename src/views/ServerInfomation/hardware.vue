@@ -4,52 +4,20 @@
       <el-row id="Control">
         <!--过滤参数选择-->
         <el-col :span="6">
-          <span>用户姓名：</span>
+          <span>服务器IP：</span>
           <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--过滤参数选择-->
         <el-col :span="6">
-          <span>接收方式：</span>
-          <el-select v-model="ReceiveTypeSearchKeyword" placeholder="请选择">
-            <el-option
-              v-for="item in ReceiveTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <span>服务器名称：</span>
+          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="6">
-          <span>起始时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="beginTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择起始日期时间">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="6">
-          <span>截止时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="endTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择截止日期时间">
-          </el-date-picker>
-        </el-col>
-      </el-row>
-      <el-row :gutter="10" id="Control1">
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span id="FilterParameters">服务器名：</span>
-          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
-        </el-col>
-        <el-col :span="6">
-          <span>事件名称：</span>
-          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <span>设备名称：</span>
+          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="12">
+        <el-col :span="6">
           <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
         </el-col>
@@ -73,40 +41,48 @@
         <!--服务类型id：serviceType-->
         <el-table-column
           prop="receive.user.userName"
-          label="用户姓名"
+          label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
           prop="receive.receiveType"
           :formatter="receiveTypeFormat"
-          label="接收方式"
+          label="服务器IP"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
           prop="server.serverName"
-          label="服务器名称"
+          label="设备名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
           prop="opEvent.opcidName"
-          label="事件名称"
+          label="已使用比例(%)"
         >
         </el-table-column>
         <!--服务信息存放表：serviceTable-->
         <el-table-column
           prop="time"
-          label="发生时间"
+          label="已用空间(GB)"
         >
         </el-table-column>
-        <!--操作栏-->
         <el-table-column
-          label="操作" width="95">
-          <template slot-scope="scope">
-            <el-button type="primary">详情</el-button>
-          </template>
+          prop="time"
+          label="剩余空间(GB)"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="time"
+          label="总空间(GB)"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="time"
+          label="数据时间"
+        >
         </el-table-column>
       </el-table>
     </el-main>
@@ -169,40 +145,7 @@
         endTimeSearchKeyword:'',
         serverNameSearchKeyword: '',
         eventNameSearchKeyword: '',
-        ReceiveTypes: [
-          {
-            value: 1,
-            label: '邮箱'
-          },
-          {
-            value: 2,
-            label: '微信'
-          }
-        ],
-        // 过滤参数列表
-        FilterParameters: [
-          {
-            value: 'serviceName',
-            label: '服务器名称'
-          },{
-            value: 'serviceTable',
-            label: '时间名称'
-          },{
-            value: 'note',
-            label: '发生时间'
-          }],
-        //过滤参数
-        FilterParameter_value: '',
-        //查找输入框
-        CompleteValue:'',
         //**************************新增***********************
-        dialogVisible: false,
-        form: {
-          serviceType: '',
-          serviceName: '',
-          serviceTable: '',
-          note: '',
-        },
         //*******************中间主体*******************
         //表格数据
         tableData: [],
@@ -220,14 +163,6 @@
     },
     methods:{
       //************************分页************************
-      receiveTypeFormat(row){
-        if(row.receive.receiveType === 1){
-          return "邮箱"
-        }
-        if(row.receive.receiveType === 2){
-          return "微信"
-        }
-      },
       //处理页面初始数据
       dealData(){
         getUserEventLogPageList(this.currentPage,this.size).then(request=>{
@@ -256,33 +191,6 @@
         this.Find();
       },
       //************************新增与查找按钮************************
-      //新增功能弹窗的取消和确认
-      Cancel() {
-        this.$message('取消成功')
-      },
-      Confirm(id) {
-        //非空验证
-        if(id === ""){
-          this.dialogVisible = true;
-          this.$message.error('服务类型id不能为空');
-        }
-        else{
-          getOpDictServiceCreate(this.form).then(request=>{
-            if(request.data.body){
-              this.Find();
-              this.$message({
-                message: '新增成功',
-                type: 'success'
-              });
-            }else{
-              super.$message({
-                message: request.data.msg,
-                type: 'warning'
-              });
-            }
-          });
-        }
-      },
       //查找按钮的事件
       Find(){
         if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
@@ -297,44 +205,10 @@
           this.dealData()
         }
       },
-      //************************修改、删除按钮************************
-      //修改、删除后的表数据返回到以下两个函数
-      GetRevise(msg){
-        getOpDictServiceUpdate(msg).then(request=>{
-          if(request.data.body){
-            this.Find();
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            });
-          }else{
-            super.$message({
-              message: request.data.msg,
-              type: 'warning'
-            });
-          }
-        });
-      },
-      GetDel(msg){
-        getOpDictServiceDelete(msg).then(request=>{
-          this.Find();
-          if(request.data.body){
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          }else{
-            super.$message({
-              message: request.data.msg,
-              type: 'warning'
-            });
-          }
-        });
-      },
     },
     mounted(){
       this.myStyle = {
-        height: document.body.clientHeight-50-80-64-70+"px"
+        height: document.body.clientHeight-50-30-64-70+"px"
       };
       if(this.$route.params.msgServerData !== undefined){
         this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
@@ -358,19 +232,13 @@
 
 <style scoped>
   #Header{
-    min-height: 7rem;
+    min-height: 3.5rem;
     background: #f1f3f4;
   }
   #Find{
     margin-left: 1rem;
   }
   #Control{
-    margin-top: 0.8rem;
-  }
-  #Control1{
-    margin-top: 0.8rem;
-  }
-  #Control2{
     margin-top: 0.8rem;
   }
   /*设置分页属性*/
