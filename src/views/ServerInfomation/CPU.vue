@@ -1,55 +1,28 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <el-row id="Control">
+      <el-row :gutter="10" id="Control">
         <!--过滤参数选择-->
         <el-col :span="6">
-          <span>用户姓名：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
-        </el-col>
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span>接收方式：</span>
-          <el-select v-model="ReceiveTypeSearchKeyword" placeholder="请选择">
+          <span id="FilterParameters">过滤参数：</span>
+          <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
             <el-option
-              v-for="item in ReceiveTypes"
+              v-for="item in FilterParameters"
               :key="item.value"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
-          <span>起始时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="beginTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择起始日期时间">
-          </el-date-picker>
+        <!--查找输入框-->
+        <el-col :span="1">
+          <span id="Value">值：</span>
         </el-col>
-        <el-col :span="6">
-          <span>截止时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="endTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择截止日期时间">
-          </el-date-picker>
-        </el-col>
-      </el-row>
-      <el-row :gutter="10" id="Control1">
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span id="FilterParameters">服务器名：</span>
-          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
-        </el-col>
-        <el-col :span="6">
-          <span>事件名称：</span>
-          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+        <el-col :span="4">
+          <el-input v-model="CompleteValue" placeholder="请输入内容"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="12">
+        <el-col :span="13">
           <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
         </el-col>
@@ -73,40 +46,33 @@
         <!--服务类型id：serviceType-->
         <el-table-column
           prop="receive.user.userName"
-          label="用户姓名"
+          label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
           prop="receive.receiveType"
           :formatter="receiveTypeFormat"
-          label="接收方式"
+          label="服务器IP"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
           prop="server.serverName"
-          label="服务器名称"
+          label="CPU名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
           prop="opEvent.opcidName"
-          label="事件名称"
+          label="已使用比例（%）"
         >
         </el-table-column>
         <!--服务信息存放表：serviceTable-->
         <el-table-column
           prop="time"
-          label="发生时间"
+          label="数据采集时间"
         >
-        </el-table-column>
-        <!--操作栏-->
-        <el-table-column
-          label="操作" width="95">
-          <template slot-scope="scope">
-            <el-button type="primary">详情</el-button>
-          </template>
         </el-table-column>
       </el-table>
     </el-main>
@@ -334,31 +300,16 @@
     },
     mounted(){
       this.myStyle = {
-        height: document.body.clientHeight-50-80-64-70+"px"
+        height: document.body.clientHeight-50-30-64-70+"px"
       };
-      if(this.$route.params.msgServerData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
-        this.Find();
-      }
-      else {
-        if(this.$route.params.serverEventData !== undefined){
-          console.log()
-          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
-          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
-          this.Find();
-        }else{
-          this.dealData();
-        }
-      }
+      this.dealData();
     }
   }
 </script>
 
 <style scoped>
   #Header{
-    min-height: 7rem;
+    min-height: 3rem;
     background: #f1f3f4;
   }
   #Find{

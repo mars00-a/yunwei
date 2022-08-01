@@ -1,55 +1,22 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <el-row id="Control">
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span>用户姓名：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
-        </el-col>
-        <!--过滤参数选择-->
-        <el-col :span="6">
-          <span>接收方式：</span>
-          <el-select v-model="ReceiveTypeSearchKeyword" placeholder="请选择">
-            <el-option
-              v-for="item in ReceiveTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6">
-          <span>起始时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="beginTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择起始日期时间">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="6">
-          <span>截止时间：</span>
-          <el-date-picker
-            :style="controlWidth.control1width"
-            v-model="endTimeSearchKeyword"
-            type="datetime"
-            placeholder="选择截止日期时间">
-          </el-date-picker>
-        </el-col>
-      </el-row>
       <el-row :gutter="10" id="Control1">
         <!--过滤参数选择-->
         <el-col :span="6">
-          <span id="FilterParameters">服务器名：</span>
+          <span id="FilterParameters">服务器名称：</span>
           <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="6">
-          <span>事件名称：</span>
+          <span>服务器IP：</span>
+          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+        </el-col>
+        <el-col :span="6">
+          <span>磁盘名称：</span>
           <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="12">
+        <el-col :span="6">
           <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="primary" @click="dealData()">恢复</el-button>
         </el-col>
@@ -70,43 +37,55 @@
           label="序号"
         >
         </el-table-column>
-        <!--服务类型id：serviceType-->
+        <!--服务器名称：serviceType-->
         <el-table-column
           prop="receive.user.userName"
-          label="用户姓名"
-        >
-        </el-table-column>
-        <!--接收方式-->
-        <el-table-column
-          prop="receive.receiveType"
-          :formatter="receiveTypeFormat"
-          label="接收方式"
-        >
-        </el-table-column>
-        <!--服务类型id：serviceType-->
-        <el-table-column
-          prop="server.serverName"
           label="服务器名称"
         >
         </el-table-column>
-        <!--服务类型名称：serviceName-->
+        <!--服务器IP-->
+        <el-table-column
+          prop="receive.receiveType"
+          width="140"
+          label="服务器IP"
+        >
+        </el-table-column>
+        <!--磁盘名称：serviceType-->
+        <el-table-column
+          width="120"
+          prop="server.serverName"
+          label="磁盘名称"
+        >
+        </el-table-column>
+        <!--总空间(GB)：serviceName-->
         <el-table-column
           prop="opEvent.opcidName"
-          label="事件名称"
+          label="总空间(GB)"
         >
         </el-table-column>
-        <!--服务信息存放表：serviceTable-->
+        <!--剩余空间(GB)：serviceTable-->
         <el-table-column
           prop="time"
-          label="发生时间"
+          label="剩余空间(GB)"
         >
         </el-table-column>
-        <!--操作栏-->
+        <!--已占用比例(%)：serviceTable-->
         <el-table-column
-          label="操作" width="95">
-          <template slot-scope="scope">
-            <el-button type="primary">详情</el-button>
-          </template>
+          prop="time"
+          label="已占用比例(%)"
+        >
+        </el-table-column>
+        <!--已占用空间(GB)：serviceTable-->
+        <el-table-column
+          prop="time"
+          label="已占用空间(GB)"
+        >
+        </el-table-column>
+        <!--数据时间：serviceTable-->
+        <el-table-column
+          prop="time"
+          label="数据时间"
+        >
         </el-table-column>
       </el-table>
     </el-main>
@@ -220,14 +199,6 @@
     },
     methods:{
       //************************分页************************
-      receiveTypeFormat(row){
-        if(row.receive.receiveType === 1){
-          return "邮箱"
-        }
-        if(row.receive.receiveType === 2){
-          return "微信"
-        }
-      },
       //处理页面初始数据
       dealData(){
         getUserEventLogPageList(this.currentPage,this.size).then(request=>{
@@ -334,31 +305,16 @@
     },
     mounted(){
       this.myStyle = {
-        height: document.body.clientHeight-50-80-64-70+"px"
+        height: document.body.clientHeight-50-30-64-70+"px"
       };
-      if(this.$route.params.msgServerData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
-        this.Find();
-      }
-      else {
-        if(this.$route.params.serverEventData !== undefined){
-          console.log()
-          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
-          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
-          this.Find();
-        }else{
-          this.dealData();
-        }
-      }
+      this.dealData();
     }
   }
 </script>
 
 <style scoped>
   #Header{
-    min-height: 7rem;
+    min-height: 4rem;
     background: #f1f3f4;
   }
   #Find{
