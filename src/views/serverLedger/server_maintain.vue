@@ -36,6 +36,7 @@
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow"
+        @row-dblclick="gotoDetails"
         :cell-class-name="tableCellClassName">
         <!--序号-->
         <el-table-column
@@ -677,6 +678,10 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
       //鼠标放到某一行上就触发
       getNowRow(row){
         this.nowRow = row.index+1+(this.currentPage-1)*this.size;
+      },
+      //鼠标双击某行触发
+      gotoDetails(row){
+        this.$router.push({name:'Details',params:{ServerId:row.serverId}});
       },
       //每页最大条数
       handleSizeChange(val) {

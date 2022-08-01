@@ -189,6 +189,12 @@ export const constantRoutes = [
         component: () => import('@/views/serverLedger/service_maintain')
       },
       {
+        path: 'Details',
+        name: 'Details',
+        meta: { title: '服务器详情', icon: 'link' },
+        component: () => import('@/views/serverLedger/Details')
+      },
+      {
         path: 'csr',
         name: 'csr',
         meta: { title: '程思睿', icon: 'link' },
