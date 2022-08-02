@@ -17,7 +17,8 @@ export default {
     }
   },
   mounted(){
-    console.log('csr',this)
+    let s=Symbol();
+    console.log(s)
   }
 }
 </script>

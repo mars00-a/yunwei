@@ -1,30 +1,21 @@
 <template>
   <el-container>
     <el-header id="Header">
-      <el-row :gutter="10" id="Control">
-        <!--过滤参数选择-->
+      <el-row id="Control">
         <el-col :span="6">
-          <span id="FilterParameters">过滤参数：</span>
-          <el-select v-model="FilterParameter_value" placeholder="请选择" title="过滤参数:" id="FilterBox">
-            <el-option
-              v-for="item in FilterParameters"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <span id="FilterParameters">服务器名称：</span>
+          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
-        <!--查找输入框-->
-        <el-col :span="1">
-          <span id="Value">值：</span>
-        </el-col>
-        <el-col :span="4">
-          <el-input v-model="CompleteValue" placeholder="请输入内容"/>
+        <el-col :span="6">
+          <span>服务器IP：</span>
+          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="13">
-          <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
-          <el-button type="primary" @click="dealData()">恢复</el-button>
+        <el-col :span="12">
+          <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
+          <el-button type="success" icon="el-icon-refresh" @click="dealData()">恢复</el-button>
+          <el-button type="info" icon="el-icon-edit-outline">导出</el-button>
+          <el-button type="primary" icon="el-icon-tickets">打印</el-button>
         </el-col>
       </el-row>
     </el-header>

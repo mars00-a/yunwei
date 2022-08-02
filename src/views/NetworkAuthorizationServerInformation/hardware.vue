@@ -3,23 +3,25 @@
     <el-header id="Header">
       <el-row id="Control">
         <!--过滤参数选择-->
-        <el-col :span="6">
+        <el-col :span="5">
           <span>服务器IP：</span>
           <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--过滤参数选择-->
-        <el-col :span="6">
+        <el-col :span="5">
           <span>服务器名称：</span>
           <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="5">
           <span>设备名称：</span>
           <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
-        <el-col :span="6">
-          <el-button type="primary" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
-          <el-button type="primary" @click="dealData()">恢复</el-button>
+        <el-col :span="8">
+          <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
+          <el-button type="success" icon="el-icon-refresh" @click="dealData()">恢复</el-button>
+          <el-button type="info" icon="el-icon-edit-outline">导出</el-button>
+          <el-button type="primary" icon="el-icon-tickets">打印</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -132,7 +134,7 @@
             width: "66%"
           },
           control2width:{
-            width: "63%"
+            width: "60%"
           },
         },
         myStyle:{
