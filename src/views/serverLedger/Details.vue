@@ -1,16 +1,16 @@
 <template>
   <el-container>
-    <el-header id="header">Header</el-header>
+    <el-header id="header">{{DetailTitle}}服务器详情</el-header>
     <el-container>
-      <el-aside id="aside">
+      <el-aside id="aside" :style="MyStyle.Aside" width="30%">
         <Aside/>
       </el-aside>
-      <el-main>
+      <el-main :style="MyStyle.Main">
         <el-tabs type="border-card">
-          <el-tab-pane label="消息中心"><StatisticsTab/></el-tab-pane>
-          <el-tab-pane label="角色管理"><ServiceTab/></el-tab-pane>
-          <el-tab-pane label="定时任务补偿"><EchartsTab/></el-tab-pane>
-          <el-tab-pane label="定时任务补偿"><StatusTab/></el-tab-pane>
+          <el-tab-pane label="服务器状态"><StatusTab/></el-tab-pane>
+          <el-tab-pane label="统计信心"><StatisticsTab/></el-tab-pane>
+          <el-tab-pane label="服务信息"><ServiceTab/></el-tab-pane>
+          <el-tab-pane label="数据统计"><EchartsTab/></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -31,6 +31,21 @@
       ServiceTab,
       EchartsTab,
       StatusTab
+    },
+    data(){
+      return{
+        //整体样式
+        MyStyle:{
+          Main:{height:''},
+          Aside:{height:''}
+        },
+        DetailTitle:'',
+      }
+    },
+    mounted(){
+      this.MyStyle.Main.height = document.body.clientHeight-45-64-70+"px";
+      this.MyStyle.Aside.height = document.body.clientHeight-45-64-70+"px";
+      this.DetailTitle = "xxxx"
     }
   }
 </script>
@@ -38,11 +53,13 @@
 <style scoped>
   #header{
     width: 100%;
-    height: 3rem;
     background: #f1f3f4;
+    font-size: 1.5rem;
+    text-align: center;
+    padding-top: 1rem;
+
   }
   #aside{
-    width: 40%;
-    height: 50rem;
+    margin-top: 0.5rem;
   }
 </style>
