@@ -5,12 +5,12 @@
       <el-aside id="aside" :style="MyStyle.Aside" width="30%">
         <Aside/>
       </el-aside>
-      <el-main :style="MyStyle.Main">
+      <el-main :style="MyStyle.Main" >
         <el-tabs type="border-card">
-          <el-tab-pane label="服务器状态"><StatusTab/></el-tab-pane>
-          <el-tab-pane label="统计信心"><StatisticsTab/></el-tab-pane>
-          <el-tab-pane label="服务信息"><ServiceTab/></el-tab-pane>
-          <el-tab-pane label="数据统计"><div style="height: 100rem"><EchartsTab/></div></el-tab-pane>
+          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab/></div></el-tab-pane>
+          <el-tab-pane label="统计信心"><div :style="MyStyle.Tab"><StatisticsTab/></div></el-tab-pane>
+          <el-tab-pane label="服务信息"><div :style="MyStyle.Tab"><ServiceTab/></div></el-tab-pane>
+          <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab/></div></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -36,8 +36,9 @@
       return{
         //整体样式
         MyStyle:{
-          Main:{height:''},
-          Aside:{height:''}
+          Main:{height:'',paddingRight:'3.3rem'},
+          Aside:{height:''},
+          Tab:{hei:''}
         },
         DetailTitle:'',
       }
@@ -45,6 +46,7 @@
     mounted(){
       this.MyStyle.Main.height = document.body.clientHeight-45-64-70+"px";
       this.MyStyle.Aside.height = document.body.clientHeight-45-64-70+"px";
+      this.MyStyle.Tab.height = document.body.clientHeight-45-100-64-70+"px";
       this.DetailTitle = "xxxx"
     }
   }
@@ -60,6 +62,10 @@
 
   }
   #aside{
+    background: white;
     margin-top: 0.5rem;
+  }
+  >>>.el-main{
+    padding-bottom: 0
   }
 </style>
