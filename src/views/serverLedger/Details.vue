@@ -10,7 +10,7 @@
           <el-tab-pane label="服务器状态"><StatusTab/></el-tab-pane>
           <el-tab-pane label="统计信心"><StatisticsTab/></el-tab-pane>
           <el-tab-pane label="服务信息"><ServiceTab/></el-tab-pane>
-          <el-tab-pane label="数据统计"><EchartsTab/></el-tab-pane>
+          <el-tab-pane label="数据统计"><div style="height: 100rem"><EchartsTab/></div></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
