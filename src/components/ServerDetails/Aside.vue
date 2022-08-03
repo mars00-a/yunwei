@@ -2,7 +2,7 @@
   <div class="myBody">
     <el-descriptions
       class="margin-top"
-      :column="1"
+      :column="2"
       border
       title="服务器详细信息"
     >
@@ -42,7 +42,7 @@
         </template>
         kooriookami
       </el-descriptions-item>
-      <el-descriptions-item>
+      <el-descriptions-item :span="2">
         <template slot="label">
           本天/周/月报警总数
         </template>
@@ -61,13 +61,36 @@
         kooriookami
       </el-descriptions-item>
     </el-descriptions>
-    <div class="buttonDiv">
-      <el-button class="" type="primary" v-for="(s,index) in serviceList" :key="s.serviceId">{{ s.serviceName }}</el-button>
-    </div>
+<!--    <div class="buttonDiv">-->
+<!--      <el-button class="" type="primary" v-for="(s,index) in serviceList" :key="s.serviceId">{{ s.serviceName }}</el-button>-->
+<!--    </div>-->
+    <span style="font-weight: bold">服务器安装的服务列表</span>
+    <el-table
+      :data="tableData"
+      height="270"
+      border
+      @row-click="clickRow"
+      style="width: 100%">
+      <el-table-column
+        prop="serviceId"
+        label="服务id">
+      </el-table-column>
+      <el-table-column
+        prop="serviceName"
+        label="服务名称">
+      </el-table-column>
+      <el-table-column
+        prop="serviceType"
+        label="服务类型"
+        :formatter="dealServiceType">
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
+    import {getServiceFindServerId} from "@/api/serverLedger";
+
     export default {
         name: "aside",
       data(){
@@ -90,17 +113,43 @@
               name: '王小虎',
               address: '上海市普陀区金沙江路 1516 弄'
             }],
-            serviceList: [
-              {
-                serviceId:1,
-                serviceName:'金华江南保安3000系统'
-              },
-              {
-                serviceId:2,
-                serviceName:'西安曲长春3000系统'
-              },
-            ],
+            serviceList: [],
           }
+      },
+      methods:{
+        // 处理服务类型的展示
+        dealServiceType(row){
+          switch (row.serviceType){
+            case 1:
+              return "1-安防服务（3000）";
+            case 2:
+              return "2-智慧用电服务";
+            case 3:
+              return "3-巡更巡检服务";
+            case 4:
+              return "4-微信服务";
+            case 5:
+              return "5-APP服务";
+            case 6:
+              return "6-短信网关服务";
+            case 7:
+              return "7-第三方短信服务";
+            case 8:
+              return "8-2030N语音服务";
+            case 9:
+              return "9-第三方语音服务";
+          }
+        },
+        // 点击服务列表的某一行
+        clickRow(row){
+          console.log("点击了服务列表某一行，id为：",row.serviceId)
+          this.$emit("clickRow",row.serviceId);
+        }
+      },
+      mounted() {
+        getServiceFindServerId(this.$route.params.serverId,1,1000).then(request => {
+          this.tableData = request.data.body.data;
+        })
       }
     }
 </script>
