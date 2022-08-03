@@ -58,6 +58,22 @@
       this.CPU = ['0.1', '0.5', '0.6', '0.7', '0.2', '0.3'];
       this.physicalMemory = ['0.5', '0.1', '0.3', '0.8', '0.9', '1'];
       this.init()
+    },
+    watch:{
+      'Date':{
+        immediate:true,
+        handler(val){
+          if(this.Date[1]-this.Date[0] > 2*60*60*1000){
+            this.Date[1] = this.Date[0]+2*60*60*1000;
+          }
+          if(this.Date[1]-this.Date[0] <= 20*60*1000 && this.Date[1]-this.Date[0] >= 10*60*1000){
+
+          }
+        }
+      }
+    },
+    props:{
+      Date:Array,
     }
   }
 </script>

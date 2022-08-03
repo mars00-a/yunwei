@@ -57,9 +57,9 @@
                 </el-date-picker>
               </el-col>
             </el-row>
-            <EchartsTab />
+            <EchartsTab :Date="[this.beginTimeSearchKeyword,this.endTimeSearchKeyword]"/>
           </div></el-tab-pane>
-          <el-tab-pane label="异常消息推送"><div :style="MyStyle.Tab"><Abnormal/></div></el-tab-pane>
+          <el-tab-pane label="异常消息推送"><div :style="MyStyle.Tab"><Abnormal :row="this.$route.params.row"/></div></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
