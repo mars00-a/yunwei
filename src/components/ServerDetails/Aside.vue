@@ -36,18 +36,6 @@
         </template>
         {{ serverDetailedInfo.contactPhone }}
       </el-descriptions-item>
-      <el-descriptions-item :span="2">
-        <template slot="label">
-          本天/周/月报警总数
-        </template>
-        181000000000000000
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">
-          正常运行时长
-        </template>
-        18100000000
-      </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
           当前状态

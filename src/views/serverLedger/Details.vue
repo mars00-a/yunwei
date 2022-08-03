@@ -39,6 +39,8 @@
             </div>
           </div></el-tab-pane>
           <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab /></div></el-tab-pane>
+          <el-tab-pane label="业务状态统计"><div :style="MyStyle.Tab"></div></el-tab-pane>
+          <el-tab-pane label="异常信息"><div :style="MyStyle.Tab"></div></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -85,7 +87,7 @@ export default {
         Tab: { hei: '' }
       },
       DetailTitle: '',
-      ServerType: 1,
+      ServerType: '',
       Tabs: '',
       // 点击左侧的某一行服务时，row就在这里
       myRow:{},
@@ -93,8 +95,9 @@ export default {
   },
   methods:{
     clickRow(row){
-      this.ServerType = row.serviceType
-      this.myRow = row
+      this.ServerType = row.serviceType;
+      this.myRow = row;
+      this.Tabs = '2';
     }
   },
   mounted() {

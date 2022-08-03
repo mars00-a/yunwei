@@ -127,11 +127,21 @@
         form: {}
       }
     },
-    mounted() {
-      this.serviceId = ''
-      getOpsvSmartHomeByService(this.serviceId).then(request => {
-
-      })
+    props:{
+      myRow:Object
+    },
+    watch:{
+      'myRow':{
+        immediate:true,
+        handler(val){
+          if(val){
+            this.serviceId = val.serviceId;
+            getOpsvSmartHomeByService(this.serviceId).then(request => {
+              this.form = request.data.body
+            })
+          }
+        }
+      }
     }
   }
 </script>

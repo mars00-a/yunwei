@@ -5,25 +5,46 @@
   import * as echarts from 'echarts';
   export default {
     name: "echartsTab",
-    mounted(){
-      this.init()
+    data(){
+      return{
+        xAxisData:[],
+        CPU:[],
+        physicalMemory:[]
+      }
     },
     methods:{
       init(){
-        var chartDom = document.getElementById('main');
-        var myChart = echarts.init(chartDom);
-        var option;
+        let chartDom = document.getElementById('main');
+        let myChart = echarts.init(chartDom);
+        let option;
         option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
           xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            boundaryGap: false,
+            data: this.xAxisData
           },
           yAxis: {
             type: 'value'
           },
           series: [
             {
-              data: [820, 932, 901, 934, 1290, 1330, 1320],
+              name:'CPU',
+              data: this.CPU,
+              type: 'line',
+              smooth: true
+            },
+            {
+              name:'物理内存',
+              data: this.physicalMemory,
               type: 'line',
               smooth: true
             }
@@ -31,6 +52,12 @@
         };
         myChart.setOption(option);
       }
+    },
+    mounted(){
+      this.xAxisData = ['一小时前', '四十五分钟前', '半小时前', '十五分钟前', '现在'];
+      this.CPU = ['0.1', '0.5', '0.6', '0.7', '0.2', '0.3'];
+      this.physicalMemory = ['0.5', '0.1', '0.3', '0.8', '0.9', '1'];
+      this.init()
     }
   }
 </script>

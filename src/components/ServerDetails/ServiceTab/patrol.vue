@@ -103,10 +103,21 @@
         form: {}
       }
     },
-    mounted() {
-      this.serviceId = ''
-      getOpsvPatrolByService(this.serviceId).then(request => {
-      })
+    props:{
+      myRow:Object
+    },
+    watch:{
+      'myRow':{
+        immediate:true,
+        handler(val){
+          if(val){
+            this.serviceId = val.serviceId;
+            getOpsvPatrolByService(this.serviceId).then(request => {
+              this.form = request.data.body
+            })
+          }
+        }
+      }
     }
   }
 </script>

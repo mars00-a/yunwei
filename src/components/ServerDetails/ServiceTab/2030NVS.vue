@@ -52,24 +52,15 @@
     props:{
       myRow:Object
     },
-    methods:{
-      initTable(){
-        getOpsv2030NvsByService(this.serviceId).then(request => {
-          this.form = request.data.body.data
-        })
-      }
-    },
-    mounted() {
-      this.serviceId = this.myRow.serviceId
-      this.initTable()
-    },
     watch:{
       'myRow':{
         immediate:true,
         handler(val){
           if(val){
-            this.serviceId = row.serviceId
-            this.initTable()
+            this.serviceId = val.serviceId;
+            getOpsv2030NvsByService(this.serviceId).then(request => {
+              this.form = request.data.body
+            })
           }
         }
       }
