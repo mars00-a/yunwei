@@ -1,5 +1,5 @@
 <template>
-  <el-descriptions class="margin-top" title="xxx服务信息" :column="2" size="small " border>
+  <el-descriptions class="margin-top" title="安防服务信息" :column="2" size="small " border>
     <el-descriptions-item>
       <template slot="label">
         服务实例ID

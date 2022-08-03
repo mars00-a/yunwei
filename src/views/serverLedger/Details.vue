@@ -2,13 +2,12 @@
   <el-container>
     <el-header id="header">{{DetailTitle}}服务器详情</el-header>
     <el-container>
-      <el-aside id="aside" :style="MyStyle.Aside" width="30%">
+      <el-aside id="aside" :style="MyStyle.Aside" width="35%">
         <Aside/>
       </el-aside>
       <el-main :style="MyStyle.Main" >
         <el-tabs type="border-card">
           <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab/></div></el-tab-pane>
-          <el-tab-pane label="统计信心"><div :style="MyStyle.Tab"><StatisticsTab/></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab"><ServiceTab/></div></el-tab-pane>
           <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab/></div></el-tab-pane>
         </el-tabs>
@@ -47,7 +46,9 @@
       this.MyStyle.Main.height = document.body.clientHeight-45-64-70+"px";
       this.MyStyle.Aside.height = document.body.clientHeight-45-64-70+"px";
       this.MyStyle.Tab.height = document.body.clientHeight-45-100-64-70+"px";
-      this.DetailTitle = "xxxx"
+      if(this.$route.params.ServerId !== undefined){
+        this.DetailTitle = this.$route.params.ServerId;
+      }
     }
   }
 </script>
