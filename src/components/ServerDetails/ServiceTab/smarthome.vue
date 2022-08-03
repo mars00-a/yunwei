@@ -4,135 +4,136 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         版本信息
       </template>
-      kooriookami
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template slot="label">
-        版本信息
-      </template>
-      kooriookami
+      {{form.version}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         小程序版本
       </template>
-      kooriookami
+      {{form.appVersion}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库IP
       </template>
-      kooriookami
+      {{form.mysqlIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.mysqlPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库用户名
       </template>
-      kooriookami
+      {{form.mysqlUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      kooriookami
+      {{form.mysqlPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库IP
       </template>
-      kooriookami
+      {{form.influxdbIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.influxdbPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库用户名
       </template>
-      kooriookami
+      {{form.influxdbUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      kooriookami
+      {{form.influxdbPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权方式
       </template>
-      kooriookami
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template slot="label">
-        授权方式
-      </template>
-      kooriookami
+      {{form.authorize}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权时间
       </template>
-      kooriookami
+      {{form.authorizeTime}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权状态
       </template>
-      kooriookami
+      {{form.authorizeStatus}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权数目
       </template>
-      kooriookami
+      {{form.authorizeNum}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权人员
       </template>
-      kooriookami
+      {{form.authorizePerson}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         备注
       </template>
-      kooriookami
+      {{form.note}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "smarthome"
+  import { getOpsvSmartHomeByService } from '@/api/serverLedger'
+  export default {
+    name: "smarthome",
+    data(){
+      return{
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvSmartHomeByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>

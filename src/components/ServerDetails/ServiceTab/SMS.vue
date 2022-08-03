@@ -4,57 +4,70 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务IP
       </template>
-      kooriookami
+      {{form.serviceIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务端口
       </template>
-      kooriookami
+      {{form.servicePort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         节点ID
       </template>
-      kooriookami
+      {{form.nodeId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         用户名
       </template>
-      kooriookami
+      {{form.user}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         密码
       </template>
-      kooriookami
+      {{form.pwd}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "s-m-s"
+  import { getOpsvSmsByService } from '@/api/serverLedger'
+  export default {
+    name: "s-m-s",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvSmsByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>

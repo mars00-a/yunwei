@@ -4,99 +4,111 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库类型
       </template>
-      kooriookami
+      {{form.dbType}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库IP
       </template>
-      kooriookami
+      {{form.dbIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.dbPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库用户名
       </template>
-      kooriookami
+      {{form.dbUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      kooriookami
+      {{form.dbPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         版本信息
       </template>
-      kooriookami
+      {{form.version}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权方式
       </template>
-      kooriookami
+      {{form.authorize}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权时间
       </template>
-      kooriookami
+      {{form.authorizeTime}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权状态
       </template>
-      kooriookami
+      {{form.authorizeStatus}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权数目
       </template>
-      kooriookami
+      {{form.authorizeNum}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权人员
       </template>
-      kooriookami
+      {{form.authorizePerson}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         公司备注信息
       </template>
-      kooriookami
+      {{form.note}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "patrol"
+  import { getOpsvPatrolByService } from '@/api/serverLedger'
+  export default {
+    name: "patrol",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvPatrolByService(this.serviceId).then(request => {
+      })
     }
+  }
 </script>
 
 <style scoped>

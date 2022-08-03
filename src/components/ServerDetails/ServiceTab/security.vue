@@ -4,121 +4,121 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      18100000000
+      {{form.dbPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权数目
       </template>
-      苏州市
+      {{form.authorizeNum}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         软件名称
       </template>
-      18100000000
+      {{form.software}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权人员
       </template>
-      苏州市
+      {{form.authorizePerson}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         版本信息
       </template>
-      18100000000
+      {{form.version}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         客户数量
       </template>
-      苏州市
+      {{form.clientNum}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库类型
       </template>
-      kooriookami
+      {{form.dbType}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权方式
       </template>
-      18100000000
+      {{form.authorize}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         是否巡检
       </template>
-      苏州市
+      {{form.ispatrol}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库IP
       </template>
-      kooriookami
+      {{form.dbIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权时间
       </template>
-      18100000000
+      {{form.authorizeTime}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         是否永久授权
       </template>
-      苏州市
+      {{form.isPermanentAuthorize}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.dbPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权状态
       </template>
-      18100000000
+      {{form.authorizeStatus}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         备注
       </template>
-      苏州市
+      {{form.note}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库名称
       </template>
-      kooriookami
+      {{form.dbUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         过期时间
       </template>
-      18100000000
+      {{form.expireDate}}
     </el-descriptions-item>
   </el-descriptions>
 </template>

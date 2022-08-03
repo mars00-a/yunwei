@@ -11,7 +11,7 @@
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab /></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
-              <security />
+              <security/>
             </div>
             <div v-if="ServerType === 2">
               <smarthome />

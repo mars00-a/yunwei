@@ -4,117 +4,130 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         中心ID
       </template>
-      kooriookami
+      {{form.centerId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         域名
       </template>
-      kooriookami
+      {{form.domain}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         FTP/IP
       </template>
-      kooriookami
+      {{form.ftpIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         FTP/UserName
       </template>
-      kooriookami
+      {{form.ftpUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         FTP/Password
       </template>
-      kooriookami
+      {{form.ftpPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         微信公众号用户名
       </template>
-      kooriookami
+      {{form.wxUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         微信公众号密码
       </template>
-      kooriookami
+      {{form.wxPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         授权密钥
       </template>
-      kooriookami
+      {{form.wxAuthkey}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         Appid
       </template>
-      kooriookami
+      {{form.wxAppid}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         AppSecret
       </template>
-      kooriookami
+      {{form.wxAppsecret}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务器固定IP
       </template>
-      kooriookami
+      {{form.serverIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.dbPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库用户名
       </template>
-      kooriookami
+      {{form.dbUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      kooriookami
+      {{form.dbPwd}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         公司备注信息
       </template>
-      kooriookami
+      {{form.note}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "weixin"
+  import { getOpsvWeixinByService } from '@/api/serverLedger'
+  export default {
+    name: "weixin",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvWeixinByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>

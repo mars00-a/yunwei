@@ -4,45 +4,58 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         2030设备GUID
       </template>
-      kooriookami
+      {{form._2030Guid}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         手机卡号
       </template>
-      kooriookami
+      {{form.phoneNum}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         通道号
       </template>
-      kooriookami
+      {{form.channelNum}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "2030-n-v-s"
+  import { getOpsv2030NvsByService } from '@/api/serverLedger'
+  export default {
+    name: "2030-n-v-s",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsv2030NvsByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>

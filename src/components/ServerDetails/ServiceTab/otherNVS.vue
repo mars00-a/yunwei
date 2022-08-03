@@ -4,45 +4,58 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         http地址
       </template>
-      kooriookami
+      {{form.http}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         账号
       </template>
-      kooriookami
+      {{form.user}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         密码
       </template>
-      kooriookami
+      {{form.pwd}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "other-n-v-s"
+  import { getOpsvOtherVsByService } from '@/api/serverLedger'
+  export default {
+    name: "other-n-v-s",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvOtherVsByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>

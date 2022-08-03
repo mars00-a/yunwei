@@ -4,69 +4,82 @@
       <template slot="label">
         服务实例ID
       </template>
-      kooriookami
+      {{form.serviceId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务名称
       </template>
-      kooriookami
+      {{form.serviceName}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         安装的服务器ID
       </template>
-      kooriookami
+      {{form.serverId}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         域名
       </template>
-      kooriookami
+      {{form.url}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务IP
       </template>
-      kooriookami
+      {{form.serviceIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         服务端口
       </template>
-      kooriookami
+      {{form.servicePort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库IP
       </template>
-      kooriookami
+      {{form.mysqlIp}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库端口
       </template>
-      kooriookami
+      {{form.mysqlPort}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库用户名
       </template>
-      kooriookami
+      {{form.mysqlUser}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
         数据库密码
       </template>
-      kooriookami
+      {{form.mysqlPwd}}
     </el-descriptions-item>
   </el-descriptions>
 </template>
 
 <script>
-    export default {
-        name: "a-p-p"
+  import { getOpsvAppByService } from '@/api/serverLedger'
+  export default {
+    name: "a-p-p",
+    data() {
+      return {
+        serviceId: '',
+        form: {}
+      }
+    },
+    mounted() {
+      this.serviceId = ''
+      getOpsvAppByService(this.serviceId).then(request => {
+
+      })
     }
+  }
 </script>
 
 <style scoped>
