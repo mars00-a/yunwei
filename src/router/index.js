@@ -194,12 +194,6 @@ export const constantRoutes = [
         meta: { title: '服务器详情', icon: 'link' },
         component: () => import('@/views/serverLedger/Details')
       },
-      {
-        path: 'csr',
-        name: 'csr',
-        meta: { title: '程思睿', icon: 'link' },
-        component: () => import('@/views/serverLedger/csr')
-      }
     ]
   },
   // 服务器台账

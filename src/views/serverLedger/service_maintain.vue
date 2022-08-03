@@ -237,7 +237,7 @@
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="visables.dialogAddCustomerVisible = true">新 增</el-button>
+        <el-button type="success" @click="AddCustomer">新 增</el-button>
         <el-button type="primary" @click="myConfirm()">确 定</el-button>
       </span>
     </el-dialog>
@@ -985,7 +985,7 @@ import {
   getOpsvPatrolByService, getOpsvSmartHomeByService, getOpsvSmsByService,getOpsvWeixinByService,getOpServiceUpdate,
   getOpsvSecurityDelete, getOpsv2030NvsDelete, getOpsvAppDelete, getOpsvOtherSmsDelete, getOpsvOtherVsDelete,
   getOpsvPatrolDelete, getOpsvSmartHomeDelete, getOpsvSmsDelete,getOpsvWeixinDelete,getOpCustomerByService,getOpCustomerServicesCreate,
-  getOpCustomerServicesDelete
+  getOpCustomerServicesDelete,getOpCustomerServicesUnBindServiceList,getOpCustomerServicesUnBindCustomerList
 } from '@/api/serverLedger'
 import {getOpDictSignalCreate} from "@/api/opdict";
   export default {
@@ -1118,61 +1118,9 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           // 添加用户时搜索的关键字
           searchCustomerKeyword: '',
           // 所有的客户信息
-          allCustomerInfos: [
-            {
-              customerId: "001",
-              areaManager: "黄奇峰",
-              company: "湖北邮政",
-              contactPhone: "123456789",
-              revisitTime: "2022.7.1",
-              address: "湖北武汉",
-              note: "无"
-            }, {
-              customerId: "002",
-              areaManager: "张三",
-              company: "武汉食品有限",
-              contactPhone: "98711234",
-              revisitTime: "2002.1.1",
-              address: "武汉孝感",
-              note: "暂无"
-            }, {
-              customerId: "003",
-              areaManager: "李四",
-              company: "广东深圳视频加工",
-              contactPhone: "238261675",
-              revisitTime: "1999.12.12",
-              address: "广东深圳",
-              note: "视频处理厂"
-            },
-          ],
+          allCustomerInfos: [],
           // 经过搜索的客户信息
-          searchAllCustomerInfos: [
-            {
-              customerId: "001",
-              areaManager: "黄奇峰",
-              company: "湖北邮政",
-              contactPhone: "123456789",
-              revisitTime: "2022.7.1",
-              address: "湖北武汉",
-              note: "无"
-            }, {
-              customerId: "002",
-              areaManager: "张三",
-              company: "武汉食品有限",
-              contactPhone: "98711234",
-              revisitTime: "2002.1.1",
-              address: "武汉孝感",
-              note: "暂无"
-            }, {
-              customerId: "003",
-              areaManager: "李四",
-              company: "广东深圳视频加工",
-              contactPhone: "238261675",
-              revisitTime: "1999.12.12",
-              address: "广东深圳",
-              note: "视频处理厂"
-            },
-          ],
+          searchAllCustomerInfos: [],
           selectServiceList:[],
         },
         // 授权数目列表
@@ -1328,6 +1276,14 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       clickAdd(){
         this.visables.dialogChooseServiceType = true
         this.addOrRevise = 0
+      },
+      AddCustomer(){
+        this.visables.dialogAddCustomerVisible = true
+        // 获取未绑定该服务的客户列表
+        getOpCustomerServicesUnBindCustomerList(this.controlServiceId).then(request=>{
+          this.customerForm.searchAllCustomerInfos = request.data.body;
+          this.customerForm.allCustomerInfos = request.data.body;
+        });
       },
       // ***********************修改按钮
       clickRevise(row){
@@ -2233,11 +2189,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
-      // 获取所有客户信息表
-      getAllCustomer().then(request=>{
-        this.customerForm.searchAllCustomerInfos = request.data.body;
-        this.customerForm.allCustomerInfos = request.data.body;
-      });
       // 获取所有服务器信息表
       getOpServerPageList(1,1000).then(request=>{
         this.allServerInfos = request.data.body.data;

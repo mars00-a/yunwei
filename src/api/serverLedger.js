@@ -380,6 +380,22 @@ export  function getOpServerDelete(objectId) {
   })
 }
 // ***********************客户相关**************************
+// 获取未绑定该服务的客户列表
+export  function getOpCustomerServicesUnBindCustomerList(serviceId) {
+  return request({
+    url: '/api/OpCustomerServices/UnBindCustomerList',
+    method: 'get',
+    params: {serviceId}
+  })
+}
+// 获取该客户未绑定的服务列表
+export  function getOpCustomerServicesUnBindServiceList(customerId) {
+  return request({
+    url: '/api/OpCustomerServices/UnBindServiceList',
+    method: 'get',
+    params: {customerId}
+  })
+}
 // 获取所有客户列表
 export  function getAllCustomerInfos() {
   return request({

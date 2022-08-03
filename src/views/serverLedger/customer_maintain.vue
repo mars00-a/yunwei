@@ -526,21 +526,45 @@
 </template>
 
 <script>
-  import {getOpCustomerPageList, getOpCustomerFindCustomerId, getOpCustomerFindAreaManager, getOpCustomerFindCompany,
-    getOpCustomerFindContact, getOpCustomerFindContactPhone, getOpCustomerFindRevisitTime, getOpCustomerFindAddress,
-    getOpCustomerFindNote, getOpCustomerFindAreaManagerId, getOpCustomerAreaManagerList, getOpCustomerCreate, getOpCustomerUpdate,
-    getOpCustomerDelete, getOpCustomerServerByCustomer, getOpCustomerServerDelete, getOpServerPageList, getOpCustomerServerCreate,
-    getOpCustomerServicesByCustomer, OpCustomerServicesCreate, getServicePageList, getServiceFindServiceId, getOpCustomerServicesDelete,
-    getOpServerCreate, getOpServerUnBindList, getOpCustomerAll,
-  } from '@/api/serverLedger'
+import {
+  getOpCustomerPageList,
+  getOpCustomerFindCustomerId,
+  getOpCustomerFindAreaManager,
+  getOpCustomerFindCompany,
+  getOpCustomerFindContact,
+  getOpCustomerFindContactPhone,
+  getOpCustomerFindRevisitTime,
+  getOpCustomerFindAddress,
+  getOpCustomerFindNote,
+  getOpCustomerFindAreaManagerId,
+  getOpCustomerAreaManagerList,
+  getOpCustomerCreate,
+  getOpCustomerUpdate,
+  getOpCustomerDelete,
+  getOpCustomerServerByCustomer,
+  getOpCustomerServerDelete,
+  getOpServerPageList,
+  getOpCustomerServerCreate,
+  getOpCustomerServicesByCustomer,
+  OpCustomerServicesCreate,
+  getServicePageList,
+  getServiceFindServiceId,
+  getOpCustomerServicesDelete,
+  getOpServerCreate,
+  getOpServerUnBindList,
+  getOpCustomerAll,
+  getOpCustomerServicesUnBindServiceList,
+} from '@/api/serverLedger'
   export default {
     name: 'op_customer',
     components: {},
     data() {
       return {
+        controlCustomerId:'',
         //*******************控制区*******************
         //过滤参数下拉框
-        FilterParameters: [{
+        FilterParameters: [
+          {
           value: 'CustomerId',
           label: '客户ID'
         },{
@@ -934,15 +958,18 @@
       },
       //服务按钮的相关事件
       getService(row){
+        this.controlCustomerId = row.customerId
         getOpCustomerServicesByCustomer(row.customerId).then(request=>{
           this.nowCustomerId = row.customerId;
           this.serviceTable = request.data.body;
         })
       },
       getServiceId(){
-        getServicePageList(1,1000).then(request=>{
-          this.serviceIdTable = request.data.body.data;
-          this.backupServiceIdTable = request.data.body.data;
+        console.log("触发了请求未绑定的服务")
+        getOpCustomerServicesUnBindServiceList(this.nowCustomerId).then(request=>{
+          console.log(request)
+          this.serviceIdTable = request.data.body;
+          this.backupServiceIdTable = request.data.body;
         })
       },
       AddServiceId(row){
