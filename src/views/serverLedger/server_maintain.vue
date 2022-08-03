@@ -681,7 +681,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
       },
       //鼠标双击某行触发
       gotoDetails(row){
-        this.$router.push({name:'Details',params:{serverId:row.serverId}});
+        this.$router.push({name:'Details',params:{row:row}});
       },
       //每页最大条数
       handleSizeChange(val) {

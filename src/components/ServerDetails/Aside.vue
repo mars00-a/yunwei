@@ -4,43 +4,37 @@
       class="margin-top"
       :column="2"
       border
-      title="服务器详细信息"
+      title="服务器基础信息"
     >
       <el-descriptions-item>
         <template slot="label">
-          服务器类型
+          服务器ID
         </template>
-        kooriookami
+        {{ serverDetailedInfo.serverId }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
-          服务器ip
+          服务器Ip
         </template>
-        18100000000
+        {{ serverDetailedInfo.serverIp }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
           客户名称
         </template>
-        kooriookami
+        {{ serverDetailedInfo.company }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
           联系人
         </template>
-        18100000000
+        {{ serverDetailedInfo.contact }}
       </el-descriptions-item>
-      <el-descriptions-item>
+      <el-descriptions-item :span="2">
         <template slot="label">
           联系电话
         </template>
-        18100000000
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template slot="label">
-          当前状态
-        </template>
-        kooriookami
+        {{ serverDetailedInfo.contactPhone }}
       </el-descriptions-item>
       <el-descriptions-item :span="2">
         <template slot="label">
@@ -89,12 +83,13 @@
 </template>
 
 <script>
-    import {getServiceFindServerId} from "@/api/serverLedger";
+import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverLedger";
 
     export default {
         name: "aside",
       data(){
           return{
+            // 服务器绑定的服务的列表
             tableData: [
               {
               date: '2016-05-02',
@@ -113,6 +108,17 @@
               name: '王小虎',
               address: '上海市普陀区金沙江路 1516 弄'
             }],
+            // 服务器基本信息
+            serverDetailedInfo:{
+              serverId:'',
+              serverIp:'',
+              company:'',
+              contact:'',
+              contactPhone:'',
+              warn:'',
+              normalTime:'',
+              status:'',
+            },
             serviceList: [],
           }
       },
@@ -143,12 +149,33 @@
         // 点击服务列表的某一行
         clickRow(row){
           console.log("点击了服务列表某一行，id为：",row.serviceId)
-          this.$emit("clickRow",row.serviceId);
+          this.$emit("clickRow",row);
         }
       },
       mounted() {
-        getServiceFindServerId(this.$route.params.serverId,1,1000).then(request => {
+        getServiceFindServerId(this.$route.params.row.serverId,1,1000).then(request => {
           this.tableData = request.data.body.data;
+        })
+        this.serverDetailedInfo.serverId = this.$route.params.row.serverId
+        this.serverDetailedInfo.serverIp = this.$route.params.row.serverIp
+        getOpCustomerServerByServer(this.$route.params.row.serverId).then(request=>{
+          if (request.data.body) {
+            if(request.data.body[0] !== undefined){
+              console.log(request.data.body[0].customer.company)
+              this.serverDetailedInfo.company = request.data.body[0].customer.company
+              this.serverDetailedInfo.contact = request.data.body[0].customer.contact
+              this.serverDetailedInfo.contactPhone = request.data.body[0].customer.contactPhone
+            }
+            else{
+              this.CustomerForm = {};
+              this.BackupCustomerForm = {};
+            }
+          } else {
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
         })
       }
     }
