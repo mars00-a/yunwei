@@ -64,7 +64,7 @@
 </template>
 
 <script>
-  import { getOpsvAppByService } from '@/api/serverLedger'
+import {getOpsv2030NvsByService, getOpsvAppByService} from '@/api/serverLedger'
   export default {
     name: "a-p-p",
     data() {
@@ -73,11 +73,30 @@
         form: {}
       }
     },
+    props:{
+      myRow:Object
+    },
+    methods:{
+      initTable(){
+        getOpsv2030NvsByService(this.serviceId).then(request => {
+          this.form = request.data.body.data
+        })
+      }
+    },
     mounted() {
-      this.serviceId = ''
-      getOpsvAppByService(this.serviceId).then(request => {
-
-      })
+      this.serviceId = this.myRow.serviceId
+      this.initTable()
+    },
+    watch:{
+      'myRow':{
+        immediate:true,
+        handler(val){
+          if(val){
+            this.serviceId = row.serviceId
+            this.initTable()
+          }
+        }
+      }
     }
   }
 </script>

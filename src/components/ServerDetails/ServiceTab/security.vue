@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import { getOpsvSecurityByService } from '@/api/serverLedger'
+import {getOpsv2030NvsByService, getOpsvSecurityByService} from '@/api/serverLedger'
 export default {
   name: 'Security',
   data() {
@@ -133,11 +133,32 @@ export default {
       form: {}
     }
   },
+  props:{
+    myRow:Object
+  },
+  methods:{
+    initTable(){
+      getOpsv2030NvsByService(this.serviceId).then(request => {
+        this.form = request.data.body.data
+      })
+    }
+  },
   mounted() {
-    this.serviceId = ''
-    getOpsvSecurityByService(this.serviceId).then(request => {
-
-    })
+    if(this.myRow.serviceId){
+      this.serviceId = this.myRow.serviceId
+      this.initTable()
+    }
+  },
+  watch:{
+    'myRow':{
+      immediate:true,
+      handler(val){
+        if(val){
+          this.serviceId = val.serviceId
+          this.initTable()
+        }
+      }
+    }
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <el-header id="header">{{ DetailTitle }}服务器详情</el-header>
     <el-container>
       <el-aside id="aside" :style="MyStyle.Aside" width="40%">
-        <Aside :row="this.$route.params.row"/>
+        <Aside @clickRow="clickRow" :row="this.$route.params.row"/>
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
@@ -11,31 +11,31 @@
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab /></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
-              <security/>
+              <security :myRow='this.myRow'/>
             </div>
             <div v-if="ServerType === 2">
-              <smarthome />
+              <smarthome :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 3">
-              <patrol />
+              <patrol :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 4">
-              <weixin />
+              <weixin :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 5">
-              <APP />
+              <APP :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 6">
-              <SMS />
+              <SMS :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 7">
-              <otherSMS />
+              <otherSMS :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 8">
-              <NVS />
+              <NVS :myRow='this.myRow' />
             </div>
             <div v-if="ServerType === 9">
-              <otherNVS />
+              <otherNVS :myRow='this.myRow' />
             </div>
           </div></el-tab-pane>
           <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab /></div></el-tab-pane>
@@ -85,8 +85,16 @@ export default {
         Tab: { hei: '' }
       },
       DetailTitle: '',
-      ServerType: 2,
-      Tabs: ''
+      ServerType: 1,
+      Tabs: '',
+      // 点击左侧的某一行服务时，row就在这里
+      myRow:{},
+    }
+  },
+  methods:{
+    clickRow(row){
+      this.ServerType = row.serviceType
+      this.myRow = row
     }
   },
   mounted() {

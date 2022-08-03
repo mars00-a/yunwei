@@ -149,7 +149,6 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
         },
         // 点击服务列表的某一行
         clickRow(row){
-          console.log("点击了服务列表某一行，id为：",row.serviceId)
           this.$emit("clickRow",row);
         },
         initLeftForm(){
@@ -159,7 +158,6 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
           this.serverDetailedInfo.serverId = this.row.serverId
           this.serverDetailedInfo.serverIp = this.row.serverIp
           getOpCustomerServerByServer(this.row.serverId).then(request=>{
-            console.log("尝试使用id：",this.row.serverId,"去搜索服务信息为：",request.data.body)
             if (request.data.body) {
               if(request.data.body[0].customer){
                 this.serverDetailedInfo.company = request.data.body[0].customer.company

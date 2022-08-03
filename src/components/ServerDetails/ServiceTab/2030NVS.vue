@@ -49,11 +49,30 @@
         form: {}
       }
     },
+    props:{
+      myRow:Object
+    },
+    methods:{
+      initTable(){
+        getOpsv2030NvsByService(this.serviceId).then(request => {
+          this.form = request.data.body.data
+        })
+      }
+    },
     mounted() {
-      this.serviceId = ''
-      getOpsv2030NvsByService(this.serviceId).then(request => {
-
-      })
+      this.serviceId = this.myRow.serviceId
+      this.initTable()
+    },
+    watch:{
+      'myRow':{
+        immediate:true,
+        handler(val){
+          if(val){
+            this.serviceId = row.serviceId
+            this.initTable()
+          }
+        }
+      }
     }
   }
 </script>
