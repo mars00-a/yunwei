@@ -124,9 +124,22 @@
 </template>
 
 <script>
-    export default {
-        name: "security"
+import { getOpsvSecurityByService } from '@/api/serverLedger'
+export default {
+  name: 'Security',
+  data() {
+    return {
+      serviceId: '',
+      form: {}
     }
+  },
+  mounted() {
+    this.serviceId = ''
+    getOpsvSecurityByService(this.serviceId).then(request => {
+
+    })
+  }
+}
 </script>
 
 <style scoped>
