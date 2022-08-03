@@ -30,7 +30,7 @@
         </template>
         {{ serverDetailedInfo.contact }}
       </el-descriptions-item>
-      <el-descriptions-item :span="2">
+      <el-descriptions-item :span="1">
         <template slot="label">
           联系电话
         </template>
@@ -49,7 +49,7 @@
     <span style="font-weight: bold">服务器安装的服务列表</span>
     <el-table
       :data="tableData"
-      height="270"
+      height="330"
       border
       @row-click="clickRow"
       style="width: 100%">

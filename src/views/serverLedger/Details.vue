@@ -7,9 +7,9 @@
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
-          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab /></div></el-tab-pane>
-          <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab /></div></el-tab-pane>
-          <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
+          <el-tab-pane name="first" label="服务器状态"><div :style="MyStyle.Tab"><StatusTab /></div></el-tab-pane>
+          <el-tab-pane name="second" label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab /></div></el-tab-pane>
+          <el-tab-pane name="third" label="服务信息"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
               <security :myRow='this.myRow'/>
             </div>
@@ -38,9 +38,9 @@
               <otherNVS :myRow='this.myRow' />
             </div>
           </div></el-tab-pane>
-          <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab /></div></el-tab-pane>
-          <el-tab-pane label="业务状态统计"><div :style="MyStyle.Tab"></div></el-tab-pane>
-          <el-tab-pane label="异常信息"><div :style="MyStyle.Tab"></div></el-tab-pane>
+          <el-tab-pane name="forth" label="数据统计"><div :style="MyStyle.Tab"><EchartsTab /></div></el-tab-pane>
+          <el-tab-pane name="fifth" label="业务状态统计"><div :style="MyStyle.Tab"></div></el-tab-pane>
+          <el-tab-pane name="sixth" label="异常信息"><div :style="MyStyle.Tab"></div></el-tab-pane>
         </el-tabs>
       </el-main>
     </el-container>
@@ -88,7 +88,7 @@ export default {
       },
       DetailTitle: '',
       ServerType: '',
-      Tabs: '',
+      Tabs: 'first',
       // 点击左侧的某一行服务时，row就在这里
       myRow:{},
     }
@@ -97,7 +97,7 @@ export default {
     clickRow(row){
       this.ServerType = row.serviceType;
       this.myRow = row;
-      this.Tabs = '2';
+      this.Tabs = 'third';
     }
   },
   mounted() {
