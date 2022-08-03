@@ -2,12 +2,13 @@
   <el-container>
     <el-header id="header">{{DetailTitle}}服务器详情</el-header>
     <el-container>
-      <el-aside id="aside" :style="MyStyle.Aside" width="35%">
+      <el-aside id="aside" :style="MyStyle.Aside" width="40%">
         <Aside/>
       </el-aside>
       <el-main :style="MyStyle.Main" >
         <el-tabs type="border-card">
           <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab/></div></el-tab-pane>
+          <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab/></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab"><ServiceTab/></div></el-tab-pane>
           <el-tab-pane label="数据统计"><div :style="MyStyle.Tab"><EchartsTab/></div></el-tab-pane>
         </el-tabs>
@@ -18,7 +19,7 @@
 
 <script>
   import Aside from '@/components/ServerDetails/Aside'
-  import StatisticsTab from '@/components/ServerDetails/StatisticsTab'
+  import HardwareTab from '@/components/ServerDetails/HardwareTab'
   import ServiceTab from '@/components/ServerDetails/ServiceTab'
   import EchartsTab from '@/components/ServerDetails/EchartsTab'
   import StatusTab from '@/components/ServerDetails/StatusTab'
@@ -26,7 +27,7 @@
     name: "details",
     components:{
       Aside,
-      StatisticsTab,
+      HardwareTab,
       ServiceTab,
       EchartsTab,
       StatusTab

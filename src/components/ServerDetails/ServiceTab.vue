@@ -1,5 +1,5 @@
 <template>
-  <el-descriptions class="margin-top" title="第三方语音服务信息" :column="1" size="medium " border>
+  <el-descriptions class="margin-top" title="智慧用电服务信息" :column="2" size="small " border>
     <el-descriptions-item>
       <template slot="label">
         服务实例ID
@@ -20,19 +20,109 @@
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
-        http地址
+        版本信息
       </template>
       kooriookami
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
-        账号
+        版本信息
       </template>
       kooriookami
     </el-descriptions-item>
     <el-descriptions-item>
       <template slot="label">
-        密码
+        小程序版本
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库IP
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库端口
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库用户名
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库密码
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库IP
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库端口
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库用户名
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        数据库密码
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权方式
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权方式
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权时间
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权状态
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权数目
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        授权人员
+      </template>
+      kooriookami
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        备注
       </template>
       kooriookami
     </el-descriptions-item>
