@@ -541,6 +541,7 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
     },
     data() {
       return{
+        customerIdTable:[],
         //*******************控制区*******************
         //过滤参数下拉框
         FilterParameters: [
