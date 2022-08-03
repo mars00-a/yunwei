@@ -89,6 +89,7 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
         name: "aside",
       data(){
           return{
+            row: this.row,
             // 服务器绑定的服务的列表
             tableData: [
               {
@@ -150,34 +151,54 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
         clickRow(row){
           console.log("点击了服务列表某一行，id为：",row.serviceId)
           this.$emit("clickRow",row);
+        },
+        initLeftForm(){
+          getServiceFindServerId(this.row.serverId,1,1000).then(request => {
+            this.tableData = request.data.body.data;
+          })
+          this.serverDetailedInfo.serverId = this.row.serverId
+          this.serverDetailedInfo.serverIp = this.row.serverIp
+          getOpCustomerServerByServer(this.row.serverId).then(request=>{
+            console.log("尝试使用id：",this.row.serverId,"去搜索服务信息为：",request.data.body)
+            if (request.data.body) {
+              if(request.data.body[0].customer){
+                this.serverDetailedInfo.company = request.data.body[0].customer.company
+                this.serverDetailedInfo.contact = request.data.body[0].customer.contact
+                this.serverDetailedInfo.contactPhone = request.data.body[0].customer.contactPhone
+              }
+              else{
+                this.serverDetailedInfo.company = '暂无数据'
+                this.serverDetailedInfo.contact = '暂无数据'
+                this.serverDetailedInfo.contactPhone = '暂无数据'
+              }
+            } else {
+              this.$message({
+                message: request.data.msg,
+                type: 'warning'
+              });
+            }
+          })
         }
       },
       mounted() {
-        getServiceFindServerId(this.$route.params.row.serverId,1,1000).then(request => {
-          this.tableData = request.data.body.data;
-        })
-        this.serverDetailedInfo.serverId = this.$route.params.row.serverId
-        this.serverDetailedInfo.serverIp = this.$route.params.row.serverIp
-        getOpCustomerServerByServer(this.$route.params.row.serverId).then(request=>{
-          if (request.data.body) {
-            if(request.data.body[0] !== undefined){
-              console.log(request.data.body[0].customer.company)
-              this.serverDetailedInfo.company = request.data.body[0].customer.company
-              this.serverDetailedInfo.contact = request.data.body[0].customer.contact
-              this.serverDetailedInfo.contactPhone = request.data.body[0].customer.contactPhone
+        if(this.row)
+          this.initLeftForm()
+      },
+      props:{
+          row:Object
+      },
+      watch:{
+          'row':{
+            immediate:true,
+            handler(val){
+              if(val){
+                this.initLeftForm()
+              }
             }
-            else{
-              this.CustomerForm = {};
-              this.BackupCustomerForm = {};
-            }
-          } else {
-            this.$message({
-              message: request.data.msg,
-              type: 'warning'
-            });
-          }
-        })
+          },
+
       }
+
     }
 </script>
 

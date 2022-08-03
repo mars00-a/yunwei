@@ -3,7 +3,7 @@
     <el-header id="header">{{ DetailTitle }}服务器详情</el-header>
     <el-container>
       <el-aside id="aside" :style="MyStyle.Aside" width="40%">
-        <Aside />
+        <Aside :row="this.$route.params.row"/>
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
