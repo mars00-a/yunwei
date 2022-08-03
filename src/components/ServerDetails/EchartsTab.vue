@@ -1,7 +1,6 @@
 <template>
-  <div id="main" style="width: 52rem;height: 25rem"></div>
+  <div id="main" style="width: 40rem;height: 25rem"></div>
 </template>
-
 <script>
   import * as echarts from 'echarts';
   export default {
