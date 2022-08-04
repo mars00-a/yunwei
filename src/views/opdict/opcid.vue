@@ -634,8 +634,8 @@ export default {
           return p.opsignalName.indexOf(val) !== -1 || p.opsignalId.indexOf(val) !== -1
         })
 
-        if(this.form.eventType !== '' && val.length === 10){
-          this.form.opcid = 'E' + val.substr(1,7) + '0' + this.form.eventType
+        if(this.form.eventType !== '' && this.form.opsignalId.length === 10){
+          this.form.opcid = 'E' + this.form.opsignalId.substr(1,7) + '0' + this.form.eventType
         }
       }
     },
@@ -646,7 +646,7 @@ export default {
           this.form.opcid = 'E' + this.form.opsignalId.substr(1,7) + '0' + this.form.eventType
         }
       }
-    }
+    },
 
   },
   mounted(){
