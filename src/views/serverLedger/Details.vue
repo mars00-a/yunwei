@@ -7,8 +7,8 @@
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
-          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab /></div></el-tab-pane>
-          <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab /></div></el-tab-pane>
+          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab :myRow="this.$route.params.row"/></div></el-tab-pane>
+          <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab :myRow="this.$route.params.row"/></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
               <security :myRow='this.myRow'/>
@@ -149,5 +149,11 @@ export default {
   }
   >>>.el-main{
     padding-bottom: 0
+  }
+  >>>.el-container .el-aside{
+    padding-right: 5px;
+  }
+  >>>.el-container .el-main{
+    padding-left: 10px;
   }
 </style>

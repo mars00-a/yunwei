@@ -199,6 +199,7 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
   height: 97%;
   width: 100%;
   box-shadow: 0 0 3px 2px #dfe4ed;
+  overflow: hidden;
 }
 >>>.el-descriptions__table .el-descriptions-item__cell{
   padding: 4px 10px;

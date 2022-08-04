@@ -85,31 +85,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
-      }
-    ]
-  },
-  {
     path: '/profile',
     component: Layout,
     redirect: '/profile/index',
@@ -129,36 +104,36 @@ export const constantRoutes = [
     path: '/opdict',
     component: Layout,
     redirect: '/opdict/object',
-    meta: { title: '字典表', icon: 'link' },
+    meta: { title: '字典表', icon: 'el-icon-document-copy' },
     children: [
       {
         path: 'object',
         name: 'ObjectPage',
-        meta: { title: '检测对象', icon: 'link' },
+        meta: { title: '检测对象', icon: 'el-icon-search' },
         component: () => import('@/views/opdict/object')
       },
       {
         path: 'opcid',
         name: 'OpcidPage',
-        meta: { title: '运维事件', icon: 'link' },
+        meta: { title: '运维事件', icon: 'el-icon-date' },
         component: () => import('@/views/opdict/opcid')
       },
       {
         path: 'service',
         name: 'ServicePage',
-        meta: { title: '服务类型', icon: 'link' },
+        meta: { title: '服务类型', icon: 'el-icon-user' },
         component: () => import('@/views/opdict/service')
       },
       {
         path: 'signal',
         name: 'SignalPage',
-        meta: { title: '运维指标', icon: 'link' },
+        meta: { title: '运维指标', icon: 'el-icon-odometer' },
         component: () => import('@/views/opdict/signal')
       },
       {
         path: 'status',
         name: 'StatusPage',
-        meta: { title: '运维状态', icon: 'link' },
+        meta: { title: '运维状态', icon: 'el-icon-discover' },
         component: () => import('@/views/opdict/status')
       }
     ]
@@ -168,52 +143,52 @@ export const constantRoutes = [
     path: '/serverLedger',
     component: Layout,
     redirect: '/serverLedger/customer_maintain',
-    meta: { title: '服务器台账', icon: 'link' },
+    meta: { title: '服务器台账', icon: 'el-icon-tickets' },
     children: [
       {
         path: 'customer_maintain',
         name: 'CustomerMaintainPage',
-        meta: { title: '客户信息维护', icon: 'link' },
+        meta: { title: '客户信息维护', icon: 'el-icon-s-custom' },
         component: () => import('@/views/serverLedger/customer_maintain')
       },
       {
         path: 'server_maintain',
         name: 'ServerMaintainPage',
-        meta: { title: '服务器信息维护', icon: 'link' },
+        meta: { title: '服务器信息维护', icon: 'el-icon-cpu' },
         component: () => import('@/views/serverLedger/server_maintain')
       },
       {
         path: 'service_maintain',
         name: 'ServiceMaintainPage',
-        meta: { title: '服务类型', icon: 'link' },
+        meta: { title: '服务类型', icon: 'el-icon-user' },
         component: () => import('@/views/serverLedger/service_maintain')
       },
       {
         path: 'Details',
         name: 'Details',
-        meta: { title: '服务器详情', icon: 'link' },
+        meta: { title: '服务器详情', icon: 'el-icon-info' },
         hidden: true,
         component: () => import('@/views/serverLedger/Details')
       },
     ]
   },
-  // 服务器台账
+  // 消息推送
   {
     path: '/messagePush',
     component: Layout,
     redirect: '/messagePush/msgPush',
-    meta: { title: '消息推送配置', icon: 'link' },
+    meta: { title: '消息推送配置', icon: 'el-icon-s-promotion' },
     children: [
       {
         path: 'msgPush',
         name: 'MsgPush',
-        meta: { title: '消息推送配置', icon: 'link' },
+        meta: { title: '消息推送配置', icon: 'el-icon-chat-dot-round' },
         component: () => import('@/views/messagePush/msgPush')
       },
       {
         path: 'historicalMsg',
         name: 'historicalMsg',
-        meta: { title: '历史记录', icon: 'link' },
+        meta: { title: '历史记录', icon: 'el-icon-chat-line-round' },
         component: () => import('@/views/messagePush/historicalMsg')
       }
     ]
@@ -223,27 +198,27 @@ export const constantRoutes = [
     path: '/ServeerInfomation',
     component: Layout,
     redirect: '/ServerInfomation/CPU',
-    meta: { title: '服务器查看', icon: 'link' },
+    meta: { title: '服务器查看', icon: 'el-icon-monitor' },
     children: [
       {
         path: 'CPU',
         name: 'CPU',
-        meta: { title: 'CPU使用实时状态', icon: 'link' },
+        meta: { title: 'CPU使用实时状态', icon: 'el-icon-cpu' },
         component: () => import('@/views/ServerInformation/CPU')
       },{
         path: 'disk',
         name: 'disk',
-        meta: { title: '磁盘空间最新状态', icon: 'link' },
+        meta: { title: '磁盘空间最新状态', icon: 'el-icon-pie-chart' },
         component: () => import('@/views/ServerInformation/disk')
       },{
         path: 'hardware',
         name: 'hardware',
-        meta: { title: '硬件实时状态', icon: 'link' },
+        meta: { title: '硬件实时状态', icon: 'el-icon-stopwatch' },
         component: () => import('@/views/ServerInformation/hardware')
       },{
         path: 'ram',
         name: 'ram',
-        meta: { title: '内存实时状态表', icon: 'link' },
+        meta: { title: '内存实时状态表', icon: 'el-icon-s-marketing' },
         component: () => import('@/views/ServerInformation/ram')
       }
     ]
@@ -253,27 +228,27 @@ export const constantRoutes = [
     path: '/NetworkAuthorizationServerInformation',
     component: Layout,
     redirect: '/NetworkAuthorizationServerInformation/CPU',
-    meta: { title: '网络授权服务器查看', icon: 'link' },
+    meta: { title: '网络授权服务器查看', icon: 'el-icon-s-platform' },
     children: [
       {
         path: 'CPU',
         name: 'CPU',
-        meta: { title: 'CPU使用实时状态', icon: 'link' },
+        meta: { title: 'CPU使用实时状态', icon: 'el-icon-cpu' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/CPU')
       },{
         path: 'disk',
         name: 'disk',
-        meta: { title: '磁盘空间最新状态', icon: 'link' },
+        meta: { title: '磁盘空间最新状态', icon: 'el-icon-pie-chart' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/disk')
       },{
         path: 'hardware',
         name: 'hardware',
-        meta: { title: '硬件实时状态', icon: 'link' },
+        meta: { title: '硬件实时状态', icon: 'el-icon-stopwatch' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/hardware')
       },{
         path: 'ram',
         name: 'ram',
-        meta: { title: '内存实时状态表', icon: 'link' },
+        meta: { title: '内存实时状态表', icon: 'el-icon-s-marketing' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/ram')
       }
     ]

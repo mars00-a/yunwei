@@ -4,13 +4,13 @@
       <template slot="label">
         服务器名称
       </template>
-      kooriookami
+      {{ this.myRow.serverName }}
     </el-descriptions-item>
     <el-descriptions-item span="1.5">
       <template slot="label">
         服务器IP
       </template>
-      kooriookami
+      {{ this.myRow.serverIp }}
     </el-descriptions-item>
     <el-descriptions-item span="3">
       <template slot="label">
@@ -64,9 +64,17 @@
 </template>
 
 <script>
-    export default {
-        name: "status-tab"
-    }
+  export default {
+      name: "status-tab",
+    data(){
+        return{
+
+        }
+    },
+    props:{
+      myRow:Object
+    },
+  }
 </script>
 
 <style scoped>
