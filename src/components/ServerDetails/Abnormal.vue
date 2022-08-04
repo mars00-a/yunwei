@@ -39,7 +39,7 @@ export default {
     }
   },
   props:{
-    myRow:
+    myRow:Array
   }
 }
 </script>

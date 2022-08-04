@@ -192,6 +192,7 @@ export const constantRoutes = [
         path: 'Details',
         name: 'Details',
         meta: { title: '服务器详情', icon: 'link' },
+        hidden: true,
         component: () => import('@/views/serverLedger/Details')
       },
     ]

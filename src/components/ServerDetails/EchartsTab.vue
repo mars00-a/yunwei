@@ -51,6 +51,15 @@
           ]
         };
         myChart.setOption(option);
+      },
+      dealTime(beginTime,timeInterval){
+        console.log("dealTime被调用了");
+        for(let i=0;i<=10;i++){
+          this.xAxisData[i] = (Array(2).join('0') + beginTime.getHours()).slice(-2) + ":" +
+            (Array(2).join('0') + beginTime.getMinutes()).slice(-2);
+          beginTime.setTime(beginTime.valueOf()+timeInterval)
+        }
+        this.init();
       }
     },
     mounted(){
@@ -64,10 +73,10 @@
         immediate:true,
         handler(val){
           if(this.Date[1]-this.Date[0] > 2*60*60*1000){
-            this.Date[1] = this.Date[0]+2*60*60*1000;
+            this.dealTime(this.Date[0], 12*60*1000);
           }
           if(this.Date[1]-this.Date[0] <= 20*60*1000 && this.Date[1]-this.Date[0] >= 10*60*1000){
-
+            this.dealTime(this.Date[0], (this.Date[1]-this.Date[0])/10);
           }
         }
       }
