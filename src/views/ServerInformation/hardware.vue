@@ -5,12 +5,12 @@
         <!--过滤参数选择-->
         <el-col :span="5">
           <span>服务器IP：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverIp" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--过滤参数选择-->
         <el-col :span="5">
           <span>服务器名称：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverName" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="5">
           <span>设备名称：</span>
@@ -42,47 +42,47 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="receive.user.userName"
+          prop="server.serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="receive.receiveType"
+          prop="server.serverIp"
           :formatter="receiveTypeFormat"
           label="服务器IP"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="deviceName"
           label="设备名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
-          prop="opEvent.opcidName"
+          prop="ratio"
           label="已使用比例(%)"
         >
         </el-table-column>
         <!--服务信息存放表：serviceTable-->
         <el-table-column
-          prop="time"
+          prop="value"
           label="已用空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="value"
           label="剩余空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="value"
           label="总空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="server.serverName"
           label="数据时间"
         >
         </el-table-column>
@@ -121,6 +121,7 @@
   import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
     getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
   import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
+  import {getServerHardStatus} from '@/api/ServerInfomation'
   export default {
     name: "hardware",
     components: {
@@ -141,6 +142,8 @@
           height:''
         },
         //*******************控制区*******************
+        serverIp:'',
+        serverName:'',
         UserNameSearchKeyword:'',
         ReceiveTypeSearchKeyword:'',
         beginTimeSearchKeyword:'',
@@ -167,12 +170,14 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getUserEventLogPageList(this.currentPage,this.size).then(request=>{
+        getServerHardStatus('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
+          console.log(request)
         });
-        this.FilterParameter_value = '';
-        this.CompleteValue='';
+        this.serverIp = '';
+        this.serverName='';
+        this.UserNameSearchKeyword='';
       },
       //鼠标放到某一行上就触发
       tableCellClassName({row,rowIndex}){

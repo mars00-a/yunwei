@@ -79,24 +79,7 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
           return{
             row: this.row,
             // 服务器绑定的服务的列表
-            tableData: [
-              {
-              date: '2016-05-02',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-04',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-              date: '2016-05-01',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-              date: '2016-05-03',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1516 弄'
-            }],
+            tableData: [],
             // 服务器基本信息
             serverDetailedInfo:{
               serverId:'',
@@ -142,7 +125,8 @@ import {getOpCustomerServerByServer, getServiceFindServerId} from "@/api/serverL
         initLeftForm(){
           getServiceFindServerId(this.row.serverId,1,1000).then(request => {
             this.tableData = request.data.body.data;
-          })
+            this.$emit("FirstServiceData",this.tableData);
+          });
           this.serverDetailedInfo.serverId = this.row.serverId
           this.serverDetailedInfo.serverIp = this.row.serverIp
           getOpCustomerServerByServer(this.row.serverId).then(request=>{

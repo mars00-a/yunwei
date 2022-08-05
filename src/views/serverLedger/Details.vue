@@ -3,13 +3,13 @@
     <el-header id="header">{{ DetailTitle }}服务器详情</el-header>
     <el-container>
       <el-aside id="aside" :style="MyStyle.Aside" width="40%">
-        <Aside @clickRow="clickRow" :row="this.$route.params.row"/>
+        <Aside @FirstServiceData="FirstServiceData" @clickRow="clickRow" :row="this.$route.params.row"/>
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
           <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab :myRow="this.$route.params.row"/></div></el-tab-pane>
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab :myRow="this.$route.params.row"/></div></el-tab-pane>
-          <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
+          <el-tab-pane label="服务信息" @onclick="FirstServer()"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
               <security :myRow='this.myRow'/>
             </div>
@@ -121,6 +121,10 @@ export default {
       this.ServerType = row.serviceType;
       this.myRow = row;
       this.Tabs = '2';
+    },
+    FirstServiceData(msg){
+      this.ServerType = msg[0].serviceType;
+      this.myRow = msg[0];
     }
   },
   mounted() {
