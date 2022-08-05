@@ -143,6 +143,7 @@
         <!--服务器id-->
         <el-form-item label="服务器ID" :rules="[{ required: true}]">
           <el-input
+            disabled="true"
             v-model="addForm.serverId" />
         </el-form-item>
         <!--客户Id-->

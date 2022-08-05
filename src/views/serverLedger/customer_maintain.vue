@@ -148,6 +148,7 @@
         <!--客户id-->
         <el-form-item label="客户id" :rules="[{ required: true}]">
           <el-input
+            disabled="true"
             v-model="addForm.customerId" />
         </el-form-item>
         <!--客户经理-->
