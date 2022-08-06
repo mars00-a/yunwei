@@ -31,6 +31,7 @@
         border
         style="width: 87.8rem"
         @cell-mouse-enter="getNowRow"
+        :row-class-name="tableRowClassName"
         :cell-class-name="tableCellClassName">
         <!--序号-->
         <el-table-column
@@ -154,6 +155,17 @@
       }
     },
     methods:{
+      tableRowClassName({row, rowIndex}) {
+        if (row.ratio >= 90) {
+          console.log("大于了25")
+          return 'red';
+        }
+        else if (row.ratio >= 80) {
+          console.log("大于了20")
+          return 'yellow';
+        }
+        return '';
+      },
       //************************分页************************
       //处理页面初始数据
       dealData(){
@@ -217,6 +229,12 @@
 </script>
 
 <style scoped>
+>>>.el-main .el-table .red {
+  color: red;
+}
+>>>.el-table .yellow {
+  color: #e6a23c;
+}
   #Header{
     min-height: 3.5rem;
     background: #f1f3f4;

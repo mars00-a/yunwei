@@ -163,11 +163,11 @@
     },
     methods:{
       tableRowClassName({row, rowIndex}) {
-        if (row.ratio >= 33) {
+        if (row.ratio >= 90) {
           console.log("大于了25")
           return 'red';
         }
-        else if (row.ratio >= 20) {
+        else if (row.ratio >= 80) {
           console.log("大于了20")
           return 'yellow';
         }
