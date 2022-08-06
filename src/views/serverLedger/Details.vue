@@ -7,8 +7,8 @@
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
-          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab">
-            <el-descriptions title="SK3000" :column="3" size="medium " border>
+          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab" id="status">
+            <el-descriptions title="SK3000" :column="3" size="medium"  border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   主机总数
@@ -70,40 +70,148 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="APP服务" :column="3" size="medium " border>
+            <el-descriptions title="APP服务" :column="3" size="medium" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
-                  报警总数
+                  时刻乐居数据包总数
                 </template>
                 kooriookami
               </el-descriptions-item>
               <el-descriptions-item span="1.5">
                 <template slot="label">
-                  接收消息人数
+                  时刻乐居数据包未处理量
                 </template>
                 kooriookami
               </el-descriptions-item>
               <el-descriptions-item span="1.5">
                 <template slot="label">
-                  主机离线/总数
+                  物联网数据包总数
                 </template>
                 kooriookami
               </el-descriptions-item>
               <el-descriptions-item span="1.5">
                 <template slot="label">
-                  DVR离线/总数
+                  物联网数据包未处理量
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  语音数据包总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  语音数据包未处理量
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  报警数据包总数（新）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  报警数据包未处理量（新）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  报警数据包未处理量（新）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  报警数据包未处理量（旧）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions title="智能家居" :column="3" size="medium" style="margin-top: 2rem" border>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  主机总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  主机离线数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  数据包总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  数据包未处理量
+                </template>
+                kooriookami
+              </el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions title="智慧控电" :column="3" size="medium" style="margin-top: 2rem" border>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  消息队列（下发）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  消息队列（上报）
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  网关总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  网关在线数目
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  网关停用数目
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  设备安装总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  注册用户数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions title="智慧用电" :column="3" size="medium" style="margin-top: 2rem" border>
+              <el-descriptions-item span="3">
+                <template slot="label">
+                  业主端后台服务状态
                 </template>
                 kooriookami
               </el-descriptions-item>
               <el-descriptions-item span="3">
                 <template slot="label">
-                  客户端数
-                </template>
-                kooriookami
-              </el-descriptions-item>
-              <el-descriptions-item span="3">
-                <template slot="label">
-                  数据时间
+                  运维端后台服务状态
                 </template>
                 kooriookami
               </el-descriptions-item>
@@ -208,7 +316,7 @@ export default {
       MyStyle: {
         Main: { height: '', paddingRight: '3.3rem' },
         Aside: { height: '' },
-        Tab: { hei: '' }
+        Tab: {height: ''}
       },
       DetailTitle: '',
       ServerType: '',
@@ -232,8 +340,13 @@ export default {
     this.MyStyle.Main.height = document.body.clientHeight - 45 - 64 - 70 + 'px'
     this.MyStyle.Aside.height = document.body.clientHeight - 45 - 64 - 70 + 'px'
     this.MyStyle.Tab.height = document.body.clientHeight - 45 - 100 - 64 - 70 + 'px'
-    if (this.$route.params.row) {
-      this.DetailTitle = this.$route.params.row.serverName;
+  },
+  watch:{
+    '$route.params.row.serverName':{
+      immediate:true,
+      handler(val){
+        this.DetailTitle = val;
+      }
     }
   }
 }
@@ -251,6 +364,9 @@ export default {
   #aside{
     background: white;
     margin-top: 0.5rem;
+  }
+  #status{
+    overflow:auto
   }
   >>>.el-main{
     padding-bottom: 0
