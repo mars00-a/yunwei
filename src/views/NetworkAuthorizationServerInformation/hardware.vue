@@ -42,13 +42,13 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="server.serverIp"
+          prop="serverIp"
           label="服务器IP"
         >
         </el-table-column>
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-  import {getServerHardStatus} from '@/api/ServerInfomation'
+  import {getAuthServerHardStatusHardStatusPageList} from '@/api/ServerInfomation'
   export default {
     name: "hardware",
     components: {
@@ -158,7 +158,7 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getServerHardStatus('','',this.currentPage,this.size).then(request=>{
+        getAuthServerHardStatusHardStatusPageList('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
           for(let i=0;i<request.data.body.data.length;i++){
@@ -193,7 +193,7 @@
       //查找按钮的事件
       Find(){
         if(this.serverIp||this.serverName !== '') {
-          getServerHardStatus(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
+          getAuthServerHardStatusHardStatusPageList(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
             for(let i=0;i<request.data.body.data.length;i++){

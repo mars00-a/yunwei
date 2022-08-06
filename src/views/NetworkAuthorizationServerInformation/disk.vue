@@ -41,13 +41,13 @@
         </el-table-column>
         <!--服务器名称：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--服务器IP-->
         <el-table-column
-          prop="server.serverIp"
+          prop="serverIp"
           width="140"
           label="服务器IP"
         >
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-  import {getDiskStatusPageList} from '@/api/ServerInfomation'
+  import {getAuthServerHardStatusDiskStatusPageList} from '@/api/ServerInfomation'
   export default {
     name: "disk",
     components: {
@@ -162,7 +162,7 @@
       //************************分页************************
       //处理页面初始数据
       dealData() {
-        getDiskStatusPageList('', '', this.currentPage, this.size).then(request => {
+        getAuthServerHardStatusDiskStatusPageList('', '', this.currentPage, this.size).then(request => {
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
           for(let i=0;i<request.data.body.data.length;i++){
@@ -195,7 +195,7 @@
       //查找按钮的事件
       Find() {
         if (this.serverIp || this.serverName !== '') {
-          getDiskStatusPageList(this.serverIp, this.serverName, this.currentPage, this.size).then(request => {
+          getAuthServerHardStatusDiskStatusPageList(this.serverIp, this.serverName, this.currentPage, this.size).then(request => {
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
             for(let i=0;i<request.data.body.data.length;i++){

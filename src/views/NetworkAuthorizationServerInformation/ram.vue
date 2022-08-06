@@ -42,13 +42,13 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="server.serverIp"
+          prop="serverIp"
           :formatter="receiveTypeFormat"
           label="服务器IP"
         >
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-  import {getMemoryStatusPageList} from '@/api/ServerInfomation'
+  import {getAuthServerHardStatusMemoryStatusPageList} from '@/api/ServerInfomation'
   export default {
     name: "ram",
     components: {},
@@ -158,7 +158,7 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getMemoryStatusPageList('','',this.currentPage,this.size).then(request=>{
+        getAuthServerHardStatusMemoryStatusPageList('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
           for(let i=0;i<request.data.body.data.length;i++){
@@ -193,7 +193,7 @@
       //查找按钮的事件
       Find(){
         if(this.serverIp||this.serverName !== '') {
-          getMemoryStatusPageList(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
+          getAuthServerHardStatusMemoryStatusPageList(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
             for(let i=0;i<request.data.body.data.length;i++){
