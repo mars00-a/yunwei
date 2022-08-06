@@ -7,7 +7,108 @@
       </el-aside>
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
-          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab"><StatusTab :myRow="this.$route.params.row"/></div></el-tab-pane>
+          <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab">
+            <el-descriptions title="SK3000" :column="3" size="medium " border>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  主机总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  主机离线数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  DVR总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  DVR离线数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="3">
+                <template slot="label">
+                  客户端在线数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1">
+                <template slot="label">
+                  接警服务器
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1">
+                <template slot="label">
+                  转警服务器
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1">
+                <template slot="label">
+                  视频服务器
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  数据库备份信息
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  服务器授权状态
+                </template>
+                kooriookami
+              </el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions title="APP服务" :column="3" size="medium " border>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  报警总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  接收消息人数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  主机离线/总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="1.5">
+                <template slot="label">
+                  DVR离线/总数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="3">
+                <template slot="label">
+                  客户端数
+                </template>
+                kooriookami
+              </el-descriptions-item>
+              <el-descriptions-item span="3">
+                <template slot="label">
+                  数据时间
+                </template>
+                kooriookami
+              </el-descriptions-item>
+            </el-descriptions>
+          </div></el-tab-pane>
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab :myRow="this.$route.params.row"/></div></el-tab-pane>
           <el-tab-pane label="服务信息" @onclick="FirstServer()"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
