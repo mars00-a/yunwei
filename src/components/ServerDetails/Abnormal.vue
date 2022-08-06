@@ -92,10 +92,10 @@ export default {
       this.Find();
     },
     receiveTypeFormat(row){
-      if(row.receive.receiveType === 1 || row.receiveType === '1'){
+      if(row.receive.receiveType === 1 || row.receive.receiveType === '1'){
         return "邮箱"
       }
-      if(row.receive.receiveType === 2 || row.receiveType === '1'){
+      if(row.receive.receiveType === 2 || row.receive.receiveType === '2'){
         return "微信"
       }
     },

@@ -15,7 +15,6 @@
           <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1, Find()">过滤</el-button>
           <el-button type="success" icon="el-icon-refresh" @click="dealData()">恢复</el-button>
           <el-button type="info" icon="el-icon-edit-outline">导出</el-button>
-          <el-button type="primary" icon="el-icon-tickets">打印</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -25,6 +24,7 @@
         height="100%"
         border
         style="width: 87.8rem"
+        :row-class-name="tableRowClassName"
         @cell-mouse-enter="getNowRow"
         :cell-class-name="tableCellClassName">
         <!--序号-->
@@ -162,6 +162,17 @@
       }
     },
     methods:{
+      tableRowClassName({row, rowIndex}) {
+        if (row.ratio >= 33) {
+          console.log("大于了25")
+          return 'red';
+        }
+        else if (row.ratio >= 20) {
+          console.log("大于了20")
+          return 'yellow';
+        }
+        return '';
+      },
       //************************分页************************
       //处理页面初始数据
       dealData(){
@@ -219,6 +230,12 @@
 </script>
 
 <style scoped>
+  >>>.el-main .el-table .red {
+    color: red;
+  }
+  >>>.el-table .yellow {
+    color: #e6a23c;
+  }
   #Header{
     min-height: 3rem;
     background: #f1f3f4;

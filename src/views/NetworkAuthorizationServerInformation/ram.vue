@@ -21,7 +21,6 @@
           <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
           <el-button type="success" icon="el-icon-refresh" @click="dealData()">恢复</el-button>
           <el-button type="info" icon="el-icon-edit-outline">导出</el-button>
-          <el-button type="primary" icon="el-icon-tickets">打印</el-button>
         </el-col>
       </el-row>
     </el-header>
