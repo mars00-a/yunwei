@@ -70,7 +70,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="APP服务" :column="3" size="medium" v-if="APP" style="margin-top: 2rem" border>
+            <el-descriptions title="APP服务" :column="3" size="medium" v-else-if="APP" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   时刻乐居数据包总数
@@ -132,7 +132,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智能家居" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
+            <el-descriptions title="智能家居" :column="3" size="medium" v-else-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   主机总数
@@ -158,7 +158,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智慧控电" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
+            <el-descriptions title="智慧控电" :column="3" size="medium" v-else-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   消息队列（下发）
@@ -202,7 +202,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智慧用电" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
+            <el-descriptions title="智慧用电" :column="3" size="medium" v-else-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="3">
                 <template slot="label">
                   业主端后台服务状态
@@ -216,6 +216,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
+            <el-empty description="暂无数据" v-else/>
           </div></el-tab-pane>
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab :myRow="this.$route.params.row"/></div></el-tab-pane>
           <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
@@ -340,6 +341,15 @@ export default {
       this.Tabs = '2';
     },
     FirstServiceData(msg){
+      this.security = false;
+      this.smarthome = false;
+      this.patrol = false;
+      this.weixin = false;
+      this.APP = false;
+      this.SMS = false;
+      this.otherSMS = false;
+      this.NVS = false;
+      this.otherNVS = false;
       if(msg[0]){
         this.ServerType = msg[0].serviceType;
         this.myRow = msg[0];
