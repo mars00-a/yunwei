@@ -8,8 +8,14 @@
     <!--序号-->
     <!--服务类型id：serviceType-->
     <el-table-column
-      prop="server.serverName"
-      label="服务器名称"
+      prop="receive.user.userName"
+      label="用户名称"
+    >
+    </el-table-column>
+    <el-table-column
+      prop="receive.receiveType"
+      :formatter="receiveTypeFormat"
+      label="接收方式"
     >
     </el-table-column>
     <!--服务类型名称：serviceName-->
@@ -70,6 +76,7 @@ export default {
     Find(){
       if(this.myRow)
         getUserEventLogFind('','','', '', this.myRow.serverName,'',this.currentPage,this.size).then(request=>{
+          console.log("请求到的异常信息：",request)
           this.tableData = request.data.body.data;
           this.totalNumber=request.data.body.total
         })
@@ -84,6 +91,14 @@ export default {
       this.currentPage = val;
       this.Find();
     },
+    receiveTypeFormat(row){
+      if(row.receive.receiveType === 1 || row.receiveType === '1'){
+        return "邮箱"
+      }
+      if(row.receive.receiveType === 2 || row.receiveType === '1'){
+        return "微信"
+      }
+    },
   },
   props:{
     myRow:Object
@@ -97,6 +112,7 @@ export default {
       handler(val){
         if(this.myRow)
           getUserEventLogFind('','','', '', this.myRow.serverName,'',this.currentPage,this.size).then(request=>{
+            console.log("请求到的异常信息：",request)
             this.tableData = request.data.body.data;
             this.totalNumber=request.data.body.total
           })
