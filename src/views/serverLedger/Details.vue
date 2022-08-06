@@ -8,7 +8,7 @@
       <el-main :style="MyStyle.Main">
         <el-tabs v-model="Tabs" type="border-card">
           <el-tab-pane label="服务器状态"><div :style="MyStyle.Tab" id="status">
-            <el-descriptions title="SK3000" :column="3" size="medium"  border>
+            <el-descriptions title="SK3000" :column="3" size="medium"  v-if="security" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   主机总数
@@ -70,7 +70,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="APP服务" :column="3" size="medium" style="margin-top: 2rem" border>
+            <el-descriptions title="APP服务" :column="3" size="medium" v-if="APP" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   时刻乐居数据包总数
@@ -132,7 +132,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智能家居" :column="3" size="medium" style="margin-top: 2rem" border>
+            <el-descriptions title="智能家居" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   主机总数
@@ -158,7 +158,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智慧控电" :column="3" size="medium" style="margin-top: 2rem" border>
+            <el-descriptions title="智慧控电" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="1.5">
                 <template slot="label">
                   消息队列（下发）
@@ -202,7 +202,7 @@
                 kooriookami
               </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions title="智慧用电" :column="3" size="medium" style="margin-top: 2rem" border>
+            <el-descriptions title="智慧用电" :column="3" size="medium" v-if="smarthome" style="margin-top: 2rem" border>
               <el-descriptions-item span="3">
                 <template slot="label">
                   业主端后台服务状态
@@ -218,7 +218,7 @@
             </el-descriptions>
           </div></el-tab-pane>
           <el-tab-pane label="硬件状态"><div :style="MyStyle.Tab"><HardwareTab :myRow="this.$route.params.row"/></div></el-tab-pane>
-          <el-tab-pane label="服务信息" @onclick="FirstServer()"><div :style="MyStyle.Tab">
+          <el-tab-pane label="服务信息"><div :style="MyStyle.Tab">
             <div v-if="ServerType === 1">
               <security :myRow='this.myRow'/>
             </div>
@@ -288,7 +288,6 @@ import smarthome from '@/components/ServerDetails/ServiceTab/smarthome'
 import SMS from '@/components/ServerDetails/ServiceTab/SMS'
 import weixin from '@/components/ServerDetails/ServiceTab/weixin'
 import EchartsTab from '@/components/ServerDetails/EchartsTab'
-import StatusTab from '@/components/ServerDetails/StatusTab'
 import Abnormal from '@/components/ServerDetails/Abnormal'
 export default {
   name: 'Details',
@@ -296,7 +295,6 @@ export default {
     Aside,
     HardwareTab,
     EchartsTab,
-    StatusTab,
     NVS,
     APP,
     otherNVS,
@@ -323,6 +321,16 @@ export default {
       Tabs: '',
       // 点击左侧的某一行服务时，row就在这里
       myRow:{},
+      //判断显示内容
+      security:'',
+      smarthome:'',
+      patrol:'',
+      weixin:'',
+      APP:'',
+      SMS:'',
+      otherSMS:'',
+      NVS:'',
+      otherNVS:''
     }
   },
   methods:{
@@ -335,6 +343,37 @@ export default {
       if(msg[0]){
         this.ServerType = msg[0].serviceType;
         this.myRow = msg[0];
+        msg.forEach(a=>{
+          switch (a.serviceType){
+            case 1:
+              this.security = true;
+              break;
+            case 2:
+              this.smarthome = true;
+              break;
+            case 3:
+              this.patrol = true;
+              break;
+            case 4:
+              this.weixin = true;
+              break;
+            case 5:
+              this.APP = true;
+              break;
+            case 6:
+              this.SMS = true;
+              break;
+            case 7:
+              this.otherSMS = true;
+              break;
+            case 8:
+              this.NVS = true;
+              break;
+            case 9:
+              this.otherNVS = true;
+              break;
+          }
+        })
       }
     }
   },
