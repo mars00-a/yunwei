@@ -107,7 +107,7 @@
                 <el-button type="success" @click="dialogLoginVisible = true, getLogin(scope.row)">登录</el-button>
               </el-col>
               <el-col :span="8">
-                <el-button type="primary">事件</el-button>
+                <el-button type="primary" @click="eventButton(scope.row)">事件</el-button>
               </el-col>
             </el-row>
           </template>
@@ -511,6 +511,82 @@
         <el-button type="primary" @click="dialogLoginReviseVisible = false, ConfirmReviseLogin()">确 定</el-button>
       </span>
     </el-dialog>
+<!--    事件的弹窗-->
+    <el-dialog top="5vh" title="编辑服务器事件" :visible.sync="dialogEventVisible" width="40%">
+      <el-row>
+        <el-col :span="5">
+          <span style="line-height: 40px;margin-left: 20px">搜索：</span>
+        </el-col>
+        <el-col :span="19">
+          <el-input v-model="eventForm.searchEventKeyword" placeholder="输入事件id或名称查询"></el-input>
+        </el-col>
+      </el-row>
+
+      <el-table
+        :data="eventForm.searchEventInfos"
+        border
+        height="26rem"
+      >
+        <!--        客户id-->
+        <el-table-column
+          prop="opcid"
+          label="事件id"
+        >
+        </el-table-column>
+        <!--        客户名称-->
+        <el-table-column
+          prop="opcidName"
+          label="事件名称"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="threshold"
+          label="阈值"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="level"
+          label="等级"
+        >
+        </el-table-column>
+        <el-table-column
+          label="操作">
+          <template slot-scope="scope">
+            <el-button type="primary" @click="editEventButton(scope.row)">编辑</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!--      最下方操作-->
+      <span slot="footer" class="dialog-footer">
+        <el-button plain type="info" @click="dialogEventVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogEventVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+<!--    编辑服务器的事件的信息-->
+    <el-dialog top="10vh" title="编辑服务器事件" :visible.sync="eventEditVisible" width="30%">
+      <el-form ref="eventEditForm" :model="eventEditForm" label-width="90px">
+        <!--服务器ID-->
+        <el-form-item label="事件id">
+          <el-input :disabled="true" v-model="eventEditForm.opcid" />
+        </el-form-item>
+        <!--服务器IP-->
+        <el-form-item label="事件名称">
+          <el-input :disabled="true" v-model="eventEditForm.opcidName" />
+        </el-form-item>
+        <!--服务器端口-->
+        <el-form-item label="阈值">
+          <el-input v-model="eventEditForm.threshold" />
+        </el-form-item>
+        <!--使用工具-->
+        <el-form-item label="等级">
+          <el-input v-model="eventEditForm.level" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="eventEditVisible = false">取 消</el-button>
+        <el-button type="primary" @click="ConfirmEditEvent">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -536,6 +612,7 @@ import {
   getOpServerLoginLoginSoftList
 } from '@/api/serverLedger'
 import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serverLedger'
+import {getOpEventCidByServerId, getOpUserServerEventUpdateThreshold} from "@/api/wang";
   export default {
     name: 'op_server',
     components: {
@@ -619,6 +696,21 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
         loginTable:[],
         loginAddForm:{},
         Tools:[],
+        // 事件的弹窗
+        dialogEventVisible: false,
+        eventEditVisible:false,
+        eventForm: {
+          controlServerId:'',
+          searchEventKeyword:'',
+          searchEventInfos:[],
+          allEventInfos:[],
+        },
+        eventEditForm: {
+          opcid:'',
+          opcidName:'',
+          threshold:'',
+          level:''
+        }
       }
     },
     methods:{
@@ -934,6 +1026,48 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
             });
           }
         })
+      },
+      // **************************************事件相关*************************
+      // 打开某个服务器的事件弹窗
+      eventButton(row){
+        this.dialogEventVisible = true
+        this.eventForm.controlServerId = row.serverId
+        getOpEventCidByServerId(this.eventForm.controlServerId).then(request => {
+          this.eventForm.allEventInfos = request.data.body;
+          this.eventForm.searchEventInfos = request.data.body;
+        });
+      },
+      // 编辑某服务器的某个事件
+      editEventButton(row){
+        this.eventEditVisible = true
+        this.eventEditForm.opcid = row.opcid
+        this.eventEditForm.opcidName = row.opcidName
+        this.eventEditForm.threshold = row.threshold
+        this.eventEditForm.level = row.level
+        console.log("尝试编辑服务器的某个事件，服务器和事件id为：",this.eventForm.controlServerId,row.opcid)
+      },
+      // 编辑事件后确认
+      ConfirmEditEvent(){
+        console.log("点击了确认编辑")
+        getOpUserServerEventUpdateThreshold(this.eventForm.controlServerId,this.eventEditForm.opcid,this.eventEditForm.threshold,
+          this.eventEditForm.level).then(request=>{
+          if(request.data.body){
+            getOpEventCidByServerId(this.eventForm.controlServerId).then(request => {
+              this.eventForm.allEventInfos = request.data.body;
+              this.eventForm.searchEventInfos = request.data.body;
+            });
+            this.eventEditVisible = false
+            this.$message({
+              message: "修改成功",
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: request.data.msg,
+              type: 'warning'
+            });
+          }
+        });
       }
     },
     watch:{
@@ -991,7 +1125,17 @@ import {getOpServerDelete, getAllCustomerInfos, getAllCustomer} from '@/api/serv
             this.addForm.serverId = '';
           }
         }
-      }
+      },
+      // 检索服务器的事件
+      'eventForm.searchEventKeyword':{
+        immediate:true,
+        handler(val){
+          console.log("检测到搜索关键词改变")
+          this.eventForm.searchEventInfos = this.eventForm.allEventInfos.filter(p =>{
+            return p.opcid.indexOf(val) !== -1 || p.opcidName.indexOf(val) !== -1
+          })
+        }
+      },
     },
     mounted(){
       this.dealData();

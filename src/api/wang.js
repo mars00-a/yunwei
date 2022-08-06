@@ -68,3 +68,21 @@ export  function getOpUserServerReceiveCreate(data) {
     data
   })
 }
+
+// 更新服务器事件的阈值等级信息
+
+export  function getOpUserServerEventUpdateThreshold(serverId,opcid,threshold,level) {
+  return request({
+    url: '/api/OpUserServerEvent/UpdateThreshold',
+    method: 'post',
+    params:{serverId,opcid,threshold,level}
+  })
+}
+// 获取服务器事件的阈值
+export  function getOpEventCidByServerId(serverId) {
+  return request({
+    url: '/api/OpEventCid/ByServerId',
+    method: 'get',
+    params:{serverId}
+  })
+}
