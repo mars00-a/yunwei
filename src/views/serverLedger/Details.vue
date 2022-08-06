@@ -332,8 +332,10 @@ export default {
       this.Tabs = '2';
     },
     FirstServiceData(msg){
-      this.ServerType = msg[0].serviceType;
-      this.myRow = msg[0];
+      if(msg[0]){
+        this.ServerType = msg[0].serviceType;
+        this.myRow = msg[0];
+      }
     }
   },
   mounted() {

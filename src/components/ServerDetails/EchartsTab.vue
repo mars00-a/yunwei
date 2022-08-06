@@ -71,16 +71,18 @@
       'Date':{
         immediate:true,
         handler(val){
-          let now = new Date().getTime();
-          if(this.Date[1].valueOf()< now){
-            if(this.Date[1]-this.Date[0] > 2*60*60*1000){
-              this.dealTime(this.Date[0], 6*60*1000, 20);
-            }
-            if(this.Date[1]-this.Date[0] <= 20*60*1000 && this.Date[1]-this.Date[0] >= 10*60*1000){
-              this.dealTime(this.Date[0], (this.Date[1]-this.Date[0])/20, 20);
-            }
-            if(this.Date[1]-this.Date[0] <= 10*60*1000 && this.Date[1]-this.Date[0] >= 0){
-              this.dealTime(this.Date[0], 30*1000, parseInt((this.Date[1]-this.Date[0])/(30000))+1);
+          if(Date[0]&&Date[1]){
+            let now = new Date().getTime();
+            if(this.Date[1].valueOf()< now){
+              if(this.Date[1]-this.Date[0] > 2*60*60*1000){
+                this.dealTime(this.Date[0], 6*60*1000, 20);
+              }
+              if(this.Date[1]-this.Date[0] <= 20*60*1000 && this.Date[1]-this.Date[0] >= 10*60*1000){
+                this.dealTime(this.Date[0], (this.Date[1]-this.Date[0])/20, 20);
+              }
+              if(this.Date[1]-this.Date[0] <= 10*60*1000 && this.Date[1]-this.Date[0] >= 0){
+                this.dealTime(this.Date[0], 30*1000, parseInt((this.Date[1]-this.Date[0])/(30000))+1);
+              }
             }
           }
         }

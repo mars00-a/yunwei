@@ -68,7 +68,7 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getServerHardStatus('','',1,100).then(request=>{
+        getServerHardStatus(this.myRow.serverIp,this.myRow.serverName,1,100).then(request=>{
           this.tableData = request.data.body.data;
           for(let i=0;i<request.data.body.data.length;i++){
             this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
@@ -82,7 +82,16 @@
       this.myStyle = {
         height: document.body.clientHeight-130-30-64-70+"px"
       };
-      this.dealData();
+    },
+    watch:{
+      'myRow.serverIp':{
+        immediate:true,
+        handler(val){
+          if(val){
+            this.dealData();
+          }
+        }
+      }
     },
     props:{
       myRow:Object
