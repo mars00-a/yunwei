@@ -223,30 +223,31 @@
             <div v-if="ServerType === 1">
               <security :myRow='this.myRow'/>
             </div>
-            <div v-if="ServerType === 2">
+            <div v-else-if="ServerType === 2">
               <smarthome :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 3">
+            <div v-else-if="ServerType === 3">
               <patrol :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 4">
+            <div v-else-if="ServerType === 4">
               <weixin :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 5">
+            <div v-else-if="ServerType === 5">
               <APP :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 6">
+            <div v-else-if="ServerType === 6">
               <SMS :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 7">
+            <div v-else-if="ServerType === 7">
               <otherSMS :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 8">
+            <div v-else-if="ServerType === 8">
               <NVS :myRow='this.myRow' />
             </div>
-            <div v-if="ServerType === 9">
+            <div v-else-if="ServerType === 9">
               <otherNVS :myRow='this.myRow' />
             </div>
+            <el-empty description="暂无数据" v-else/>
           </div></el-tab-pane>
           <el-tab-pane label="数据统计"><div :style="MyStyle.Tab">
             <el-row>
