@@ -232,22 +232,22 @@ export const constantRoutes = [
     children: [
       {
         path: 'CPU',
-        name: 'CPU',
+        name: 'networkCPU',
         meta: { title: 'CPU使用实时状态', icon: 'el-icon-cpu' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/CPU')
       },{
         path: 'disk',
-        name: 'disk',
+        name: 'networkDisk',
         meta: { title: '磁盘空间最新状态', icon: 'el-icon-pie-chart' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/disk')
       },{
         path: 'hardware',
-        name: 'hardware',
+        name: 'networkHardware',
         meta: { title: '硬件实时状态', icon: 'el-icon-stopwatch' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/hardware')
       },{
         path: 'ram',
-        name: 'ram',
+        name: 'networkRam',
         meta: { title: '内存实时状态表', icon: 'el-icon-s-marketing' },
         component: () => import('@/views/NetworkAuthorizationServerInformation/ram')
       }
