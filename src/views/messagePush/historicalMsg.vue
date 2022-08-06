@@ -343,7 +343,6 @@
       }
       else {
         if(this.$route.params.serverEventData !== undefined){
-          console.log()
           this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
           this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
           this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;

@@ -1360,7 +1360,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
         this.addForm.serviceType = type
         this.openOneDialog(type)
         let searchKeyword = this.addForm.serverId+"0"+type
-        console.log("用于查找的关键字是：",searchKeyword)
         getServiceFindServiceId(searchKeyword,1,200).then(request=>{
           let totalArr = request.data.body.data;
           // 获取返回的所有数的流水号
@@ -1501,7 +1500,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log("客户id为：",row.customerId,"服务id为：",this.controlServiceId)
           getOpCustomerServicesDelete(row.customerId,this.controlServiceId).then(request=>{
             if(request.data.body){
               getOpCustomerByService(this.controlServiceId).then(request=>{
@@ -1637,7 +1635,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
             serviceId:this.controlServiceId
           }
         }
-        console.log(dataArr)
         for (let i=0;i<this.customerForm.selectServiceList.length;i++){
           getOpCustomerServicesCreate(dataArr[i]).then(request=>{
             if(request.data.body && i >= this.customerForm.selectServiceList.length-1){
@@ -1661,7 +1658,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       },
       handleSelectionChange(val){
         this.customerForm.selectServiceList = val
-        console.log(this.customerForm.selectServiceList)
       },
       // 鼠标悬浮提示
       tableServerNameGet(id){
@@ -2160,7 +2156,6 @@ import {getOpDictSignalCreate} from "@/api/opdict";
       'isPermanentAuthorize': {
         immediate: true,
         handler(val){
-          console.log("检测到是否永久授权发生改变,值为：",val)
           if(val === 0 || val ==='0') {
             this.controlIsPermanentAuthorizeShow = true
             this.nineDialogForm.securityForm.expireDate = ""

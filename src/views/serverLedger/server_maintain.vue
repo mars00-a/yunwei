@@ -937,7 +937,6 @@ import {getOpEventCidByServerId, getOpUserServerEventUpdateThreshold} from "@/ap
       },
       targetTableIdGetFocus(row){
         this.addForm.customerId = row.customerId;
-        console.log(this.addForm);
       },
       //添加客户id
       targetTableGetFocus(index,row){
@@ -1044,11 +1043,9 @@ import {getOpEventCidByServerId, getOpUserServerEventUpdateThreshold} from "@/ap
         this.eventEditForm.opcidName = row.opcidName
         this.eventEditForm.threshold = row.threshold
         this.eventEditForm.level = row.level
-        console.log("尝试编辑服务器的某个事件，服务器和事件id为：",this.eventForm.controlServerId,row.opcid)
       },
       // 编辑事件后确认
       ConfirmEditEvent(){
-        console.log("点击了确认编辑")
         getOpUserServerEventUpdateThreshold(this.eventForm.controlServerId,this.eventEditForm.opcid,this.eventEditForm.threshold,
           this.eventEditForm.level).then(request=>{
           if(request.data.body){
@@ -1108,11 +1105,9 @@ import {getOpEventCidByServerId, getOpUserServerEventUpdateThreshold} from "@/ap
             if(FirstData.length === 0){
               this.addForm.serverId = val+'S01';
             } else{
-              console.log(FirstData);
               for(let i=0;i<FirstData.length;i++){
                 LastData[i] = FirstData[i].serverId;
               }
-              console.log(LastData);
               let max = LastData.reduce((total,value)=>total>value?total:value);
               max = max.slice(-2);
               if(max >= '09'){
@@ -1130,7 +1125,6 @@ import {getOpEventCidByServerId, getOpUserServerEventUpdateThreshold} from "@/ap
       'eventForm.searchEventKeyword':{
         immediate:true,
         handler(val){
-          console.log("检测到搜索关键词改变")
           this.eventForm.searchEventInfos = this.eventForm.allEventInfos.filter(p =>{
             return p.opcid.indexOf(val) !== -1 || p.opcidName.indexOf(val) !== -1
           })

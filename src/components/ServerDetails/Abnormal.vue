@@ -76,7 +76,6 @@ export default {
     Find(){
       if(this.myRow)
         getUserEventLogFind('','','', '', this.myRow.serverName,'',this.currentPage,this.size).then(request=>{
-          console.log("请求到的异常信息：",request)
           this.tableData = request.data.body.data;
           this.totalNumber=request.data.body.total
         })
@@ -112,7 +111,6 @@ export default {
       handler(val){
         if(this.myRow)
           getUserEventLogFind('','','', '', this.myRow.serverName,'',this.currentPage,this.size).then(request=>{
-            console.log("请求到的异常信息：",request)
             this.tableData = request.data.body.data;
             this.totalNumber=request.data.body.total
           })

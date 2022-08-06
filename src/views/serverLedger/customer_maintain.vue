@@ -893,7 +893,6 @@ import {
         this.pushAddServerForm.endTime= this.addServerForm.endTime;
         this.pushAddServerForm.customerId= this.nowCustomerId;
         this.pushAddServerForm.serverId= this.addServerForm.serverId;
-        console.log(this.pushAddServerForm);
         getOpCustomerServerCreate(this.pushAddServerForm).then(request=>{
           getOpCustomerServerByCustomer(this.nowCustomerId).then(request=>{
             this.serverTable = request.data.body;
@@ -948,7 +947,6 @@ import {
           }
           let max = dealData.reduce((total,value)=>total>value?total:value);
           max = max.slice(-2);
-          console.log(max);
           if(max>='09'){
             this.newServerForm.serverId = this.nowCustomerId+'S'+(parseInt(max)+1);
           }else{
@@ -966,9 +964,7 @@ import {
         })
       },
       getServiceId(){
-        console.log("触发了请求未绑定的服务")
         getOpCustomerServicesUnBindServiceList(this.nowCustomerId).then(request=>{
-          console.log(request)
           this.serviceIdTable = request.data.body;
           this.backupServiceIdTable = request.data.body;
         })
