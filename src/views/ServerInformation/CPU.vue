@@ -4,15 +4,15 @@
       <el-row id="Control">
         <el-col :span="6">
           <span id="FilterParameters">服务器名称：</span>
-          <el-input v-model="serverNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverName" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="6">
           <span>服务器IP：</span>
-          <el-input v-model="eventNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverIp" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--查找、新增功能按钮-->
         <el-col :span="12">
-          <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1,Find()">过滤</el-button>
+          <el-button type="primary" icon="el-icon-c-scale-to-original" id="Find" @click="currentPage = 1, Find()">过滤</el-button>
           <el-button type="success" icon="el-icon-refresh" @click="dealData()">恢复</el-button>
           <el-button type="info" icon="el-icon-edit-outline">导出</el-button>
           <el-button type="primary" icon="el-icon-tickets">打印</el-button>
@@ -36,26 +36,25 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="receive.user.userName"
+          prop="server.serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="receive.receiveType"
-          :formatter="receiveTypeFormat"
+          prop="server.serverIp"
           label="服务器IP"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="deviceName"
           label="CPU名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
-          prop="opEvent.opcidName"
+          prop="ratio"
           label="已使用比例（%）"
         >
         </el-table-column>
@@ -96,14 +95,10 @@
 </template>
 
 <script>
-  import msgServer from '../../components/messagePush/msgServer'
-  import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
-    getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
-  import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
+  import {getCpuStatusPageList} from '@/api/ServerInfomation'
   export default {
     name: "cpu",
     components: {
-      msgServer
     },
     data() {
       return {
@@ -125,17 +120,8 @@
         beginTimeSearchKeyword:'',
         endTimeSearchKeyword:'',
         serverNameSearchKeyword: '',
-        eventNameSearchKeyword: '',
-        ReceiveTypes: [
-          {
-            value: 1,
-            label: '邮箱'
-          },
-          {
-            value: 2,
-            label: '微信'
-          }
-        ],
+        serverIp: '',
+        serverName: '',
         // 过滤参数列表
         FilterParameters: [
           {
@@ -177,22 +163,17 @@
     },
     methods:{
       //************************分页************************
-      receiveTypeFormat(row){
-        if(row.receive.receiveType === 1){
-          return "邮箱"
-        }
-        if(row.receive.receiveType === 2){
-          return "微信"
-        }
-      },
       //处理页面初始数据
       dealData(){
-        getUserEventLogPageList(this.currentPage,this.size).then(request=>{
+        getCpuStatusPageList('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
+          for(let i=0;i<request.data.body.data.length;i++){
+            this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+          }
         });
-        this.FilterParameter_value = '';
-        this.CompleteValue='';
+        this.serverIp = '';
+        this.serverName='';
       },
       //鼠标放到某一行上就触发
       tableCellClassName({row,rowIndex}){
@@ -212,81 +193,20 @@
         this.currentPage = val;
         this.Find();
       },
-      //************************新增与查找按钮************************
-      //新增功能弹窗的取消和确认
-      Cancel() {
-        this.$message('取消成功')
-      },
-      Confirm(id) {
-        //非空验证
-        if(id === ""){
-          this.dialogVisible = true;
-          this.$message.error('服务类型id不能为空');
-        }
-        else{
-          getOpDictServiceCreate(this.form).then(request=>{
-            if(request.data.body){
-              this.Find();
-              this.$message({
-                message: '新增成功',
-                type: 'success'
-              });
-            }else{
-              super.$message({
-                message: request.data.msg,
-                type: 'warning'
-              });
-            }
-          });
-        }
-      },
       //查找按钮的事件
       Find(){
-        if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
-          this.endTimeSearchKeyword||this.serverNameSearchKeyword||this.eventNameSearchKeyword !== '') {
-          getUserEventLogFind(this.UserNameSearchKeyword,this.ReceiveTypeSearchKeyword,this.beginTimeSearchKeyword, this.endTimeSearchKeyword,
-            this.serverNameSearchKeyword,this.eventNameSearchKeyword,this.currentPage,this.size).then(request=>{
+        if(this.serverIp||this.serverName !== '') {
+          getCpuStatusPageList(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
+            for(let i=0;i<request.data.body.data.length;i++){
+              this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+            }
           })
         }
         else{
           this.dealData()
         }
-      },
-      //************************修改、删除按钮************************
-      //修改、删除后的表数据返回到以下两个函数
-      GetRevise(msg){
-        getOpDictServiceUpdate(msg).then(request=>{
-          if(request.data.body){
-            this.Find();
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            });
-          }else{
-            super.$message({
-              message: request.data.msg,
-              type: 'warning'
-            });
-          }
-        });
-      },
-      GetDel(msg){
-        getOpDictServiceDelete(msg).then(request=>{
-          this.Find();
-          if(request.data.body){
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          }else{
-            super.$message({
-              message: request.data.msg,
-              type: 'warning'
-            });
-          }
-        });
       },
     },
     mounted(){

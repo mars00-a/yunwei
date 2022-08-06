@@ -5,12 +5,12 @@
         <!--过滤参数选择-->
         <el-col :span="5">
           <span>服务器IP：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverIp" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <!--过滤参数选择-->
         <el-col :span="5">
           <span>服务器名称：</span>
-          <el-input v-model="UserNameSearchKeyword" placeholder="请输入内容" :style="controlWidth.control2width"/>
+          <el-input v-model="serverName" placeholder="请输入内容" :style="controlWidth.control2width"/>
         </el-col>
         <el-col :span="5">
           <span>内存名称：</span>
@@ -42,42 +42,42 @@
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="receive.user.userName"
+          prop="server.serverName"
           label="服务器名称"
         >
         </el-table-column>
         <!--接收方式-->
         <el-table-column
-          prop="receive.receiveType"
+          prop="server.serverIp"
           :formatter="receiveTypeFormat"
           label="服务器IP"
         >
         </el-table-column>
         <!--服务类型id：serviceType-->
         <el-table-column
-          prop="server.serverName"
+          prop="deviceName"
           label="内存名称"
         >
         </el-table-column>
         <!--服务类型名称：serviceName-->
         <el-table-column
-          prop="opEvent.opcidName"
+          prop="ratio"
           label="已占用比例(%)"
         >
         </el-table-column>
         <!--服务信息存放表：serviceTable-->
         <el-table-column
-          prop="time"
+          prop="value"
           label="已用空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="surplus"
           label="剩余空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="total"
           label="总空间(GB)"
         >
         </el-table-column>
@@ -117,15 +117,10 @@
 </template>
 
 <script>
-  import msgServer from '../../components/messagePush/msgServer'
-  import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
-    getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
-  import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
+  import {getMemoryStatusPageList} from '@/api/ServerInfomation'
   export default {
     name: "ram",
-    components: {
-      msgServer
-    },
+    components: {},
     data() {
       return {
         //*******************页面自适应参数*******************
@@ -141,12 +136,9 @@
           height:''
         },
         //*******************控制区*******************
+        serverName:'',
+        serverIp:'',
         UserNameSearchKeyword:'',
-        ReceiveTypeSearchKeyword:'',
-        beginTimeSearchKeyword:'',
-        endTimeSearchKeyword:'',
-        serverNameSearchKeyword: '',
-        eventNameSearchKeyword: '',
         //*******************中间主体*******************
         //表格数据
         tableData: [],
@@ -166,12 +158,18 @@
       //************************分页************************
       //处理页面初始数据
       dealData(){
-        getUserEventLogPageList(this.currentPage,this.size).then(request=>{
+        getMemoryStatusPageList('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
+          for(let i=0;i<request.data.body.data.length;i++){
+            this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+            this.tableData[i].total = Math.round((request.data.body.data[i].value / (request.data.body.data[i].ratio/100))*100)/100;
+            this.tableData[i].surplus = Math.round(this.tableData[i].total*(1-request.data.body.data[i].ratio/100)*100)/100;
+          }
         });
-        this.FilterParameter_value = '';
-        this.CompleteValue='';
+        this.serverIp = '';
+        this.serverName='';
+        this.UserNameSearchKeyword='';
       },
       //鼠标放到某一行上就触发
       tableCellClassName({row,rowIndex}){
@@ -194,12 +192,15 @@
       //************************新增与查找按钮************************
       //查找按钮的事件
       Find(){
-        if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
-          this.endTimeSearchKeyword||this.serverNameSearchKeyword||this.eventNameSearchKeyword !== '') {
-          getUserEventLogFind(this.UserNameSearchKeyword,this.ReceiveTypeSearchKeyword,this.beginTimeSearchKeyword, this.endTimeSearchKeyword,
-            this.serverNameSearchKeyword,this.eventNameSearchKeyword,this.currentPage,this.size).then(request=>{
+        if(this.serverIp||this.serverName !== '') {
+          getMemoryStatusPageList(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
+            for(let i=0;i<request.data.body.data.length;i++){
+              this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+              this.tableData[i].total = Math.round((request.data.body.data[i].value / (request.data.body.data[i].ratio/100))*100)/100;
+              this.tableData[i].surplus = Math.round(this.tableData[i].total*(1-request.data.body.data[i].ratio/100)*100)/100;
+            }
           })
         }
         else{
@@ -211,22 +212,7 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
-      if(this.$route.params.msgServerData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
-        this.Find();
-      }
-      else {
-        if(this.$route.params.serverEventData !== undefined){
-          console.log()
-          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
-          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
-          this.Find();
-        }else{
-          this.dealData();
-        }
-      }
+      this.dealData();
     }
   }
 </script>

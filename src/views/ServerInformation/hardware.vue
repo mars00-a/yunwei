@@ -49,7 +49,6 @@
         <!--接收方式-->
         <el-table-column
           prop="server.serverIp"
-          :formatter="receiveTypeFormat"
           label="服务器IP"
         >
         </el-table-column>
@@ -72,17 +71,17 @@
         >
         </el-table-column>
         <el-table-column
-          prop="value"
+          prop="surplus"
           label="剩余空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="value"
+          prop="total"
           label="总空间(GB)"
         >
         </el-table-column>
         <el-table-column
-          prop="server.serverName"
+          prop="time"
           label="数据时间"
         >
         </el-table-column>
@@ -117,15 +116,10 @@
 </template>
 
 <script>
-  import msgServer from '../../components/messagePush/msgServer'
-  import {getOpDictServicePageList, getOpDictServiceCreate, getOpDictServiceFindServiceType, getOpDictServiceFindServiceName,
-    getOpDictServiceFindServiceTable, getOpDictServiceFindNote, getOpDictServiceDelete, getOpDictServiceUpdate,} from '@/api/opdict'
-  import {getUserEventLogPageList, getUserEventLogFind, } from '@/api/messagePush'
   import {getServerHardStatus} from '@/api/ServerInfomation'
   export default {
     name: "hardware",
     components: {
-      msgServer
     },
     data() {
       return {
@@ -145,12 +139,6 @@
         serverIp:'',
         serverName:'',
         UserNameSearchKeyword:'',
-        ReceiveTypeSearchKeyword:'',
-        beginTimeSearchKeyword:'',
-        endTimeSearchKeyword:'',
-        serverNameSearchKeyword: '',
-        eventNameSearchKeyword: '',
-        //**************************新增***********************
         //*******************中间主体*******************
         //表格数据
         tableData: [],
@@ -173,7 +161,11 @@
         getServerHardStatus('','',this.currentPage,this.size).then(request=>{
           this.totalNumber = request.data.body.total;
           this.tableData = request.data.body.data;
-          console.log(request)
+          for(let i=0;i<request.data.body.data.length;i++){
+            this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+            this.tableData[i].total = Math.round((request.data.body.data[i].value / (request.data.body.data[i].ratio/100))*100)/100;
+            this.tableData[i].surplus = Math.round(this.tableData[i].total*(1-request.data.body.data[i].ratio/100)*100)/100;
+          }
         });
         this.serverIp = '';
         this.serverName='';
@@ -200,12 +192,15 @@
       //************************新增与查找按钮************************
       //查找按钮的事件
       Find(){
-        if(this.UserNameSearchKeyword||this.ReceiveTypeSearchKeyword||this.beginTimeSearchKeyword||
-          this.endTimeSearchKeyword||this.serverNameSearchKeyword||this.eventNameSearchKeyword !== '') {
-          getUserEventLogFind(this.UserNameSearchKeyword,this.ReceiveTypeSearchKeyword,this.beginTimeSearchKeyword, this.endTimeSearchKeyword,
-            this.serverNameSearchKeyword,this.eventNameSearchKeyword,this.currentPage,this.size).then(request=>{
+        if(this.serverIp||this.serverName !== '') {
+          getServerHardStatus(this.serverIp,this.serverName,this.currentPage,this.size).then(request=>{
             this.totalNumber = request.data.body.total;
             this.tableData = request.data.body.data;
+            for(let i=0;i<request.data.body.data.length;i++){
+              this.tableData[i].ratio = Math.round(this.tableData[i].ratio*100)/100;
+              this.tableData[i].total = Math.round((request.data.body.data[i].value / (request.data.body.data[i].ratio/100))*100)/100;
+              this.tableData[i].surplus = Math.round(this.tableData[i].total*(1-request.data.body.data[i].ratio/100)*100)/100;
+            }
           })
         }
         else{
@@ -217,22 +212,7 @@
       this.myStyle = {
         height: document.body.clientHeight-50-30-64-70+"px"
       };
-      if(this.$route.params.msgServerData !== undefined){
-        this.UserNameSearchKeyword = this.$route.params.msgServerData.userName;
-        this.ReceiveTypeSearchKeyword = this.$route.params.msgServerData.receiveType;
-        this.Find();
-      }
-      else {
-        if(this.$route.params.serverEventData !== undefined){
-          console.log()
-          this.UserNameSearchKeyword = this.$route.params.serverEventData.userName;
-          this.ReceiveTypeSearchKeyword = this.$route.params.serverEventData.receiveType;
-          this.serverNameSearchKeyword = this.$route.params.serverEventData.server.serverName;
-          this.Find();
-        }else{
-          this.dealData();
-        }
-      }
+      this.dealData();
     }
   }
 </script>
